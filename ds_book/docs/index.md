@@ -21,10 +21,10 @@ These materials are designed to provide TensorFlow expertise via tutorials and s
 ```
 
 
-```{admonition} How to run the book codes
+```{admonition} How to run the notebook code
 :class: important
 
-A major advantage of executable books is that the reader may enjoy running the source codes himself, modifying them and playing around. No downloading, installation or configuration are required. Simply go to 
+A major advantage of executable books is that the reader may enjoy running the source code, modifying them and playing around. No downloading, installation or configuration are required. Simply go to 
 
 [https://github.com/developmentseed/servir-amazonia-ml/tree/jupyterbook/docs/index.html](hhttps://github.com/developmentseed/servir-amazonia-ml/tree/jupyterbook/docs/index.html),
 
