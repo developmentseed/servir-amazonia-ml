@@ -53,7 +53,7 @@ latex:
   latex_engine                : "pdflatex"
   use_jupyterbook_latex       : true # use jupyterbook-latex for pdf builds as default
   latex_documents:
-    targetname: dl_book.tex
+    targetname: ds_book.tex
     
 sphinx:
   config:
