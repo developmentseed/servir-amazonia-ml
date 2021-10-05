@@ -25,7 +25,7 @@ html:
 notebook_interface            : "notebook"
 
 repository:
-  url           : "https://github.com/developmentseed/servir-amazonia-ml/tree/jupyterbook"
+  url           : "https://github.com/developmentseed/servir-amazonia-ml/"
   branch        : master
   path_to_book  : ds_book
 
@@ -64,5 +64,5 @@ sphinx:
     latex_elements.pointsize: 12pt
     
 
-google_analytics:
-  mytrackingcode: UA-205698170-1
+#google_analytics:
+#  mytrackingcode: UA-205698170-1
