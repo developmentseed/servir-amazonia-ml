@@ -8,8 +8,7 @@
 
 <!-- #endregion -->
 
-These materials are designed to provide TensorFlow expertise via tutorials and science support to the SERVIR-Amazonia Hub and key stakeholders on two modeling efforts: 1) TerraBio (Monitoring Forest Dynamics from Space to Enable Sustainable Livelihoods and Biodiversity Conservation in the Amazon) and 2) Monitoring of Gold Mining in the Peruvian Amazon. The end goal of the project will be to advance the implementation and delivery of key SERVIR-Amazonia services that rely on neural networks written in TensorFlow by improving hub capacities. These improvements will address training, testing, and evaluation of TF models as well as different ML techniques demoed in Colab notebooks using real data. 
-
+These materials are designed to provide TensorFlow expertise via tutorials and science support, vis a vis suggestions for training, testing, and evaluation of TensorFlow models as well as different deep learning techniques demoed in Colab notebooks using real data. 
 
 
 ```{admonition} Links

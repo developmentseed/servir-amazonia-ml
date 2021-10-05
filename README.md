@@ -1,4 +1,4 @@
-# Explaining neural networks in raw Python: lectures in Jupiter
+# Deep Learning with TensorFlow and EO Data
 
 Complete file set for [Jupyter Book](https://beta.jupyterbook.org/intro.html)
 
