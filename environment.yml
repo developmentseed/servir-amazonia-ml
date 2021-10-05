@@ -1,4 +1,4 @@
-name: nn_book
+name: ds_book
 channels:
   - default
 dependencies:
