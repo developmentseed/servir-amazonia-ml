@@ -27,7 +27,7 @@ notebook_interface            : "notebook"
 repository:
   url           : "https://github.com/developmentseed/servir-amazonia-ml/tree/jupyterbook"
   branch        : master
-  path_to_book  : nn_book
+  path_to_book  : ds_book
 
 # Launch button settings
 #launch_buttons:
@@ -65,4 +65,4 @@ sphinx:
     
 
 google_analytics:
-  mytrackingcode: UA-205698170-1
+  mytrackingcode: UA:-205698170-1
