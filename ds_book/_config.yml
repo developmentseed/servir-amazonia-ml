@@ -27,7 +27,7 @@ notebook_interface            : "notebook"
 repository:
   url           : "https://github.com/developmentseed/servir-amazonia-ml/tree/jupyterbook"
   branch        : master
-  path_to_book  : nn_book
+  path_to_book  : ds_book
 
 # Launch button settings
 #launch_buttons:
@@ -53,7 +53,7 @@ latex:
   latex_engine                : "pdflatex"
   use_jupyterbook_latex       : true # use jupyterbook-latex for pdf builds as default
   latex_documents:
-    targetname: dl_book.tex
+    targetname: ds_book.tex
     
 sphinx:
   config:
