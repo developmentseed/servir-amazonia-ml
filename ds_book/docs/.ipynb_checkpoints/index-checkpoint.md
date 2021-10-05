@@ -24,7 +24,7 @@ The text is brief (the pdf printout has ~120 pages including the appendix), so a
 :class: tip
 
 - Jupyter Book: 
-[https://bronwojtek.github.io/neuralnets-in-raw-python/docs/index.html](https://bronwojtek.github.io/neuralnets-in-raw-python/docs/index.html)
+[https://developmentseed.github.io/servir-amazonia-ml/docs/index.html](https://developmentseed.github.io/servir-amazonia-ml/docs/index.html)
 
 - pdf and codes: [www.ifj.edu.pl/~broniows/nn](https://www.ifj.edu.pl/~broniows/nn) or [www.ujk.edu.pl/~broniows/nn](https://www.ujk.edu.pl/~broniows/nn)
 
