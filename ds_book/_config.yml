@@ -25,7 +25,7 @@ html:
 notebook_interface            : "notebook"
 
 repository:
-  url           : "https://github.com/developmentseed/servir-amazonia-ml/"
+  url           : "https://github.com/developmentseed/servir-amazonia-ml/tree/jupyterbook"
   branch        : master
   path_to_book  : nn_book
 
