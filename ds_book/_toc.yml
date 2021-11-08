@@ -4,6 +4,7 @@ chapters:
 - file: docs/intro
 - file: docs/mcp
 - file: docs/memory
+- file: docs/deeplearning_crop_segmentation
 - file: docs/perceptron
 - file: docs/more_layers
 - file: docs/backprop
