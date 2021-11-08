@@ -54,7 +54,7 @@
     <link rel="shortcut icon" href="../_static/ds.png"/>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="MCP Neuron" href="mcp.html" />
+    <link rel="next" title="Crop type mapping with Deep Learning" href="deeplearning_crop_segmentation.html" />
     <link rel="prev" title="Deep Learning with TensorFlow: Tutorials for modeling in the Amazon" href="index.html" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="docsearch:language" content="en" />
@@ -96,53 +96,8 @@
   </a>
  </li>
  <li class="toctree-l1">
-  <a class="reference internal" href="mcp.html">
-   MCP Neuron
-  </a>
- </li>
- <li class="toctree-l1">
-  <a class="reference internal" href="memory.html">
-   Models of memory
-  </a>
- </li>
- <li class="toctree-l1">
   <a class="reference internal" href="deeplearning_crop_segmentation.html">
    Crop type mapping with Deep Learning
-  </a>
- </li>
- <li class="toctree-l1">
-  <a class="reference internal" href="perceptron.html">
-   Perceptron
-  </a>
- </li>
- <li class="toctree-l1">
-  <a class="reference internal" href="more_layers.html">
-   More layers
-  </a>
- </li>
- <li class="toctree-l1">
-  <a class="reference internal" href="backprop.html">
-   Back propagation
-  </a>
- </li>
- <li class="toctree-l1">
-  <a class="reference internal" href="interpol.html">
-   Interpolation
-  </a>
- </li>
- <li class="toctree-l1">
-  <a class="reference internal" href="rectification.html">
-   Rectification
-  </a>
- </li>
- <li class="toctree-l1">
-  <a class="reference internal" href="unsupervised.html">
-   Unsupervised learning
-  </a>
- </li>
- <li class="toctree-l1">
-  <a class="reference internal" href="som.html">
-   Self Organizing Maps
   </a>
  </li>
  <li class="toctree-l1">
@@ -346,14 +301,14 @@
 <p>In the remaining part of this section we give, in a rather dense format, a bunch of important definitions:</p>
 <p>Networks with one layer of neurons are called <strong>single-layer</strong> networks. The last layer (light blue blobs) is called the <strong>output layer</strong>. In multi-layer (more than one neuron layer) networks the neuron layers preceding the output layer (purple blobs) are called <strong>intermediate layers</strong>. If the number of layers is large (e.g. as many as 64, 128, …), we deal with the recent “ground-breaking” <strong>deep networks</strong>.</p>
 <p>Neurons in various layers do not have to function the same way, in particular the output neurons may act differently from the others.</p>
-<p>The signal from the input travels along the links (edges, synaptic connections), indicated with arrows, to the neurons in subsequent layers. In feed-forward networks, as the one in <a class="reference internal" href="#ffnn-fig"><span class="std std-numref">Fig. 3</span></a>, it can only move forward (from left to right in the figure): from the input to the first neuron layer, from the first to the second, and so on until the output is reached. No going backward to preceding layers, or parallel propagation among the neurons of the same layer, are allowed. This would be a <strong>recurrent</strong> feature that we touch upon in section <a class="reference internal" href="som.html#lat-lab"><span class="std std-ref">Lateral inhibition</span></a>.</p>
+<p>The signal from the input travels along the links (edges, synaptic connections), indicated with arrows, to the neurons in subsequent layers. In feed-forward networks, as the one in <a class="reference internal" href="#ffnn-fig"><span class="std std-numref">Fig. 3</span></a>, it can only move forward (from left to right in the figure): from the input to the first neuron layer, from the first to the second, and so on until the output is reached. No going backward to preceding layers, or parallel propagation among the neurons of the same layer, are allowed. This would be a <strong>recurrent</strong> feature that we touch upon in section <span class="xref std std-ref">lat-lab</span>.</p>
 <p>As we describe in detail in the following chapters, the traveling signal is appropriately <strong>processed</strong> by the neurons, hence the device carries out a computation: input is being transformed into output.</p>
 <p>In the sample network of <a class="reference internal" href="#ffnn-fig"><span class="std std-numref">Fig. 3</span></a> each neuron from a preceding layer is connected to each neuron in the following layer. Such ANNs are called <strong>fully connected</strong>.</p>
 <div class="figure align-default" id="ffnn-fig">
 <a class="reference internal image-reference" href="../_images/feed_f.png"><img alt="../_images/feed_f.png" src="../_images/feed_f.png" style="width: 300px;" /></a>
 <p class="caption"><span class="caption-number">Fig. 3 </span><span class="caption-text">A sample feed-foward fully connected artificial neural network. The colored blobs represent the neurons, and the edges indicate the synaptic connections. The signal propagates starting from the input (black dots), via the neurons in subsequent intermediate (hidden) layers (purple blobs), to the output layer (light blue blobs). The strength of the connections is controled by weights (hyperparameters) assigned to the edges.</span><a class="headerlink" href="#ffnn-fig" title="Permalink to this image">¶</a></p>
 </div>
-<p>As we will discuss in greater detail shortly, each edge (synaptic connection) in the network has a certain “strength” described with a number called <strong>weight</strong> (the weights are also termed <strong>hyperparameters</strong>). Even very small fully connected networks, such as the one of <a class="reference internal" href="#ffnn-fig"><span class="std std-numref">Fig. 3</span></a>, have very many connections (here 30), hence contain a lot of hyperparameters. Thus, while sometimes looking innocuously, ANNs are in fact very complex multi-parametric systems. Moreover, a crucial feature here is an inherent nonlinearity of the neuron responses, as we discuss in chapter <a class="reference internal" href="mcp.html#mcp-lab"><span class="std std-ref">MCP Neuron</span></a>.</p>
+<p>As we will discuss in greater detail shortly, each edge (synaptic connection) in the network has a certain “strength” described with a number called <strong>weight</strong> (the weights are also termed <strong>hyperparameters</strong>). Even very small fully connected networks, such as the one of <a class="reference internal" href="#ffnn-fig"><span class="std std-numref">Fig. 3</span></a>, have very many connections (here 30), hence contain a lot of hyperparameters. Thus, while sometimes looking innocuously, ANNs are in fact very complex multi-parametric systems. Moreover, a crucial feature here is an inherent nonlinearity of the neuron responses, as we discuss in chapter <span class="xref std std-ref">MCP-lab</span>.</p>
 </div>
 <div class="section" id="why-python">
 <h2>Why Python<a class="headerlink" href="#why-python" title="Permalink to this headline">¶</a></h2>
@@ -451,10 +406,10 @@
         </a>
     </div>
      <div id="next">
-        <a class="right-next" href="mcp.html" title="next page">
+        <a class="right-next" href="deeplearning_crop_segmentation.html" title="next page">
             <div class="prevnext-info">
                 <p class="prevnext-label">next</p>
-                <p class="prevnext-title">MCP Neuron</p>
+                <p class="prevnext-title">Crop type mapping with Deep Learning</p>
             </div>
             <i class="prevnext-label fas fa-angle-right"></i>
         </a>
