@@ -3,4 +3,5 @@ root: docs/index
 chapters:
 - file: docs/intro
 - file: docs/deeplearning_crop_segmentation
-
+- file: docs/conclusion
+- file: docs/appendix
