@@ -438,98 +438,98 @@ and <strong>accuracy</strong>. We’ll also generate confusion matrices during e
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>     |████████████████████████████████| 19.3 MB 143 kB/s 
-     |████████████████████████████████| 1.0 MB 4.9 MB/s 
-     |████████████████████████████████| 6.3 MB 75.9 MB/s 
-     |████████████████████████████████| 15.4 MB 49.6 MB/s 
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>     |████████████████████████████████| 19.3 MB 131 kB/s 
+     |████████████████████████████████| 1.0 MB 6.7 MB/s 
+     |████████████████████████████████| 15.4 MB 36 kB/s 
+     |████████████████████████████████| 6.3 MB 74.1 MB/s 
 ?25hCollecting git+https://github.com/tensorflow/examples.git
-  Cloning https://github.com/tensorflow/examples.git to /tmp/pip-req-build-3zbfoco0
-  Running command git clone -q https://github.com/tensorflow/examples.git /tmp/pip-req-build-3zbfoco0
-Requirement already satisfied: absl-py in /usr/local/lib/python3.7/dist-packages (from tensorflow-examples===ec3e02a33d087331c76a5f3c2d427b4cf965745e-) (0.12.0)
-Requirement already satisfied: six in /usr/local/lib/python3.7/dist-packages (from tensorflow-examples===ec3e02a33d087331c76a5f3c2d427b4cf965745e-) (1.15.0)
+  Cloning https://github.com/tensorflow/examples.git to /tmp/pip-req-build-advnbt6h
+  Running command git clone -q https://github.com/tensorflow/examples.git /tmp/pip-req-build-advnbt6h
+Requirement already satisfied: absl-py in /usr/local/lib/python3.7/dist-packages (from tensorflow-examples===03f796596c9ca9d3d42e5cb43a726b8e220c73b2-) (0.12.0)
+Requirement already satisfied: six in /usr/local/lib/python3.7/dist-packages (from tensorflow-examples===03f796596c9ca9d3d42e5cb43a726b8e220c73b2-) (1.15.0)
 Building wheels for collected packages: tensorflow-examples
   Building wheel for tensorflow-examples (setup.py) ... ?25l?25hdone
-  Created wheel for tensorflow-examples: filename=tensorflow_examples-ec3e02a33d087331c76a5f3c2d427b4cf965745e_-py3-none-any.whl size=268138 sha256=46f5f72bbe229c0b28d5cfe1256fb3f8f77ab82a568e3b1770b63b938604375d
-  Stored in directory: /tmp/pip-ephem-wheel-cache-5buvrdb3/wheels/eb/19/50/2a4363c831fa12b400af86325a6f26ade5d2cdc5b406d552ca
-<span class=" -Color -Color-Yellow">  WARNING: Built wheel for tensorflow-examples is invalid: Metadata 1.2 mandates PEP 440 version, but &#39;ec3e02a33d087331c76a5f3c2d427b4cf965745e-&#39; is not</span>
+  Created wheel for tensorflow-examples: filename=tensorflow_examples-03f796596c9ca9d3d42e5cb43a726b8e220c73b2_-py3-none-any.whl size=268214 sha256=1bf5c6c9326f0b32a830fb604a59f85ea3f536d6feb81a9c8181ef4efaa76d2d
+  Stored in directory: /tmp/pip-ephem-wheel-cache-9kgzfqbs/wheels/eb/19/50/2a4363c831fa12b400af86325a6f26ade5d2cdc5b406d552ca
+<span class=" -Color -Color-Yellow">  WARNING: Built wheel for tensorflow-examples is invalid: Metadata 1.2 mandates PEP 440 version, but &#39;03f796596c9ca9d3d42e5cb43a726b8e220c73b2-&#39; is not</span>
 Failed to build tensorflow-examples
 Installing collected packages: tensorflow-examples
     Running setup.py install for tensorflow-examples ... ?25l?25hdone
 <span class=" -Color -Color-Yellow">  DEPRECATION: tensorflow-examples was installed using the legacy &#39;setup.py install&#39; method, because a wheel could not be built for it. A possible replacement is to fix the wheel build issue reported above. You can find discussion regarding this at https://github.com/pypa/pip/issues/8368.</span>
-Successfully installed tensorflow-examples-ec3e02a33d087331c76a5f3c2d427b4cf965745e-
+Successfully installed tensorflow-examples-03f796596c9ca9d3d42e5cb43a726b8e220c73b2-
 Collecting tfds-nightly
-  Downloading tfds_nightly-4.4.0.dev202111010107-py3-none-any.whl (4.0 MB)
-     |████████████████████████████████| 4.0 MB 5.1 MB/s 
-?25hRequirement already satisfied: promise in /usr/local/lib/python3.7/dist-packages (from tfds-nightly) (2.3)
-Requirement already satisfied: importlib-resources in /usr/local/lib/python3.7/dist-packages (from tfds-nightly) (5.2.2)
-Requirement already satisfied: requests&gt;=2.19.0 in /usr/local/lib/python3.7/dist-packages (from tfds-nightly) (2.23.0)
-Requirement already satisfied: six in /usr/local/lib/python3.7/dist-packages (from tfds-nightly) (1.15.0)
-Requirement already satisfied: tqdm in /usr/local/lib/python3.7/dist-packages (from tfds-nightly) (4.62.3)
-Requirement already satisfied: future in /usr/local/lib/python3.7/dist-packages (from tfds-nightly) (0.16.0)
-Requirement already satisfied: numpy in /usr/local/lib/python3.7/dist-packages (from tfds-nightly) (1.19.5)
-Requirement already satisfied: typing-extensions in /usr/local/lib/python3.7/dist-packages (from tfds-nightly) (3.7.4.3)
-Requirement already satisfied: tensorflow-metadata in /usr/local/lib/python3.7/dist-packages (from tfds-nightly) (1.2.0)
-Requirement already satisfied: absl-py in /usr/local/lib/python3.7/dist-packages (from tfds-nightly) (0.12.0)
-Requirement already satisfied: protobuf&gt;=3.12.2 in /usr/local/lib/python3.7/dist-packages (from tfds-nightly) (3.17.3)
-Requirement already satisfied: termcolor in /usr/local/lib/python3.7/dist-packages (from tfds-nightly) (1.1.0)
+  Downloading tfds_nightly-4.4.0.dev202111080107-py3-none-any.whl (4.0 MB)
+     |████████████████████████████████| 4.0 MB 10.0 MB/s 
+?25hRequirement already satisfied: absl-py in /usr/local/lib/python3.7/dist-packages (from tfds-nightly) (0.12.0)
+Requirement already satisfied: promise in /usr/local/lib/python3.7/dist-packages (from tfds-nightly) (2.3)
 Requirement already satisfied: dill in /usr/local/lib/python3.7/dist-packages (from tfds-nightly) (0.3.4)
-Requirement already satisfied: certifi&gt;=2017.4.17 in /usr/local/lib/python3.7/dist-packages (from requests&gt;=2.19.0-&gt;tfds-nightly) (2021.5.30)
+Requirement already satisfied: termcolor in /usr/local/lib/python3.7/dist-packages (from tfds-nightly) (1.1.0)
+Requirement already satisfied: six in /usr/local/lib/python3.7/dist-packages (from tfds-nightly) (1.15.0)
+Requirement already satisfied: protobuf&gt;=3.12.2 in /usr/local/lib/python3.7/dist-packages (from tfds-nightly) (3.17.3)
+Requirement already satisfied: tensorflow-metadata in /usr/local/lib/python3.7/dist-packages (from tfds-nightly) (1.2.0)
+Requirement already satisfied: future in /usr/local/lib/python3.7/dist-packages (from tfds-nightly) (0.16.0)
+Requirement already satisfied: requests&gt;=2.19.0 in /usr/local/lib/python3.7/dist-packages (from tfds-nightly) (2.23.0)
+Requirement already satisfied: importlib-resources in /usr/local/lib/python3.7/dist-packages (from tfds-nightly) (5.2.2)
+Requirement already satisfied: tqdm in /usr/local/lib/python3.7/dist-packages (from tfds-nightly) (4.62.3)
+Requirement already satisfied: typing-extensions in /usr/local/lib/python3.7/dist-packages (from tfds-nightly) (3.7.4.3)
+Requirement already satisfied: numpy in /usr/local/lib/python3.7/dist-packages (from tfds-nightly) (1.19.5)
 Requirement already satisfied: idna&lt;3,&gt;=2.5 in /usr/local/lib/python3.7/dist-packages (from requests&gt;=2.19.0-&gt;tfds-nightly) (2.10)
-Requirement already satisfied: urllib3!=1.25.0,!=1.25.1,&lt;1.26,&gt;=1.21.1 in /usr/local/lib/python3.7/dist-packages (from requests&gt;=2.19.0-&gt;tfds-nightly) (1.24.3)
 Requirement already satisfied: chardet&lt;4,&gt;=3.0.2 in /usr/local/lib/python3.7/dist-packages (from requests&gt;=2.19.0-&gt;tfds-nightly) (3.0.4)
+Requirement already satisfied: certifi&gt;=2017.4.17 in /usr/local/lib/python3.7/dist-packages (from requests&gt;=2.19.0-&gt;tfds-nightly) (2021.5.30)
+Requirement already satisfied: urllib3!=1.25.0,!=1.25.1,&lt;1.26,&gt;=1.21.1 in /usr/local/lib/python3.7/dist-packages (from requests&gt;=2.19.0-&gt;tfds-nightly) (1.24.3)
 Requirement already satisfied: zipp&gt;=3.1.0 in /usr/local/lib/python3.7/dist-packages (from importlib-resources-&gt;tfds-nightly) (3.6.0)
 Requirement already satisfied: googleapis-common-protos&lt;2,&gt;=1.52.0 in /usr/local/lib/python3.7/dist-packages (from tensorflow-metadata-&gt;tfds-nightly) (1.53.0)
 Installing collected packages: tfds-nightly
-Successfully installed tfds-nightly-4.4.0.dev202111010107
+Successfully installed tfds-nightly-4.4.0.dev202111080107
 Collecting focal-loss
   Downloading focal_loss-0.0.7-py3-none-any.whl (19 kB)
 Requirement already satisfied: tensorflow&gt;=2.2 in /usr/local/lib/python3.7/dist-packages (from focal-loss) (2.6.0)
-Requirement already satisfied: absl-py~=0.10 in /usr/local/lib/python3.7/dist-packages (from tensorflow&gt;=2.2-&gt;focal-loss) (0.12.0)
-Requirement already satisfied: termcolor~=1.1.0 in /usr/local/lib/python3.7/dist-packages (from tensorflow&gt;=2.2-&gt;focal-loss) (1.1.0)
-Requirement already satisfied: keras-preprocessing~=1.1.2 in /usr/local/lib/python3.7/dist-packages (from tensorflow&gt;=2.2-&gt;focal-loss) (1.1.2)
-Requirement already satisfied: keras~=2.6 in /usr/local/lib/python3.7/dist-packages (from tensorflow&gt;=2.2-&gt;focal-loss) (2.6.0)
-Requirement already satisfied: protobuf&gt;=3.9.2 in /usr/local/lib/python3.7/dist-packages (from tensorflow&gt;=2.2-&gt;focal-loss) (3.17.3)
-Requirement already satisfied: opt-einsum~=3.3.0 in /usr/local/lib/python3.7/dist-packages (from tensorflow&gt;=2.2-&gt;focal-loss) (3.3.0)
-Requirement already satisfied: tensorboard~=2.6 in /usr/local/lib/python3.7/dist-packages (from tensorflow&gt;=2.2-&gt;focal-loss) (2.6.0)
-Requirement already satisfied: gast==0.4.0 in /usr/local/lib/python3.7/dist-packages (from tensorflow&gt;=2.2-&gt;focal-loss) (0.4.0)
-Requirement already satisfied: wheel~=0.35 in /usr/local/lib/python3.7/dist-packages (from tensorflow&gt;=2.2-&gt;focal-loss) (0.37.0)
-Requirement already satisfied: wrapt~=1.12.1 in /usr/local/lib/python3.7/dist-packages (from tensorflow&gt;=2.2-&gt;focal-loss) (1.12.1)
-Requirement already satisfied: flatbuffers~=1.12.0 in /usr/local/lib/python3.7/dist-packages (from tensorflow&gt;=2.2-&gt;focal-loss) (1.12)
-Requirement already satisfied: h5py~=3.1.0 in /usr/local/lib/python3.7/dist-packages (from tensorflow&gt;=2.2-&gt;focal-loss) (3.1.0)
-Requirement already satisfied: six~=1.15.0 in /usr/local/lib/python3.7/dist-packages (from tensorflow&gt;=2.2-&gt;focal-loss) (1.15.0)
-Requirement already satisfied: typing-extensions~=3.7.4 in /usr/local/lib/python3.7/dist-packages (from tensorflow&gt;=2.2-&gt;focal-loss) (3.7.4.3)
-Requirement already satisfied: google-pasta~=0.2 in /usr/local/lib/python3.7/dist-packages (from tensorflow&gt;=2.2-&gt;focal-loss) (0.2.0)
-Requirement already satisfied: numpy~=1.19.2 in /usr/local/lib/python3.7/dist-packages (from tensorflow&gt;=2.2-&gt;focal-loss) (1.19.5)
-Requirement already satisfied: astunparse~=1.6.3 in /usr/local/lib/python3.7/dist-packages (from tensorflow&gt;=2.2-&gt;focal-loss) (1.6.3)
-Requirement already satisfied: clang~=5.0 in /usr/local/lib/python3.7/dist-packages (from tensorflow&gt;=2.2-&gt;focal-loss) (5.0)
 Requirement already satisfied: tensorflow-estimator~=2.6 in /usr/local/lib/python3.7/dist-packages (from tensorflow&gt;=2.2-&gt;focal-loss) (2.6.0)
+Requirement already satisfied: protobuf&gt;=3.9.2 in /usr/local/lib/python3.7/dist-packages (from tensorflow&gt;=2.2-&gt;focal-loss) (3.17.3)
 Requirement already satisfied: grpcio&lt;2.0,&gt;=1.37.0 in /usr/local/lib/python3.7/dist-packages (from tensorflow&gt;=2.2-&gt;focal-loss) (1.41.0)
+Requirement already satisfied: numpy~=1.19.2 in /usr/local/lib/python3.7/dist-packages (from tensorflow&gt;=2.2-&gt;focal-loss) (1.19.5)
+Requirement already satisfied: six~=1.15.0 in /usr/local/lib/python3.7/dist-packages (from tensorflow&gt;=2.2-&gt;focal-loss) (1.15.0)
+Requirement already satisfied: clang~=5.0 in /usr/local/lib/python3.7/dist-packages (from tensorflow&gt;=2.2-&gt;focal-loss) (5.0)
+Requirement already satisfied: absl-py~=0.10 in /usr/local/lib/python3.7/dist-packages (from tensorflow&gt;=2.2-&gt;focal-loss) (0.12.0)
+Requirement already satisfied: astunparse~=1.6.3 in /usr/local/lib/python3.7/dist-packages (from tensorflow&gt;=2.2-&gt;focal-loss) (1.6.3)
+Requirement already satisfied: google-pasta~=0.2 in /usr/local/lib/python3.7/dist-packages (from tensorflow&gt;=2.2-&gt;focal-loss) (0.2.0)
+Requirement already satisfied: flatbuffers~=1.12.0 in /usr/local/lib/python3.7/dist-packages (from tensorflow&gt;=2.2-&gt;focal-loss) (1.12)
+Requirement already satisfied: tensorboard~=2.6 in /usr/local/lib/python3.7/dist-packages (from tensorflow&gt;=2.2-&gt;focal-loss) (2.6.0)
+Requirement already satisfied: h5py~=3.1.0 in /usr/local/lib/python3.7/dist-packages (from tensorflow&gt;=2.2-&gt;focal-loss) (3.1.0)
+Requirement already satisfied: keras-preprocessing~=1.1.2 in /usr/local/lib/python3.7/dist-packages (from tensorflow&gt;=2.2-&gt;focal-loss) (1.1.2)
+Requirement already satisfied: wrapt~=1.12.1 in /usr/local/lib/python3.7/dist-packages (from tensorflow&gt;=2.2-&gt;focal-loss) (1.12.1)
+Requirement already satisfied: termcolor~=1.1.0 in /usr/local/lib/python3.7/dist-packages (from tensorflow&gt;=2.2-&gt;focal-loss) (1.1.0)
+Requirement already satisfied: wheel~=0.35 in /usr/local/lib/python3.7/dist-packages (from tensorflow&gt;=2.2-&gt;focal-loss) (0.37.0)
+Requirement already satisfied: opt-einsum~=3.3.0 in /usr/local/lib/python3.7/dist-packages (from tensorflow&gt;=2.2-&gt;focal-loss) (3.3.0)
+Requirement already satisfied: keras~=2.6 in /usr/local/lib/python3.7/dist-packages (from tensorflow&gt;=2.2-&gt;focal-loss) (2.6.0)
+Requirement already satisfied: typing-extensions~=3.7.4 in /usr/local/lib/python3.7/dist-packages (from tensorflow&gt;=2.2-&gt;focal-loss) (3.7.4.3)
+Requirement already satisfied: gast==0.4.0 in /usr/local/lib/python3.7/dist-packages (from tensorflow&gt;=2.2-&gt;focal-loss) (0.4.0)
 Requirement already satisfied: cached-property in /usr/local/lib/python3.7/dist-packages (from h5py~=3.1.0-&gt;tensorflow&gt;=2.2-&gt;focal-loss) (1.5.2)
-Requirement already satisfied: tensorboard-plugin-wit&gt;=1.6.0 in /usr/local/lib/python3.7/dist-packages (from tensorboard~=2.6-&gt;tensorflow&gt;=2.2-&gt;focal-loss) (1.8.0)
-Requirement already satisfied: google-auth&lt;2,&gt;=1.6.3 in /usr/local/lib/python3.7/dist-packages (from tensorboard~=2.6-&gt;tensorflow&gt;=2.2-&gt;focal-loss) (1.35.0)
-Requirement already satisfied: setuptools&gt;=41.0.0 in /usr/local/lib/python3.7/dist-packages (from tensorboard~=2.6-&gt;tensorflow&gt;=2.2-&gt;focal-loss) (57.4.0)
 Requirement already satisfied: werkzeug&gt;=0.11.15 in /usr/local/lib/python3.7/dist-packages (from tensorboard~=2.6-&gt;tensorflow&gt;=2.2-&gt;focal-loss) (1.0.1)
 Requirement already satisfied: google-auth-oauthlib&lt;0.5,&gt;=0.4.1 in /usr/local/lib/python3.7/dist-packages (from tensorboard~=2.6-&gt;tensorflow&gt;=2.2-&gt;focal-loss) (0.4.6)
+Requirement already satisfied: google-auth&lt;2,&gt;=1.6.3 in /usr/local/lib/python3.7/dist-packages (from tensorboard~=2.6-&gt;tensorflow&gt;=2.2-&gt;focal-loss) (1.35.0)
+Requirement already satisfied: setuptools&gt;=41.0.0 in /usr/local/lib/python3.7/dist-packages (from tensorboard~=2.6-&gt;tensorflow&gt;=2.2-&gt;focal-loss) (57.4.0)
 Requirement already satisfied: tensorboard-data-server&lt;0.7.0,&gt;=0.6.0 in /usr/local/lib/python3.7/dist-packages (from tensorboard~=2.6-&gt;tensorflow&gt;=2.2-&gt;focal-loss) (0.6.1)
+Requirement already satisfied: tensorboard-plugin-wit&gt;=1.6.0 in /usr/local/lib/python3.7/dist-packages (from tensorboard~=2.6-&gt;tensorflow&gt;=2.2-&gt;focal-loss) (1.8.0)
 Requirement already satisfied: markdown&gt;=2.6.8 in /usr/local/lib/python3.7/dist-packages (from tensorboard~=2.6-&gt;tensorflow&gt;=2.2-&gt;focal-loss) (3.3.4)
 Requirement already satisfied: requests&lt;3,&gt;=2.21.0 in /usr/local/lib/python3.7/dist-packages (from tensorboard~=2.6-&gt;tensorflow&gt;=2.2-&gt;focal-loss) (2.23.0)
 Requirement already satisfied: cachetools&lt;5.0,&gt;=2.0.0 in /usr/local/lib/python3.7/dist-packages (from google-auth&lt;2,&gt;=1.6.3-&gt;tensorboard~=2.6-&gt;tensorflow&gt;=2.2-&gt;focal-loss) (4.2.4)
-Requirement already satisfied: rsa&lt;5,&gt;=3.1.4 in /usr/local/lib/python3.7/dist-packages (from google-auth&lt;2,&gt;=1.6.3-&gt;tensorboard~=2.6-&gt;tensorflow&gt;=2.2-&gt;focal-loss) (4.7.2)
 Requirement already satisfied: pyasn1-modules&gt;=0.2.1 in /usr/local/lib/python3.7/dist-packages (from google-auth&lt;2,&gt;=1.6.3-&gt;tensorboard~=2.6-&gt;tensorflow&gt;=2.2-&gt;focal-loss) (0.2.8)
+Requirement already satisfied: rsa&lt;5,&gt;=3.1.4 in /usr/local/lib/python3.7/dist-packages (from google-auth&lt;2,&gt;=1.6.3-&gt;tensorboard~=2.6-&gt;tensorflow&gt;=2.2-&gt;focal-loss) (4.7.2)
 Requirement already satisfied: requests-oauthlib&gt;=0.7.0 in /usr/local/lib/python3.7/dist-packages (from google-auth-oauthlib&lt;0.5,&gt;=0.4.1-&gt;tensorboard~=2.6-&gt;tensorflow&gt;=2.2-&gt;focal-loss) (1.3.0)
 Requirement already satisfied: importlib-metadata in /usr/local/lib/python3.7/dist-packages (from markdown&gt;=2.6.8-&gt;tensorboard~=2.6-&gt;tensorflow&gt;=2.2-&gt;focal-loss) (4.8.1)
 Requirement already satisfied: pyasn1&lt;0.5.0,&gt;=0.4.6 in /usr/local/lib/python3.7/dist-packages (from pyasn1-modules&gt;=0.2.1-&gt;google-auth&lt;2,&gt;=1.6.3-&gt;tensorboard~=2.6-&gt;tensorflow&gt;=2.2-&gt;focal-loss) (0.4.8)
-Requirement already satisfied: certifi&gt;=2017.4.17 in /usr/local/lib/python3.7/dist-packages (from requests&lt;3,&gt;=2.21.0-&gt;tensorboard~=2.6-&gt;tensorflow&gt;=2.2-&gt;focal-loss) (2021.5.30)
 Requirement already satisfied: idna&lt;3,&gt;=2.5 in /usr/local/lib/python3.7/dist-packages (from requests&lt;3,&gt;=2.21.0-&gt;tensorboard~=2.6-&gt;tensorflow&gt;=2.2-&gt;focal-loss) (2.10)
-Requirement already satisfied: urllib3!=1.25.0,!=1.25.1,&lt;1.26,&gt;=1.21.1 in /usr/local/lib/python3.7/dist-packages (from requests&lt;3,&gt;=2.21.0-&gt;tensorboard~=2.6-&gt;tensorflow&gt;=2.2-&gt;focal-loss) (1.24.3)
 Requirement already satisfied: chardet&lt;4,&gt;=3.0.2 in /usr/local/lib/python3.7/dist-packages (from requests&lt;3,&gt;=2.21.0-&gt;tensorboard~=2.6-&gt;tensorflow&gt;=2.2-&gt;focal-loss) (3.0.4)
+Requirement already satisfied: certifi&gt;=2017.4.17 in /usr/local/lib/python3.7/dist-packages (from requests&lt;3,&gt;=2.21.0-&gt;tensorboard~=2.6-&gt;tensorflow&gt;=2.2-&gt;focal-loss) (2021.5.30)
+Requirement already satisfied: urllib3!=1.25.0,!=1.25.1,&lt;1.26,&gt;=1.21.1 in /usr/local/lib/python3.7/dist-packages (from requests&lt;3,&gt;=2.21.0-&gt;tensorboard~=2.6-&gt;tensorflow&gt;=2.2-&gt;focal-loss) (1.24.3)
 Requirement already satisfied: oauthlib&gt;=3.0.0 in /usr/local/lib/python3.7/dist-packages (from requests-oauthlib&gt;=0.7.0-&gt;google-auth-oauthlib&lt;0.5,&gt;=0.4.1-&gt;tensorboard~=2.6-&gt;tensorflow&gt;=2.2-&gt;focal-loss) (3.1.1)
 Requirement already satisfied: zipp&gt;=0.5 in /usr/local/lib/python3.7/dist-packages (from importlib-metadata-&gt;markdown&gt;=2.6.8-&gt;tensorboard~=2.6-&gt;tensorflow&gt;=2.2-&gt;focal-loss) (3.6.0)
 Installing collected packages: focal-loss
 Successfully installed focal-loss-0.0.7
 Collecting tensorflow-addons==0.8.3
   Downloading tensorflow_addons-0.8.3-cp37-cp37m-manylinux2010_x86_64.whl (1.0 MB)
-     |████████████████████████████████| 1.0 MB 5.0 MB/s 
+     |████████████████████████████████| 1.0 MB 8.7 MB/s 
 ?25hRequirement already satisfied: typeguard in /usr/local/lib/python3.7/dist-packages (from tensorflow-addons==0.8.3) (2.7.1)
 Installing collected packages: tensorflow-addons
 Successfully installed tensorflow-addons-0.8.3
@@ -1106,11 +1106,11 @@ rgb:  &lt;open DatasetReader name=&#39;/content/gdrive/My Drive/servir-tf/terrab
 <span class="n">tiles_dir</span> <span class="o">=</span> <span class="s1">&#39;./tiled/&#39;</span>
 
 <span class="c1"># train</span>
-<span class="n">img_dir</span> <span class="o">=</span> <span class="s1">&#39;./tiled/indices/&#39;</span> <span class="c1">#images_bright/&#39;</span>
+<span class="n">img_dir</span> <span class="o">=</span> <span class="s1">&#39;./tiled/images_bright/&#39;</span> <span class="c1">#images_bright/&#39; indices/</span>
 <span class="n">label_dir</span> <span class="o">=</span> <span class="s1">&#39;./tiled/labels/&#39;</span>
 
 <span class="c1"># test</span>
-<span class="n">test_img_dir</span> <span class="o">=</span> <span class="s1">&#39;./tiled/indices_test/&#39;</span>
+<span class="n">test_img_dir</span> <span class="o">=</span> <span class="s1">&#39;./tiled/images_test/&#39;</span>
 <span class="n">test_label_dir</span> <span class="o">=</span> <span class="s1">&#39;./tiled/labels_test/&#39;</span>
 </pre></div>
 </div>
@@ -1127,6 +1127,13 @@ rgb:  &lt;open DatasetReader name=&#39;/content/gdrive/My Drive/servir-tf/terrab
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># get initial counts of train and test images</span>
 <span class="o">%</span><span class="k">ls</span> $img_dir | wc -l
 <span class="o">%</span><span class="k">ls</span> $test_img_dir | wc -l
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>74700
+ls: cannot access &#39;./tiled/images_test/&#39;: No such file or directory
+0
 </pre></div>
 </div>
 </div>
@@ -1181,18 +1188,6 @@ rgb:  &lt;open DatasetReader name=&#39;/content/gdrive/My Drive/servir-tf/terrab
 </div>
 </div>
 <p>Let’s check for the proportion of background tiles. This takes a while. So we can skip by loading from saved results.</p>
-<div class="cell docutils container">
-<div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">personal_dir</span>
-</pre></div>
-</div>
-</div>
-<div class="cell_output docutils container">
-<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&#39;/content/gdrive/My Drive/servir-tf/terrabio/&#39;
-</pre></div>
-</div>
-</div>
-</div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">skip</span> <span class="o">=</span> <span class="kc">True</span>
@@ -1281,9 +1276,9 @@ number of background test images:  0
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Number of training examples: 3157
-Number of validation examples: 1217
-Number of test examples: 136
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Number of training examples: 1546
+Number of validation examples: 596
+Number of test examples: 67
 </pre></div>
 </div>
 </div>
@@ -1332,7 +1327,7 @@ Number of test examples: 136
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="../_images/deeplearning_crop_segmentation_62_0.png" src="../_images/deeplearning_crop_segmentation_62_0.png" />
+<img alt="../_images/deeplearning_crop_segmentation_61_0.png" src="../_images/deeplearning_crop_segmentation_61_0.png" />
 </div>
 </div>
 </div>
@@ -1563,7 +1558,7 @@ Number of test examples: 136
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="../_images/deeplearning_crop_segmentation_76_0.png" src="../_images/deeplearning_crop_segmentation_76_0.png" />
+<img alt="../_images/deeplearning_crop_segmentation_75_0.png" src="../_images/deeplearning_crop_segmentation_75_0.png" />
 </div>
 </div>
 <p>…same check for the validation images:</p>
@@ -1608,7 +1603,7 @@ Number of test examples: 136
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="../_images/deeplearning_crop_segmentation_78_0.png" src="../_images/deeplearning_crop_segmentation_78_0.png" />
+<img alt="../_images/deeplearning_crop_segmentation_77_0.png" src="../_images/deeplearning_crop_segmentation_77_0.png" />
 </div>
 </div>
 <p>…same check for the test images:</p>
@@ -1653,7 +1648,7 @@ Number of test examples: 136
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="../_images/deeplearning_crop_segmentation_80_0.png" src="../_images/deeplearning_crop_segmentation_80_0.png" />
+<img alt="../_images/deeplearning_crop_segmentation_79_0.png" src="../_images/deeplearning_crop_segmentation_79_0.png" />
 </div>
 </div>
 </div>
@@ -1753,39 +1748,6 @@ Number of test examples: 136
 </div>
 </div>
 <p>Notice there is a class imbalance problem in the dataset. For that reason, we will use a loss function called focal loss. It uses a parameter to weigh the losses contributed by each class to prevent bias towards the over-represented.</p>
-<div class="cell docutils container">
-<div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">train_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="s1">&#39;Farmpin_training.csv&#39;</span><span class="p">)</span>
-<span class="n">inv_freq</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="mi">1</span><span class="o">/</span><span class="p">(</span><span class="n">train_df</span><span class="o">.</span><span class="n">crop_id</span><span class="o">.</span><span class="n">value_counts</span><span class="p">()</span><span class="o">/</span><span class="nb">len</span><span class="p">(</span><span class="n">train_df</span><span class="p">)))</span>
-<span class="n">inv_freq</span> <span class="o">=</span> <span class="p">[</span><span class="mf">0.</span><span class="p">,</span><span class="o">*</span><span class="n">inv_freq</span><span class="p">]</span>
-<span class="n">class_weights</span> <span class="o">=</span> <span class="p">{</span><span class="mi">0</span> <span class="p">:</span> <span class="n">inv_freq</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="mi">1</span><span class="p">:</span> <span class="n">inv_freq</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="mi">2</span><span class="p">:</span> <span class="n">inv_freq</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span> <span class="mi">3</span><span class="p">:</span> <span class="n">inv_freq</span><span class="p">[</span><span class="mi">3</span><span class="p">],</span> 
-                <span class="mi">4</span><span class="p">:</span> <span class="n">inv_freq</span><span class="p">[</span><span class="mi">4</span><span class="p">],</span> <span class="mi">5</span><span class="p">:</span> <span class="n">inv_freq</span><span class="p">[</span><span class="mi">5</span><span class="p">],</span> <span class="mi">6</span><span class="p">:</span> <span class="n">inv_freq</span><span class="p">[</span><span class="mi">6</span><span class="p">],</span>
-                <span class="mi">7</span><span class="p">:</span> <span class="n">inv_freq</span><span class="p">[</span><span class="mi">7</span><span class="p">],</span> <span class="mi">8</span><span class="p">:</span> <span class="n">inv_freq</span><span class="p">[</span><span class="mi">8</span><span class="p">],</span> <span class="mi">9</span><span class="p">:</span> <span class="n">inv_freq</span><span class="p">[</span><span class="mi">9</span><span class="p">]}</span>
-</pre></div>
-</div>
-</div>
-</div>
-<div class="cell docutils container">
-<div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">class_weights</span>
-</pre></div>
-</div>
-</div>
-<div class="cell_output docutils container">
-<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>{0: 0.0,
- 1: 2.647932131495228,
- 2: 4.6585820895522385,
- 3: 8.823321554770319,
- 4: 9.352059925093632,
- 5: 16.98639455782313,
- 6: 17.58450704225352,
- 7: 26.28421052631579,
- 8: 32.42857142857143,
- 9: 356.7142857142857}
-</pre></div>
-</div>
-</div>
-</div>
 <p>We will measure our model’s performance during training by per-pixel accuracy.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
@@ -1829,7 +1791,7 @@ Number of test examples: 136
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="../_images/deeplearning_crop_segmentation_98_0.png" src="../_images/deeplearning_crop_segmentation_98_0.png" />
+<img alt="../_images/deeplearning_crop_segmentation_95_0.png" src="../_images/deeplearning_crop_segmentation_95_0.png" />
 </div>
 </div>
 <p>Let’s observe how the model improves while it is training. To accomplish this task, a callback function is defined below to plot a validation image and it’s predicted mask after each epoch.</p>
@@ -1861,7 +1823,7 @@ Number of test examples: 136
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="../_images/deeplearning_crop_segmentation_102_0.png" src="../_images/deeplearning_crop_segmentation_102_0.png" />
+<img alt="../_images/deeplearning_crop_segmentation_99_0.png" src="../_images/deeplearning_crop_segmentation_99_0.png" />
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Sample Prediction after epoch 50
 </pre></div>
 </div>
@@ -1888,7 +1850,7 @@ Number of test examples: 136
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="../_images/deeplearning_crop_segmentation_104_0.png" src="../_images/deeplearning_crop_segmentation_104_0.png" />
+<img alt="../_images/deeplearning_crop_segmentation_101_0.png" src="../_images/deeplearning_crop_segmentation_101_0.png" />
 </div>
 </div>
 </div>
@@ -1898,7 +1860,7 @@ Number of test examples: 136
 <p>We will export the final model weights.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">save_model_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">personal_dir</span><span class="p">,</span><span class="s1">&#39;indices_model_out_lr00001_batchs8_ep50/&#39;</span><span class="p">)</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">save_model_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">personal_dir</span><span class="p">,</span><span class="s1">&#39;optical_model_out_lr00001_batchs8_ep50/&#39;</span><span class="p">)</span>
 <span class="k">if</span> <span class="p">(</span><span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isdir</span><span class="p">(</span><span class="n">save_model_path</span><span class="p">)):</span>
   <span class="n">os</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="n">save_model_path</span><span class="p">)</span>
 <span class="n">model</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="n">save_model_path</span><span class="p">)</span>
@@ -1906,7 +1868,7 @@ Number of test examples: 136
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>INFO:tensorflow:Assets written to: /content/gdrive/My Drive/servir-tf/terrabio/indices_model_out_lr00001_batchs8_ep50/assets
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>INFO:tensorflow:Assets written to: /content/gdrive/My Drive/servir-tf/terrabio/optical_model_out_lr00001_batchs8_ep50/assets
 </pre></div>
 </div>
 <div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>/usr/local/lib/python3.7/dist-packages/keras/utils/generic_utils.py:497: CustomMaskWarning: Custom mask layers require a config and must override get_config. When loading, the custom mask layer must be passed to the custom_objects argument.
@@ -1986,7 +1948,7 @@ Number of test examples: 136
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="../_images/deeplearning_crop_segmentation_112_0.png" src="../_images/deeplearning_crop_segmentation_112_0.png" />
+<img alt="../_images/deeplearning_crop_segmentation_109_0.png" src="../_images/deeplearning_crop_segmentation_109_0.png" />
 </div>
 </div>
 </div>
@@ -2001,7 +1963,7 @@ Number of test examples: 136
 <span class="n">pred_masks</span> <span class="o">=</span> <span class="p">[]</span>
 <span class="n">true_masks</span> <span class="o">=</span> <span class="p">[]</span>
 
-<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">40</span><span class="p">):</span>
+<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">20</span><span class="p">):</span>
     <span class="n">img_num</span> <span class="o">=</span> <span class="n">i</span>
 
     <span class="n">temp_ds</span> <span class="o">=</span> <span class="n">get_baseline_dataset</span><span class="p">(</span><span class="n">foreground_list_x</span><span class="p">[</span><span class="n">img_num</span><span class="p">:</span><span class="n">img_num</span><span class="o">+</span><span class="mi">1</span><span class="p">],</span> 
@@ -2040,6 +2002,155 @@ Number of test examples: 136
 </pre></div>
 </div>
 </div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[&#39;./tiled/labels/tile_terrabio_22043.png&#39;]
+[0 6]
+</pre></div>
+</div>
+<img alt="../_images/deeplearning_crop_segmentation_111_1.png" src="../_images/deeplearning_crop_segmentation_111_1.png" />
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[&#39;./tiled/labels/tile_terrabio_32842.png&#39;]
+[0 5]
+</pre></div>
+</div>
+<img alt="../_images/deeplearning_crop_segmentation_111_3.png" src="../_images/deeplearning_crop_segmentation_111_3.png" />
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[&#39;./tiled/labels/tile_terrabio_34948.png&#39;]
+[0 5]
+</pre></div>
+</div>
+<img alt="../_images/deeplearning_crop_segmentation_111_5.png" src="../_images/deeplearning_crop_segmentation_111_5.png" />
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[&#39;./tiled/labels/tile_terrabio_15355.png&#39;]
+[0 2 5]
+</pre></div>
+</div>
+<img alt="../_images/deeplearning_crop_segmentation_111_7.png" src="../_images/deeplearning_crop_segmentation_111_7.png" />
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[&#39;./tiled/labels/tile_terrabio_15207.png&#39;]
+[0 2 5]
+</pre></div>
+</div>
+<img alt="../_images/deeplearning_crop_segmentation_111_9.png" src="../_images/deeplearning_crop_segmentation_111_9.png" />
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[&#39;./tiled/labels/tile_terrabio_22907.png&#39;]
+[0 2 5]
+</pre></div>
+</div>
+<img alt="../_images/deeplearning_crop_segmentation_111_11.png" src="../_images/deeplearning_crop_segmentation_111_11.png" />
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[&#39;./tiled/labels/tile_terrabio_16566.png&#39;]
+[0 2 5 6]
+</pre></div>
+</div>
+<img alt="../_images/deeplearning_crop_segmentation_111_13.png" src="../_images/deeplearning_crop_segmentation_111_13.png" />
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[&#39;./tiled/labels/tile_terrabio_15222.png&#39;]
+[0 2]
+</pre></div>
+</div>
+<img alt="../_images/deeplearning_crop_segmentation_111_15.png" src="../_images/deeplearning_crop_segmentation_111_15.png" />
+<div class="output traceback highlight-ipythontb notranslate"><div class="highlight"><pre><span></span><span class="gt">---------------------------------------------------------------------------</span>
+<span class="ne">TypeError</span><span class="g g-Whitespace">                                 </span>Traceback (most recent call last)
+<span class="nn">&lt;ipython-input-66-26ffb2d6de64&gt;</span> in <span class="ni">&lt;module&gt;</span><span class="nt">()</span>
+<span class="g g-Whitespace">     </span><span class="mi">13</span>                                    <span class="n">preproc_fn</span><span class="o">=</span><span class="n">tr_preprocessing_fn</span><span class="p">,</span>
+<span class="g g-Whitespace">     </span><span class="mi">14</span>                                    <span class="n">batch_size</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+<span class="ne">---&gt; </span><span class="mi">15</span>                                    <span class="n">shuffle</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<span class="g g-Whitespace">     </span><span class="mi">16</span> 
+<span class="g g-Whitespace">     </span><span class="mi">17</span>     <span class="c1"># Let&#39;s examine some of these augmented images</span>
+
+<span class="nn">&lt;ipython-input-37-9d7d72aa8844&gt;</span> in <span class="ni">get_baseline_dataset</span><span class="nt">(filenames, labels, preproc_fn, threads, batch_size, shuffle)</span>
+<span class="g g-Whitespace">     </span><span class="mi">11</span>   <span class="c1"># Map our preprocessing function to every element in our dataset, taking</span>
+<span class="g g-Whitespace">     </span><span class="mi">12</span>   <span class="c1"># advantage of multithreading</span>
+<span class="ne">---&gt; </span><span class="mi">13</span>   <span class="n">dataset</span> <span class="o">=</span> <span class="n">dataset</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="n">_process_pathnames</span><span class="p">,</span> <span class="n">num_parallel_calls</span><span class="o">=</span><span class="n">threads</span><span class="p">)</span>
+<span class="g g-Whitespace">     </span><span class="mi">14</span>   <span class="k">if</span> <span class="n">preproc_fn</span><span class="o">.</span><span class="n">keywords</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="s1">&#39;resize&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">preproc_fn</span><span class="o">.</span><span class="n">keywords</span><span class="p">:</span>
+<span class="g g-Whitespace">     </span><span class="mi">15</span>     <span class="k">assert</span> <span class="n">batch_size</span> <span class="o">==</span> <span class="mi">1</span><span class="p">,</span> <span class="s2">&quot;Batching images must be of the same size&quot;</span>
+
+<span class="nn">/usr/local/lib/python3.7/dist-packages/tensorflow/python/data/ops/dataset_ops.py</span> in <span class="ni">map</span><span class="nt">(self, map_func, num_parallel_calls, deterministic)</span>
+<span class="g g-Whitespace">   </span><span class="mi">1866</span>           <span class="n">num_parallel_calls</span><span class="p">,</span>
+<span class="g g-Whitespace">   </span><span class="mi">1867</span>           <span class="n">deterministic</span><span class="p">,</span>
+<span class="ne">-&gt; </span><span class="mi">1868</span>           <span class="n">preserve_cardinality</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="g g-Whitespace">   </span><span class="mi">1869</span> 
+<span class="g g-Whitespace">   </span><span class="mi">1870</span>   <span class="k">def</span> <span class="nf">flat_map</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">map_func</span><span class="p">):</span>
+
+<span class="nn">/usr/local/lib/python3.7/dist-packages/tensorflow/python/data/ops/dataset_ops.py</span> in <span class="ni">__init__</span><span class="nt">(self, input_dataset, map_func, num_parallel_calls, deterministic, use_inter_op_parallelism, preserve_cardinality, use_legacy_function)</span>
+<span class="g g-Whitespace">   </span><span class="mi">5022</span>         <span class="bp">self</span><span class="o">.</span><span class="n">_transformation_name</span><span class="p">(),</span>
+<span class="g g-Whitespace">   </span><span class="mi">5023</span>         <span class="n">dataset</span><span class="o">=</span><span class="n">input_dataset</span><span class="p">,</span>
+<span class="ne">-&gt; </span><span class="mi">5024</span>         <span class="n">use_legacy_function</span><span class="o">=</span><span class="n">use_legacy_function</span><span class="p">)</span>
+<span class="g g-Whitespace">   </span><span class="mi">5025</span>     <span class="k">if</span> <span class="n">deterministic</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+<span class="g g-Whitespace">   </span><span class="mi">5026</span>       <span class="bp">self</span><span class="o">.</span><span class="n">_deterministic</span> <span class="o">=</span> <span class="s2">&quot;default&quot;</span>
+
+<span class="nn">/usr/local/lib/python3.7/dist-packages/tensorflow/python/data/ops/dataset_ops.py</span> in <span class="ni">__init__</span><span class="nt">(self, func, transformation_name, dataset, input_classes, input_shapes, input_types, input_structure, add_to_graph, use_legacy_function, defun_kwargs)</span>
+<span class="g g-Whitespace">   </span><span class="mi">4216</span>         <span class="n">fn_factory</span> <span class="o">=</span> <span class="n">trace_tf_function</span><span class="p">(</span><span class="n">defun_kwargs</span><span class="p">)</span>
+<span class="g g-Whitespace">   </span><span class="mi">4217</span> 
+<span class="ne">-&gt; </span><span class="mi">4218</span>     <span class="bp">self</span><span class="o">.</span><span class="n">_function</span> <span class="o">=</span> <span class="n">fn_factory</span><span class="p">()</span>
+<span class="g g-Whitespace">   </span><span class="mi">4219</span>     <span class="c1"># There is no graph to add in eager mode.</span>
+<span class="g g-Whitespace">   </span><span class="mi">4220</span>     <span class="n">add_to_graph</span> <span class="o">&amp;=</span> <span class="ow">not</span> <span class="n">context</span><span class="o">.</span><span class="n">executing_eagerly</span><span class="p">()</span>
+
+<span class="nn">/usr/local/lib/python3.7/dist-packages/tensorflow/python/eager/function.py</span> in <span class="ni">get_concrete_function</span><span class="nt">(self, *args, **kwargs)</span>
+<span class="g g-Whitespace">   </span><span class="mi">3149</span>     <span class="s2">&quot;&quot;&quot;</span>
+<span class="g g-Whitespace">   </span><span class="mi">3150</span><span class="s2">     graph_function = self._get_concrete_function_garbage_collected(</span>
+<span class="ne">-&gt; </span><span class="mi">3151</span><span class="s2">         *args, **kwargs)</span>
+<span class="g g-Whitespace">   </span><span class="mi">3152</span><span class="s2">     graph_function._garbage_collector.release()  # pylint: disable=protected-access</span>
+<span class="g g-Whitespace">   </span><span class="mi">3153</span><span class="s2">     return graph_function</span>
+
+<span class="nn">/usr/local/lib/python3.7/dist-packages/tensorflow/python/eager/function.py</span> in <span class="ni">_get_concrete_function_garbage_collected</span><span class="nt">(self, *args, **kwargs)</span>
+<span class="g g-Whitespace">   </span><span class="mi">3114</span><span class="s2">       args, kwargs = None, None</span>
+<span class="g g-Whitespace">   </span><span class="mi">3115</span><span class="s2">     with self._lock:</span>
+<span class="ne">-&gt; </span><span class="mi">3116</span><span class="s2">       graph_function, _ = self._maybe_define_function(args, kwargs)</span>
+<span class="g g-Whitespace">   </span><span class="mi">3117</span><span class="s2">       seen_names = set()</span>
+<span class="g g-Whitespace">   </span><span class="mi">3118</span><span class="s2">       captured = object_identity.ObjectIdentitySet(</span>
+
+<span class="nn">/usr/local/lib/python3.7/dist-packages/tensorflow/python/eager/function.py</span> in <span class="ni">_maybe_define_function</span><span class="nt">(self, args, kwargs)</span>
+<span class="g g-Whitespace">   </span><span class="mi">3461</span><span class="s2"> </span>
+<span class="g g-Whitespace">   </span><span class="mi">3462</span><span class="s2">           self._function_cache.missed.add(call_context_key)</span>
+<span class="ne">-&gt; </span><span class="mi">3463</span><span class="s2">           graph_function = self._create_graph_function(args, kwargs)</span>
+<span class="g g-Whitespace">   </span><span class="mi">3464</span><span class="s2">           self._function_cache.primary[cache_key] = graph_function</span>
+<span class="g g-Whitespace">   </span><span class="mi">3465</span><span class="s2"> </span>
+
+<span class="nn">/usr/local/lib/python3.7/dist-packages/tensorflow/python/eager/function.py</span> in <span class="ni">_create_graph_function</span><span class="nt">(self, args, kwargs, override_flat_arg_shapes)</span>
+<span class="g g-Whitespace">   </span><span class="mi">3306</span><span class="s2">             arg_names=arg_names,</span>
+<span class="g g-Whitespace">   </span><span class="mi">3307</span><span class="s2">             override_flat_arg_shapes=override_flat_arg_shapes,</span>
+<span class="ne">-&gt; </span><span class="mi">3308</span><span class="s2">             capture_by_value=self._capture_by_value),</span>
+<span class="g g-Whitespace">   </span><span class="mi">3309</span><span class="s2">         self._function_attributes,</span>
+<span class="g g-Whitespace">   </span><span class="mi">3310</span><span class="s2">         function_spec=self.function_spec,</span>
+
+<span class="nn">/usr/local/lib/python3.7/dist-packages/tensorflow/python/framework/func_graph.py</span> in <span class="ni">func_graph_from_py_func</span><span class="nt">(name, python_func, args, kwargs, signature, func_graph, autograph, autograph_options, add_control_dependencies, arg_names, op_return_value, collections, capture_by_value, override_flat_arg_shapes, acd_record_initial_resource_uses)</span>
+<span class="g g-Whitespace">   </span><span class="mi">1005</span><span class="s2">         _, original_func = tf_decorator.unwrap(python_func)</span>
+<span class="g g-Whitespace">   </span><span class="mi">1006</span><span class="s2"> </span>
+<span class="ne">-&gt; </span><span class="mi">1007</span><span class="s2">       func_outputs = python_func(*func_args, **func_kwargs)</span>
+<span class="g g-Whitespace">   </span><span class="mi">1008</span><span class="s2"> </span>
+<span class="g g-Whitespace">   </span><span class="mi">1009</span><span class="s2">       # invariant: `func_outputs` contains only Tensors, CompositeTensors,</span>
+
+<span class="nn">/usr/local/lib/python3.7/dist-packages/tensorflow/python/data/ops/dataset_ops.py</span> in <span class="ni">wrapped_fn</span><span class="nt">(*args)</span>
+<span class="g g-Whitespace">   </span><span class="mi">4193</span><span class="s2">           attributes=defun_kwargs)</span>
+<span class="g g-Whitespace">   </span><span class="mi">4194</span><span class="s2">       def wrapped_fn(*args):  # pylint: disable=missing-docstring</span>
+<span class="ne">-&gt; </span><span class="mi">4195</span><span class="s2">         ret = wrapper_helper(*args)</span>
+<span class="g g-Whitespace">   </span><span class="mi">4196</span><span class="s2">         ret = structure.to_tensor_list(self._output_structure, ret)</span>
+<span class="g g-Whitespace">   </span><span class="mi">4197</span><span class="s2">         return [ops.convert_to_tensor(t) for t in ret]</span>
+
+<span class="nn">/usr/local/lib/python3.7/dist-packages/tensorflow/python/data/ops/dataset_ops.py</span> in <span class="ni">wrapper_helper</span><span class="nt">(*args)</span>
+<span class="g g-Whitespace">   </span><span class="mi">4123</span><span class="s2">       if not _should_unpack(nested_args):</span>
+<span class="g g-Whitespace">   </span><span class="mi">4124</span><span class="s2">         nested_args = (nested_args,)</span>
+<span class="ne">-&gt; </span><span class="mi">4125</span><span class="s2">       ret = autograph.tf_convert(self._func, ag_ctx)(*nested_args)</span>
+<span class="g g-Whitespace">   </span><span class="mi">4126</span><span class="s2">       if _should_pack(ret):</span>
+<span class="g g-Whitespace">   </span><span class="mi">4127</span><span class="s2">         ret = tuple(ret)</span>
+
+<span class="nn">/usr/local/lib/python3.7/dist-packages/tensorflow/python/autograph/impl/api.py</span> in <span class="ni">wrapper</span><span class="nt">(*args, **kwargs)</span>
+<span class="g g-Whitespace">    </span><span class="mi">693</span><span class="s2">       except Exception as e:  # pylint:disable=broad-except</span>
+<span class="g g-Whitespace">    </span><span class="mi">694</span><span class="s2">         if hasattr(e, &#39;ag_error_metadata&#39;):</span>
+<span class="ne">--&gt; </span><span class="mi">695</span><span class="s2">           raise e.ag_error_metadata.to_exception(e)</span>
+<span class="g g-Whitespace">    </span><span class="mi">696</span><span class="s2">         else:</span>
+<span class="g g-Whitespace">    </span><span class="mi">697</span><span class="s2">           raise</span>
+
+<span class="ne">TypeError</span>: in user code:
+
+<span class="s2">    &lt;ipython-input-33-a51b40e3919d&gt;:5 _process_pathnames  *</span>
+<span class="s2">        img_str = tf.io.read_file(fname)</span>
+<span class="s2">    /usr/local/lib/python3.7/dist-packages/tensorflow/python/ops/io_ops.py:139 read_file  **</span>
+<span class="s2">        return gen_io_ops.read_file(filename, name)</span>
+<span class="s2">    /usr/local/lib/python3.7/dist-packages/tensorflow/python/ops/gen_io_ops.py:561 read_file</span>
+<span class="s2">        &quot;ReadFile&quot;, filename=filename, name=name)</span>
+<span class="s2">    /usr/local/lib/python3.7/dist-packages/tensorflow/python/framework/op_def_library.py:545 _apply_op_helper</span>
+<span class="s2">        (prefix, dtypes.as_dtype(input_arg.type).name))</span>
+
+<span class="s2">    TypeError: Input &#39;filename&#39; of &#39;ReadFile&#39; Op has type float32 that does not match expected type of string.</span>
+</pre></div>
+</div>
+</div>
 </div>
 </div>
 </div>
@@ -2066,7 +2177,7 @@ Number of test examples: 136
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[0 2 5 6 7] [0 1 2 3 4 5 6 7 8]
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[0 2 5 6 7] [0 2 5 6]
 </pre></div>
 </div>
 </div>
@@ -2114,10 +2225,14 @@ Number of test examples: 136
 </div>
 </div>
 <div class="cell_output docutils container">
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>/usr/local/lib/python3.7/dist-packages/ipykernel_launcher.py:4: RuntimeWarning: invalid value encountered in true_divide
+  after removing the cwd from sys.path.
+</pre></div>
+</div>
 <div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>(8.5, -0.5)
 </pre></div>
 </div>
-<img alt="../_images/deeplearning_crop_segmentation_119_1.png" src="../_images/deeplearning_crop_segmentation_119_1.png" />
+<img alt="../_images/deeplearning_crop_segmentation_116_2.png" src="../_images/deeplearning_crop_segmentation_116_2.png" />
 </div>
 </div>
 <p>Now let’s compute the f1 score</p>
@@ -2130,7 +2245,7 @@ Number of test examples: 136
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>0.16647196517343874
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>0.18747664084133014
 </pre></div>
 </div>
 </div>
