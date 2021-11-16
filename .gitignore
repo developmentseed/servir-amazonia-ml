@@ -19,6 +19,7 @@ bin-release/
 
 # python & jupyter
 ds_book/_build/*
+ds_book/docs/data/
 .ipynb_checkpoints
 __pycache__/
 
