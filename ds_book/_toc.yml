@@ -1,8 +1,8 @@
 format: jb-book
 root: docs/index
 chapters:
-- file: docs/Lesson1a_Intro
-- file: docs/Lesson1b_Intro
+- file: docs/Lesson1a_Intro_ML_NN_DL
+- file: docs/Lesson1b_Intro_TensorFlow_Keras
 - file: docs/Lesson2a_get_planet_NICFI
 - file: docs/Lesson2b_prep_data_ML_segmentation
 - file: docs/Lesson3_deeplearning_crop_segmentation
