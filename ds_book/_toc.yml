@@ -1,9 +1,9 @@
 format: jb-book
 root: docs/index
 chapters:
-- file: docs/intro
-- file: docs/get_planet_NICFI
-- file: docs/prep_data_ML_segmentation
-- file: docs/deeplearning_crop_segmentation
-- file: docs/conclusion
+- file: docs/Lesson1a_Intro
+- file: docs/Lesson1b_Intro
+- file: docs/Lesson2a_get_planet_NICFI
+- file: docs/Lesson2b_prep_data_ML_segmentation
+- file: docs/Lesson3_deeplearning_crop_segmentation
 - file: docs/appendix
