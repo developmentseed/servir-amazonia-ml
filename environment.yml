@@ -7,6 +7,7 @@ dependencies:
   - pip
   - numpy
   - matplotlib
+  - tqdm
   - pip:
     - jupyter-book
 
