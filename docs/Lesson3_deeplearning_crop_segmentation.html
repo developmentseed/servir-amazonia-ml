@@ -239,17 +239,22 @@
      General Workflow
     </a>
    </li>
-  </ul>
- </li>
- <li class="toc-h2 nav-item toc-entry">
-  <a class="reference internal nav-link" href="#setup-notebook">
-   Setup Notebook
-  </a>
-  <ul class="nav section-nav flex-column">
    <li class="toc-h3 nav-item toc-entry">
-    <a class="reference internal nav-link" href="#getting-set-up-with-the-data">
-     Getting set up with the data
+    <a class="reference internal nav-link" href="#objectives">
+     Objectives
     </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#setup-notebook">
+     Setup Notebook
+    </a>
+    <ul class="nav section-nav flex-column">
+     <li class="toc-h4 nav-item toc-entry">
+      <a class="reference internal nav-link" href="#getting-set-up-with-the-data">
+       Getting set up with the data
+      </a>
+     </li>
+    </ul>
    </li>
    <li class="toc-h3 nav-item toc-entry">
     <a class="reference internal nav-link" href="#enabling-gpu">
@@ -338,9 +343,9 @@
 <blockquote>
 <div><p>A guide for using deep-learning based semantic segmentation to land use / land cover in satellite imagery.</p>
 </div></blockquote>
-<p>In this tutorial we will learn how to segment images according to a set of classes. <strong>Segmentation</strong>  refers to the process of partitioning an image into groups of pixels that identify with a target class (the foreground) or the background.</p>
+<p>In this tutorial we will learn how to segment images according to a set of classes. <strong>Segmentation</strong>  refers to the process of partitioning an image into groups of pixels that identify with a target class within the foreground or the background class (a catch-all class that contains non-target features).</p>
 <p>Specifically, in this tutorial we will be using data from two reference datasets, Imaflora and Para, depicting land use classifications of relevant areas in the Amazon.</p>
-<p>We will pair the reference data with a Planet 5 meter composite made from data available as part of the NICFI program. Our task will be to predict the crop types in an image on a pixel-wise basis.</p>
+<p>We will pair the reference data with a Planet 5 meter composite made from data available as part of the NICFI program. Our task will be to predict the land use / land cover in an image on a pixel-wise basis.</p>
 <div class="section" id="specific-concepts-that-will-be-covered">
 <h2>Specific concepts that will be covered<a class="headerlink" href="#specific-concepts-that-will-be-covered" title="Permalink to this headline">¶</a></h2>
 <p>In the process, we will build practical experience and develop intuition around the following concepts:</p>
@@ -359,29 +364,73 @@ and <strong>accuracy</strong>. We’ll also generate confusion matrices during e
 <div class="section" id="general-workflow">
 <h3>General Workflow<a class="headerlink" href="#general-workflow" title="Permalink to this headline">¶</a></h3>
 <ol class="simple">
-<li><p>Load image and label datasets from Google Drive or Google Cloud Storage</p></li>
+<li><p>Load image and label datasets from Google Drive</p></li>
 <li><p>Visualize data/perform some exploratory data analysis</p></li>
 <li><p>Set up data pipeline and preprocessing</p></li>
 <li><p>Build model</p></li>
 <li><p>Train model</p></li>
 <li><p>Test model</p></li>
-<li><p>Evaluate model</p></li>
+</ol>
+</div>
+<div class="section" id="objectives">
+<h3>Objectives<a class="headerlink" href="#objectives" title="Permalink to this headline">¶</a></h3>
+<ol class="simple">
+<li><p>Practice with the Keras Functional API as a means to run TensorFlow models</p></li>
+<li><p>Experience training a segmentation model and monitoring progress</p></li>
+<li><p>Learn how to generate predictions with a trained segmentation model</p></li>
 </ol>
 <p><strong>Audience:</strong> This post is geared towards intermediate users who are comfortable with basic machine learning concepts.</p>
 <p><strong>Time Estimated</strong>: 60-120 min</p>
 </div>
-</div>
 <div class="section" id="setup-notebook">
-<h2>Setup Notebook<a class="headerlink" href="#setup-notebook" title="Permalink to this headline">¶</a></h2>
+<h3>Setup Notebook<a class="headerlink" href="#setup-notebook" title="Permalink to this headline">¶</a></h3>
+<div class="admonition-version-control admonition">
+<p class="admonition-title"><strong>Version control</strong></p>
+<p>Colab updates without warning to users, which can cause notebooks to break. Therefore, we are pinning library versions.</p>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="o">!</span>python --version
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Python 3.7.12
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="o">!</span>pip --version
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>pip 21.1.3 from /usr/local/lib/python3.7/dist-packages/pip (python 3.7)
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="o">!</span>pip install <span class="nv">pip</span><span class="o">==</span><span class="m">21</span>.1.3
+</pre></div>
+</div>
+</div>
+</div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># install required libraries</span>
-<span class="o">!</span>pip install -q rasterio
-<span class="o">!</span>pip install -q geopandas
-<span class="o">!</span>pip install git+https://github.com/tensorflow/examples.git
-<span class="o">!</span>pip install -U tfds-nightly
-<span class="o">!</span>pip install focal-loss
-<span class="o">!</span>pip install tensorflow-addons<span class="o">==</span><span class="m">0</span>.8.3
+<span class="o">!</span>pip install -q <span class="nv">rasterio</span><span class="o">==</span><span class="m">1</span>.2.10
+<span class="o">!</span>pip install -q <span class="nv">geopandas</span><span class="o">==</span><span class="m">0</span>.10.2
+<span class="o">!</span>pip install -q git+https://github.com/tensorflow/examples.git
+<span class="o">!</span>pip install -q -U tfds-nightly
+<span class="o">!</span>pip install -q focal-loss
+<span class="o">!</span>pip install -q tensorflow-addons<span class="o">==</span><span class="m">0</span>.8.3
+<span class="c1">#!pip install -q matplotlib==3.5 # UNCOMMENT if running on LOCAL</span>
+<span class="o">!</span>pip install -q scikit-learn<span class="o">==</span><span class="m">1</span>.0.1
+<span class="o">!</span>pip install -q scikit-image<span class="o">==</span><span class="m">0</span>.18.3
 </pre></div>
 </div>
 </div>
@@ -405,7 +454,7 @@ and <strong>accuracy</strong>. We’ll also generate confusion matrices during e
 <span class="kn">from</span> <span class="nn">PIL</span> <span class="kn">import</span> <span class="n">Image</span>
 
 <span class="kn">import</span> <span class="nn">rasterio</span>
-<span class="kn">from</span> <span class="nn">rasterio</span> <span class="kn">import</span> <span class="n">features</span><span class="p">,</span> <span class="n">mask</span><span class="p">,</span> <span class="n">windows</span>
+<span class="kn">from</span> <span class="nn">rasterio</span> <span class="kn">import</span> <span class="n">features</span><span class="p">,</span> <span class="n">mask</span>
 
 <span class="kn">import</span> <span class="nn">geopandas</span> <span class="k">as</span> <span class="nn">gpd</span>
 
@@ -413,6 +462,7 @@ and <strong>accuracy</strong>. We’ll also generate confusion matrices during e
 <span class="kn">from</span> <span class="nn">tensorflow.python.keras</span> <span class="kn">import</span> <span class="n">layers</span><span class="p">,</span> <span class="n">losses</span><span class="p">,</span> <span class="n">models</span>
 <span class="kn">from</span> <span class="nn">tensorflow.python.keras</span> <span class="kn">import</span> <span class="n">backend</span> <span class="k">as</span> <span class="n">K</span>  
 <span class="kn">import</span> <span class="nn">tensorflow_addons</span> <span class="k">as</span> <span class="nn">tfa</span>
+<span class="kn">from</span> <span class="nn">keras.utils.vis_utils</span> <span class="kn">import</span> <span class="n">plot_model</span>
 
 <span class="kn">from</span> <span class="nn">tensorflow_examples.models.pix2pix</span> <span class="kn">import</span> <span class="n">pix2pix</span>
 
@@ -425,23 +475,26 @@ and <strong>accuracy</strong>. We’ll also generate confusion matrices during e
 
 <span class="kn">from</span> <span class="nn">focal_loss</span> <span class="kn">import</span> <span class="n">SparseCategoricalFocalLoss</span>
 <span class="kn">from</span> <span class="nn">sklearn.metrics</span> <span class="kn">import</span> <span class="n">confusion_matrix</span><span class="p">,</span> <span class="n">f1_score</span>
-
-<span class="kn">import</span> <span class="nn">cv2</span>
 </pre></div>
 </div>
 </div>
 </div>
 <div class="section" id="getting-set-up-with-the-data">
-<h3>Getting set up with the data<a class="headerlink" href="#getting-set-up-with-the-data" title="Permalink to this headline">¶</a></h3>
-<p>Create drive shortcuts of the tiled imagery to your own My Drive Folder by Right-Clicking on the Shared folder <code class="docutils literal notranslate"><span class="pre">terrabio</span></code>. Then, this folder will be available at the following path that is accessible with the google.colab <code class="docutils literal notranslate"><span class="pre">drive</span></code> module: <code class="docutils literal notranslate"><span class="pre">'/content/gdrive/My</span> <span class="pre">Drive/servir-tf/terrabio/'</span></code></p>
-<p>We’ll be working witht he following folders in the <code class="docutils literal notranslate"><span class="pre">tiled</span></code> folder:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>tiled/
+<h4>Getting set up with the data<a class="headerlink" href="#getting-set-up-with-the-data" title="Permalink to this headline">¶</a></h4>
+<div class="admonition important">
+<p class="admonition-title">Important</p>
+<p>Create drive shortcuts of the tiled imagery to your own My Drive Folder by Right-Clicking on the Shared folder <code class="docutils literal notranslate"><span class="pre">servir-tf-devseed</span></code>. Then, this folder will be available at the following path that is accessible with the google.colab <code class="docutils literal notranslate"><span class="pre">drive</span></code> module: <code class="docutils literal notranslate"><span class="pre">'/content/gdrive/My</span> <span class="pre">Drive/servir-tf-devseed/'</span></code></p>
+</div>
+<p>We’ll be working witht he following folders in the <code class="docutils literal notranslate"><span class="pre">servir-tf-devseed</span></code> folder:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>servir-tf-devseed/
 ├── images/
 ├── images_bright/
 ├── indices/
 ├── indices_800/
 ├── labels/
-└── labels_800/
+├── labels_800/
+├── background_list_train.txt
+└── terrabio_classes.csv
 </pre></div>
 </div>
 <div class="cell docutils container">
@@ -462,19 +515,19 @@ and <strong>accuracy</strong>. We’ll also generate confusion matrices during e
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># set your root directory and tiled data folders</span>
 <span class="k">if</span> <span class="s1">&#39;google.colab&#39;</span> <span class="ow">in</span> <span class="nb">str</span><span class="p">(</span><span class="n">get_ipython</span><span class="p">()):</span>
-    <span class="n">root_dir</span> <span class="o">=</span> <span class="s1">&#39;/content/gdrive/My Drive/servir-tf/terrabio/&#39;</span> 
-    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Running on CoLab&#39;</span><span class="p">)</span>
+    <span class="n">root_dir</span> <span class="o">=</span> <span class="s1">&#39;/content/gdrive/My Drive/servir-tf-devseed/&#39;</span>  
+    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Running on Colab&#39;</span><span class="p">)</span>
 <span class="k">else</span><span class="p">:</span>
-    <span class="n">root_dir</span> <span class="o">=</span> <span class="s1">&#39;./data/&#39;</span> 
-    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Not running on CoLab, data needs to be downloaded locally at </span><span class="si">{</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">root_dir</span><span class="p">)</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+    <span class="n">root_dir</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="s2">&quot;./data/servir-tf-devseed&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Not running on Colab, data needs to be downloaded locally at </span><span class="si">{</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">root_dir</span><span class="p">)</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
 
-<span class="n">img_dir</span> <span class="o">=</span> <span class="n">root_dir</span><span class="o">+</span><span class="s1">&#39;tiled/indices/&#39;</span> <span class="c1"># or root_dir+&#39;tiled/images_bright/&#39; if using the optical tiles</span>
-<span class="n">label_dir</span> <span class="o">=</span> <span class="n">root_dir</span><span class="o">+</span><span class="s1">&#39;tiled/labels/&#39;</span>
+<span class="n">img_dir</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">root_dir</span><span class="p">,</span><span class="s1">&#39;indices/&#39;</span><span class="p">)</span> <span class="c1"># or os.path.join(root_dir,&#39;images_bright/&#39;) if using the optical tiles</span>
+<span class="n">label_dir</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">root_dir</span><span class="p">,</span><span class="s1">&#39;labels/&#39;</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Running on CoLab
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Running on Colab
 </pre></div>
 </div>
 </div>
@@ -487,8 +540,9 @@ and <strong>accuracy</strong>. We’ll also generate confusion matrices during e
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>/content/gdrive/My Drive/servir-tf/terrabio
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>/content/gdrive/MyDrive/servir-tf/data/servir-tf-devseed
 </pre></div>
+</div>
 </div>
 </div>
 </div>
@@ -499,7 +553,9 @@ and <strong>accuracy</strong>. We’ll also generate confusion matrices during e
 <p>If it’s not using a GPU you can change your session/notebook to use a GPU. See <a class="reference external" href="https://colab.research.google.com/notebooks/gpu.ipynb#scrollTo=sXnDmXR7RDr2">Instructions</a></p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="o">%</span><span class="k">tensorflow_version</span> 2.x
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># this is a google colab specific command to ensure TF version 2 is used. </span>
+<span class="c1"># it won&#39;t work in a regular jupyter notebook, for a regular notebook make sure you install TF version 2</span>
+<span class="o">%</span><span class="k">tensorflow_version</span> 2.x
 <span class="kn">import</span> <span class="nn">tensorflow</span> <span class="k">as</span> <span class="nn">tf</span>
 <span class="n">device_name</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">test</span><span class="o">.</span><span class="n">gpu_device_name</span><span class="p">()</span>
 <span class="k">if</span> <span class="n">device_name</span> <span class="o">!=</span> <span class="s1">&#39;/device:GPU:0&#39;</span><span class="p">:</span>
@@ -520,7 +576,7 @@ and <strong>accuracy</strong>. We’ll also generate confusion matrices during e
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Read the classes</span>
-<span class="n">class_index</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">root_dir</span><span class="o">+</span><span class="s1">&#39;tiled/terrabio_classes.csv&#39;</span><span class="p">)</span>
+<span class="n">class_index</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">root_dir</span><span class="p">,</span><span class="s1">&#39;terrabio_classes.csv&#39;</span><span class="p">))</span>
 <span class="n">class_names</span> <span class="o">=</span> <span class="n">class_index</span><span class="o">.</span><span class="n">class_name</span><span class="o">.</span><span class="n">unique</span><span class="p">()</span>
 <span class="nb">print</span><span class="p">(</span><span class="n">class_index</span><span class="p">)</span> 
 </pre></div>
@@ -545,12 +601,14 @@ and <strong>accuracy</strong>. We’ll also generate confusion matrices during e
 <div class="section" id="read-into-tensorflow-datasets">
 <h3>Read into tensorflow datasets<a class="headerlink" href="#read-into-tensorflow-datasets" title="Permalink to this headline">¶</a></h3>
 <p>Now we will compile the spectral index image and label tiles into training, validation, and test datasets for use with TensorFlow.</p>
-<div class="cell docutils container">
-<div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># get lists of image and label tile pairs for training and testing</span>
+<div class="admonition important">
+<p class="admonition-title">Important</p>
+<p>Normally we would read the image files from the directories and then process forward from there with background removal with the next <strong>three</strong> illustrated functions, however, due to slow I/O in Google Colab we will read the images list with 90% background removal already performed from a pre-saved list in the shared drive.</p>
+</div>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># get lists of image and label tile pairs for training and testing</span>
 
 <span class="k">def</span> <span class="nf">get_train_test_lists</span><span class="p">(</span><span class="n">imdir</span><span class="p">,</span> <span class="n">lbldir</span><span class="p">):</span>
-  <span class="n">imgs</span> <span class="o">=</span> <span class="n">glob</span><span class="o">.</span><span class="n">glob</span><span class="p">(</span><span class="n">imdir</span><span class="o">+</span><span class="s2">&quot;/*.png&quot;</span><span class="p">)</span>
+  <span class="n">imgs</span> <span class="o">=</span> <span class="n">glob</span><span class="o">.</span><span class="n">glob</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">imdir</span><span class="p">,</span><span class="s2">&quot;/*.png&quot;</span><span class="p">))</span>
   <span class="c1">#print(imgs[0:1])</span>
   <span class="n">dset_list</span> <span class="o">=</span> <span class="p">[]</span>
   <span class="k">for</span> <span class="n">img</span> <span class="ow">in</span> <span class="n">imgs</span><span class="p">:</span>
@@ -567,6 +625,72 @@ and <strong>accuracy</strong>. We’ll also generate confusion matrices during e
     
   <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;number of images: &quot;</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">dset_list</span><span class="p">))</span>
   <span class="k">return</span> <span class="n">dset_list</span><span class="p">,</span> <span class="n">x_filenames</span><span class="p">,</span> <span class="n">y_filenames</span>
+
+<span class="n">train_list</span><span class="p">,</span> <span class="n">x_train_filenames</span><span class="p">,</span> <span class="n">y_train_filenames</span> <span class="o">=</span> <span class="n">get_train_test_lists</span><span class="p">(</span><span class="n">img_dir</span><span class="p">,</span> <span class="n">label_dir</span><span class="p">)</span>
+
+</pre></div>
+</div>
+<p>number of images:  37350</p>
+<p>Check for the proportion of background tiles. This takes a while. So we can skip by loading from saved results.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">skip</span> <span class="o">=</span> <span class="kc">True</span>
+
+<span class="k">if</span> <span class="ow">not</span> <span class="n">skip</span><span class="p">:</span>
+  <span class="n">background_list_train</span> <span class="o">=</span> <span class="p">[]</span>
+  <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">train_list</span><span class="p">:</span> 
+      <span class="c1"># read in each labeled images</span>
+      <span class="c1"># print(os.path.join(label_dir,&quot;{}.png&quot;.format(i))) </span>
+      <span class="n">img</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">Image</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">label_dir</span><span class="p">,</span><span class="s2">&quot;</span><span class="si">{}</span><span class="s2">.png&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">i</span><span class="p">))))</span>  
+      <span class="c1"># check if no values in image are greater than zero (background value)</span>
+      <span class="k">if</span> <span class="n">img</span><span class="o">.</span><span class="n">max</span><span class="p">()</span><span class="o">==</span><span class="mi">0</span><span class="p">:</span>
+          <span class="n">background_list_train</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
+          
+  <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Number of background images: &quot;</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">background_list_train</span><span class="p">))</span>
+
+  <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">root_dir</span><span class="p">,</span><span class="s1">&#39;background_list_train.txt&#39;</span><span class="p">),</span> <span class="s1">&#39;w&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+    <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">background_list_train</span><span class="p">:</span>
+        <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">%s</span><span class="se">\n</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">item</span><span class="p">)</span>
+
+<span class="k">else</span><span class="p">:</span>
+  <span class="n">background_list_train</span> <span class="o">=</span> <span class="p">[</span><span class="n">line</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span> <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="nb">open</span><span class="p">(</span><span class="s2">&quot;background_list_train.txt&quot;</span><span class="p">,</span> <span class="s1">&#39;r&#39;</span><span class="p">)]</span>
+  <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Number of background images: &quot;</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">background_list_train</span><span class="p">))</span>
+</pre></div>
+</div>
+<p>Number of background images:  36489</p>
+<p>We will keep only 10% of the total. Too many background tiles can cause a form of class imbalance.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">background_removal</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">background_list_train</span><span class="p">)</span> <span class="o">*</span> <span class="mf">0.9</span>
+<span class="n">train_list_clean</span> <span class="o">=</span> <span class="p">[</span><span class="n">y</span> <span class="k">for</span> <span class="n">y</span> <span class="ow">in</span> <span class="n">train_list</span> <span class="k">if</span> <span class="n">y</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">background_list_train</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="nb">int</span><span class="p">(</span><span class="n">background_removal</span><span class="p">)]]</span>
+
+<span class="n">x_train_filenames</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="n">y_train_filenames</span> <span class="o">=</span> <span class="p">[]</span>
+
+<span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">img_id</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">tqdm</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">train_list_clean</span><span class="p">))),</span> <span class="n">train_list_clean</span><span class="p">):</span>
+  <span class="k">pass</span> 
+  <span class="n">x_train_filenames</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">img_dir</span><span class="p">,</span> <span class="s2">&quot;</span><span class="si">{}</span><span class="s2">.png&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">img_id</span><span class="p">)))</span>
+  <span class="n">y_train_filenames</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">label_dir</span><span class="p">,</span> <span class="s2">&quot;</span><span class="si">{}</span><span class="s2">.png&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">img_id</span><span class="p">)))</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Number of background tiles: &quot;</span><span class="p">,</span> <span class="n">background_removal</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Remaining number of tiles after 90% background removal: &quot;</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">train_list_clean</span><span class="p">))</span>
+</pre></div>
+</div>
+<p>Number of background tiles:  32840</p>
+<p>Remaining number of tiles after 90% background removal:  4510</p>
+<div class="admonition important">
+<p class="admonition-title">Important</p>
+<p>The cell below contains the shortcut read of prepped training image list.</p>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>  <span class="k">def</span> <span class="nf">get_train_test_lists</span><span class="p">(</span><span class="n">imdir</span><span class="p">,</span> <span class="n">lbldir</span><span class="p">):</span>
+    <span class="n">train_list</span> <span class="o">=</span> <span class="p">[</span><span class="n">line</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span> <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="nb">open</span><span class="p">(</span><span class="s2">&quot;train_list_clean.txt&quot;</span><span class="p">,</span> <span class="s1">&#39;r&#39;</span><span class="p">)]</span>
+
+    <span class="n">x_filenames</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">y_filenames</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">img_id</span> <span class="ow">in</span> <span class="n">train_list</span><span class="p">:</span>
+      <span class="n">x_filenames</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">imdir</span><span class="p">,</span> <span class="s2">&quot;</span><span class="si">{}</span><span class="s2">.png&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">img_id</span><span class="p">)))</span>
+      <span class="n">y_filenames</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">lbldir</span><span class="p">,</span> <span class="s2">&quot;</span><span class="si">{}</span><span class="s2">.png&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">img_id</span><span class="p">)))</span>
+
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Number of images: &quot;</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">train_list</span><span class="p">))</span>
+    <span class="k">return</span> <span class="n">train_list</span><span class="p">,</span> <span class="n">x_filenames</span><span class="p">,</span> <span class="n">y_filenames</span>
 </pre></div>
 </div>
 </div>
@@ -578,73 +702,7 @@ and <strong>accuracy</strong>. We’ll also generate confusion matrices during e
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>number of images:  37350
-</pre></div>
-</div>
-</div>
-</div>
-<p>Let’s check for the proportion of background tiles. This takes a while. So we can skip by loading from saved results.</p>
-<div class="cell docutils container">
-<div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">skip</span> <span class="o">=</span> <span class="kc">True</span>
-
-<span class="k">if</span> <span class="ow">not</span> <span class="n">skip</span><span class="p">:</span>
-  <span class="n">background_list_train</span> <span class="o">=</span> <span class="p">[]</span>
-  <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">train_list</span><span class="p">:</span> 
-      <span class="c1"># read in each labeled images</span>
-      <span class="c1">#print(label_dir+&quot;{}.png&quot;.format(i))</span>
-      <span class="n">img</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">Image</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">label_dir</span><span class="o">+</span><span class="s2">&quot;</span><span class="si">{}</span><span class="s2">.png&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">i</span><span class="p">)))</span> 
-      <span class="c1"># check if no values in image are greater than zero (background value)</span>
-      <span class="k">if</span> <span class="n">img</span><span class="o">.</span><span class="n">max</span><span class="p">()</span><span class="o">==</span><span class="mi">0</span><span class="p">:</span>
-          <span class="n">background_list_train</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
-          
-  <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;number of background training images: &quot;</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">background_list_train</span><span class="p">))</span>
-
-
-  <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">personal_dir</span><span class="p">,</span><span class="s1">&#39;background_list_train.txt&#39;</span><span class="p">),</span> <span class="s1">&#39;w&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
-    <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">background_list_train</span><span class="p">:</span>
-        <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">%s</span><span class="se">\n</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">item</span><span class="p">)</span>
-
-<span class="k">else</span><span class="p">:</span>
-  <span class="n">background_list_train</span> <span class="o">=</span> <span class="p">[</span><span class="n">line</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span> <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="nb">open</span><span class="p">(</span><span class="s2">&quot;tiled/background_list_train.txt&quot;</span><span class="p">,</span> <span class="s1">&#39;r&#39;</span><span class="p">)]</span>
-  <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;number of background training images: &quot;</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">background_list_train</span><span class="p">))</span>
-</pre></div>
-</div>
-</div>
-<div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>number of background training images:  36489
-</pre></div>
-</div>
-</div>
-</div>
-<p>We will keep only 10% of the total. Too many background tiles can cause a form of class imbalance.</p>
-<div class="cell docutils container">
-<div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">background_removal</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">background_list_train</span><span class="p">)</span> <span class="o">*</span> <span class="mf">0.9</span>
-<span class="n">train_list_clean</span> <span class="o">=</span> <span class="p">[</span><span class="n">y</span> <span class="k">for</span> <span class="n">y</span> <span class="ow">in</span> <span class="n">train_list</span> <span class="k">if</span> <span class="n">y</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">background_list_train</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="nb">int</span><span class="p">(</span><span class="n">background_removal</span><span class="p">)]]</span>
-
-<span class="n">x_train_filenames</span> <span class="o">=</span> <span class="p">[]</span>
-<span class="n">y_train_filenames</span> <span class="o">=</span> <span class="p">[]</span>
-
-<span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">img_id</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">tqdm</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">train_list_clean</span><span class="p">))),</span> <span class="n">train_list_clean</span><span class="p">):</span>
-  <span class="k">pass</span> 
-  <span class="n">x_train_filenames</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">img_dir</span><span class="p">,</span> <span class="s2">&quot;</span><span class="si">{}</span><span class="s2">.png&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">img_id</span><span class="p">)))</span>
-  <span class="n">y_train_filenames</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">label_dir</span><span class="p">,</span> <span class="s2">&quot;</span><span class="si">{}</span><span class="s2">.png&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">img_id</span><span class="p">)))</span>
-    
-</pre></div>
-</div>
-</div>
-</div>
-<div class="cell docutils container">
-<div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Number of background tiles: &quot;</span><span class="p">,</span> <span class="n">background_removal</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Remaining number of tiles after 90% background removal: &quot;</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">train_list_clean</span><span class="p">))</span>
-</pre></div>
-</div>
-</div>
-<div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Number of background tiles:  32840.1
-Remaining number of tiles after 90% background removal:  4510
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Number of images:  4510
 </pre></div>
 </div>
 </div>
@@ -679,11 +737,11 @@ Number of test examples: 447
 </div>
 </div>
 </div>
-<div class="cell docutils container">
-<div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Check for values in train, val, and test partitions</span>
-
-<span class="n">vals_train</span> <span class="o">=</span> <span class="p">[]</span>
+<div class="admonition important">
+<p class="admonition-title">Important</p>
+<p>The code below checks for values in train, val, and test partitions. We won’t run this since it takes over 10 minutes on colab due to slow I/O.</p>
+</div>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">vals_train</span> <span class="o">=</span> <span class="p">[]</span>
 <span class="n">vals_val</span> <span class="o">=</span> <span class="p">[]</span>
 <span class="n">vals_test</span> <span class="o">=</span> <span class="p">[]</span>
 
@@ -703,26 +761,15 @@ Number of test examples: 447
 <span class="n">get_vals_in_partition</span><span class="p">(</span><span class="n">vals_train</span><span class="p">,</span> <span class="n">x_train_filenames</span><span class="p">,</span> <span class="n">y_train_filenames</span><span class="p">)</span>
 <span class="n">get_vals_in_partition</span><span class="p">(</span><span class="n">vals_val</span><span class="p">,</span> <span class="n">x_val_filenames</span><span class="p">,</span> <span class="n">y_val_filenames</span><span class="p">)</span>
 <span class="n">get_vals_in_partition</span><span class="p">(</span><span class="n">vals_test</span><span class="p">,</span> <span class="n">x_test_filenames</span><span class="p">,</span> <span class="n">y_test_filenames</span><span class="p">)</span>
-</pre></div>
-</div>
-</div>
-</div>
-<div class="cell docutils container">
-<div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Values in training partition: &quot;</span><span class="p">,</span> <span class="nb">set</span><span class="p">(</span><span class="n">flatten</span><span class="p">(</span><span class="n">vals_train</span><span class="p">)))</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Values in training partition: &quot;</span><span class="p">,</span> <span class="nb">set</span><span class="p">(</span><span class="n">flatten</span><span class="p">(</span><span class="n">vals_train</span><span class="p">)))</span>
 <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Values in validation partition: &quot;</span><span class="p">,</span> <span class="nb">set</span><span class="p">(</span><span class="n">flatten</span><span class="p">(</span><span class="n">vals_val</span><span class="p">)))</span>
 <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Values in test partition: &quot;</span><span class="p">,</span> <span class="nb">set</span><span class="p">(</span><span class="n">flatten</span><span class="p">(</span><span class="n">vals_test</span><span class="p">)))</span>
 </pre></div>
 </div>
-</div>
-<div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Values in training partition:  {0, 1, 2, 3, 4, 5, 6, 7, 8}
-Values in validation partition:  {0, 1, 2, 3, 4, 5, 6, 7, 8}
-Values in test partition:  {0, 1, 2, 3, 4, 5, 6, 7, 8}
-</pre></div>
-</div>
-</div>
-</div>
+<p>Values in training partition:  {0, 1, 2, 3, 4, 5, 6, 7, 8}</p>
+<p>Values in validation partition:  {0, 1, 2, 3, 4, 5, 6, 7, 8}</p>
+<p>Values in test partition:  {0, 1, 2, 3, 4, 5, 6, 7, 8}</p>
 </div>
 <div class="section" id="visualize-the-data">
 <h3>Visualize the data<a class="headerlink" href="#visualize-the-data" title="Permalink to this headline">¶</a></h3>
@@ -730,15 +777,21 @@ Values in test partition:  {0, 1, 2, 3, 4, 5, 6, 7, 8}
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">display_num</span> <span class="o">=</span> <span class="mi">3</span>
 
+<span class="n">background_list_train</span> <span class="o">=</span> <span class="p">[</span><span class="n">line</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span> <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="nb">open</span><span class="p">(</span><span class="s2">&quot;background_list_train.txt&quot;</span><span class="p">,</span> <span class="s1">&#39;r&#39;</span><span class="p">)]</span>
+
 <span class="c1"># select only for tiles with foreground labels present</span>
 <span class="n">foreground_list_x</span> <span class="o">=</span> <span class="p">[]</span>
 <span class="n">foreground_list_y</span> <span class="o">=</span> <span class="p">[]</span>
 <span class="k">for</span> <span class="n">x</span><span class="p">,</span><span class="n">y</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">x_train_filenames</span><span class="p">,</span> <span class="n">y_train_filenames</span><span class="p">):</span> 
     <span class="k">try</span><span class="p">:</span>
-      <span class="n">img</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">Image</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">y</span><span class="p">))</span> 
-      <span class="k">if</span> <span class="n">img</span><span class="o">.</span><span class="n">max</span><span class="p">()</span><span class="o">&gt;</span><span class="mi">0</span><span class="p">:</span>
-          <span class="n">foreground_list_x</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
-          <span class="n">foreground_list_y</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">y</span><span class="p">)</span>
+      <span class="n">filename_split</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">splitext</span><span class="p">(</span><span class="n">y</span><span class="p">)</span> 
+      <span class="n">filename_zero</span><span class="p">,</span> <span class="n">fileext</span> <span class="o">=</span> <span class="n">filename_split</span> 
+      <span class="n">basename</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">basename</span><span class="p">(</span><span class="n">filename_zero</span><span class="p">)</span> 
+      <span class="k">if</span> <span class="n">basename</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">background_list_train</span><span class="p">:</span>
+        <span class="n">foreground_list_x</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+        <span class="n">foreground_list_y</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">y</span><span class="p">)</span>
+      <span class="k">else</span><span class="p">:</span>
+        <span class="k">continue</span>
     <span class="k">except</span><span class="p">:</span>
       <span class="k">continue</span>
 
@@ -770,7 +823,7 @@ Values in test partition:  {0, 1, 2, 3, 4, 5, 6, 7, 8}
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="../_images/Lesson3_deeplearning_crop_segmentation_26_0.png" src="../_images/Lesson3_deeplearning_crop_segmentation_26_0.png" />
+<img alt="../_images/Lesson3_deeplearning_crop_segmentation_27_0.png" src="../_images/Lesson3_deeplearning_crop_segmentation_27_0.png" />
 </div>
 </div>
 </div>
@@ -799,8 +852,8 @@ Values in test partition:  {0, 1, 2, 3, 4, 5, 6, 7, 8}
 
   <span class="c1"># These are png images so they return as (num_frames, h, w, c)</span>
   <span class="n">label_img</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">image</span><span class="o">.</span><span class="n">decode_png</span><span class="p">(</span><span class="n">label_img_str</span><span class="p">,</span> <span class="n">channels</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
-  <span class="c1"># The label image should have any values between 0 and 9, indicating pixel wise</span>
-  <span class="c1"># cropt type class or background (0). We take the first channel only. </span>
+  <span class="c1"># The label image should have any values between 0 and 8, indicating pixel wise</span>
+  <span class="c1"># foreground class or background (0). We take the first channel only. </span>
   <span class="n">label_img</span> <span class="o">=</span> <span class="n">label_img</span><span class="p">[:,</span> <span class="p">:,</span> <span class="mi">0</span><span class="p">]</span>
   <span class="n">label_img</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">expand_dims</span><span class="p">(</span><span class="n">label_img</span><span class="p">,</span> <span class="n">axis</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span>
   <span class="k">return</span> <span class="n">img</span><span class="p">,</span> <span class="n">label_img</span>
@@ -842,7 +895,7 @@ Values in test partition:  {0, 1, 2, 3, 4, 5, 6, 7, 8}
 <span class="k">def</span> <span class="nf">_augment</span><span class="p">(</span><span class="n">img</span><span class="p">,</span>
              <span class="n">label_img</span><span class="p">,</span>
              <span class="n">resize</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>  <span class="c1"># Resize the image to some size e.g. [256, 256]</span>
-             <span class="n">scale</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>  <span class="c1"># Scale image e.g. 1 / 255.</span>
+             <span class="c1">#scale=1,  # Scale image e.g. 1 / 255.</span>
              <span class="n">horizontal_flip</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
              <span class="n">vertical_flip</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span> 
   <span class="k">if</span> <span class="n">resize</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
@@ -852,7 +905,7 @@ Values in test partition:  {0, 1, 2, 3, 4, 5, 6, 7, 8}
   
   <span class="n">img</span><span class="p">,</span> <span class="n">label_img</span> <span class="o">=</span> <span class="n">flip_img_h</span><span class="p">(</span><span class="n">horizontal_flip</span><span class="p">,</span> <span class="n">img</span><span class="p">,</span> <span class="n">label_img</span><span class="p">)</span>
   <span class="n">img</span><span class="p">,</span> <span class="n">label_img</span> <span class="o">=</span> <span class="n">flip_img_v</span><span class="p">(</span><span class="n">vertical_flip</span><span class="p">,</span> <span class="n">img</span><span class="p">,</span> <span class="n">label_img</span><span class="p">)</span>
-  <span class="n">img</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">cast</span><span class="p">(</span><span class="n">img</span><span class="p">,</span> <span class="n">tf</span><span class="o">.</span><span class="n">float32</span><span class="p">)</span> <span class="o">*</span> <span class="n">scale</span>  <span class="c1">#tf.to_float(img) * scale </span>
+  <span class="n">img</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">cast</span><span class="p">(</span><span class="n">img</span><span class="p">,</span> <span class="n">tf</span><span class="o">.</span><span class="n">float32</span><span class="p">)</span> <span class="c1"># * scale  #tf.to_float(img) * scale </span>
   <span class="c1">#label_img = tf.cast(label_img, tf.float32) * scale</span>
   <span class="c1">#print(&quot;tensor: &quot;, tf.unique(tf.keras.backend.print_tensor(label_img)))</span>
   <span class="k">return</span> <span class="n">img</span><span class="p">,</span> <span class="n">label_img</span>
@@ -896,7 +949,7 @@ Values in test partition:  {0, 1, 2, 3, 4, 5, 6, 7, 8}
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># dataset configuration for training</span>
 <span class="n">tr_cfg</span> <span class="o">=</span> <span class="p">{</span>
     <span class="s1">&#39;resize&#39;</span><span class="p">:</span> <span class="p">[</span><span class="n">img_shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">img_shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]],</span>
-    <span class="s1">&#39;scale&#39;</span><span class="p">:</span> <span class="mi">1</span> <span class="o">/</span> <span class="mf">255.</span><span class="p">,</span>
+    <span class="c1">#&#39;scale&#39;: 1 / 255.,</span>
     <span class="s1">&#39;horizontal_flip&#39;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
     <span class="s1">&#39;vertical_flip&#39;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
 <span class="p">}</span>
@@ -910,7 +963,7 @@ Values in test partition:  {0, 1, 2, 3, 4, 5, 6, 7, 8}
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># dataset configuration for validation</span>
 <span class="n">val_cfg</span> <span class="o">=</span> <span class="p">{</span>
     <span class="s1">&#39;resize&#39;</span><span class="p">:</span> <span class="p">[</span><span class="n">img_shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">img_shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]],</span>
-    <span class="s1">&#39;scale&#39;</span><span class="p">:</span> <span class="mi">1</span> <span class="o">/</span> <span class="mf">255.</span><span class="p">,</span>
+    <span class="c1">#&#39;scale&#39;: 1 / 255.,</span>
 <span class="p">}</span>
 <span class="n">val_preprocessing_fn</span> <span class="o">=</span> <span class="n">functools</span><span class="o">.</span><span class="n">partial</span><span class="p">(</span><span class="n">_augment</span><span class="p">,</span> <span class="o">**</span><span class="n">val_cfg</span><span class="p">)</span>
 </pre></div>
@@ -922,7 +975,7 @@ Values in test partition:  {0, 1, 2, 3, 4, 5, 6, 7, 8}
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># dataset configuration for testing</span>
 <span class="n">test_cfg</span> <span class="o">=</span> <span class="p">{</span>
     <span class="s1">&#39;resize&#39;</span><span class="p">:</span> <span class="p">[</span><span class="n">img_shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">img_shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]],</span>
-    <span class="s1">&#39;scale&#39;</span><span class="p">:</span> <span class="mi">1</span> <span class="o">/</span> <span class="mf">255.</span><span class="p">,</span>
+    <span class="c1">#&#39;scale&#39;: 1 / 255.,</span>
 <span class="p">}</span>
 <span class="n">test_preprocessing_fn</span> <span class="o">=</span> <span class="n">functools</span><span class="o">.</span><span class="n">partial</span><span class="p">(</span><span class="n">_augment</span><span class="p">,</span> <span class="o">**</span><span class="n">test_cfg</span><span class="p">)</span>
 </pre></div>
@@ -1001,7 +1054,7 @@ Values in test partition:  {0, 1, 2, 3, 4, 5, 6, 7, 8}
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="../_images/Lesson3_deeplearning_crop_segmentation_40_0.png" src="../_images/Lesson3_deeplearning_crop_segmentation_40_0.png" />
+<img alt="../_images/Lesson3_deeplearning_crop_segmentation_41_0.png" src="../_images/Lesson3_deeplearning_crop_segmentation_41_0.png" />
 </div>
 </div>
 <p>…same check for the validation images:</p>
@@ -1011,10 +1064,17 @@ Values in test partition:  {0, 1, 2, 3, 4, 5, 6, 7, 8}
 <span class="n">foreground_list_x</span> <span class="o">=</span> <span class="p">[]</span>
 <span class="n">foreground_list_y</span> <span class="o">=</span> <span class="p">[]</span>
 <span class="k">for</span> <span class="n">x</span><span class="p">,</span><span class="n">y</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">x_val_filenames</span><span class="p">,</span> <span class="n">y_val_filenames</span><span class="p">):</span> 
-    <span class="n">img</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">Image</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">y</span><span class="p">))</span> 
-    <span class="k">if</span> <span class="n">img</span><span class="o">.</span><span class="n">max</span><span class="p">()</span><span class="o">&gt;</span><span class="mi">0</span><span class="p">:</span>
+    <span class="k">try</span><span class="p">:</span>
+      <span class="n">filename_split</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">splitext</span><span class="p">(</span><span class="n">y</span><span class="p">)</span> 
+      <span class="n">filename_zero</span><span class="p">,</span> <span class="n">fileext</span> <span class="o">=</span> <span class="n">filename_split</span> 
+      <span class="n">basename</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">basename</span><span class="p">(</span><span class="n">filename_zero</span><span class="p">)</span> 
+      <span class="k">if</span> <span class="n">basename</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">background_list_train</span><span class="p">:</span>
         <span class="n">foreground_list_x</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
         <span class="n">foreground_list_y</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">y</span><span class="p">)</span>
+      <span class="k">else</span><span class="p">:</span>
+        <span class="k">continue</span>
+    <span class="k">except</span><span class="p">:</span>
+      <span class="k">continue</span>
 
 <span class="n">num_foreground_examples</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">foreground_list_y</span><span class="p">)</span>
 
@@ -1046,7 +1106,7 @@ Values in test partition:  {0, 1, 2, 3, 4, 5, 6, 7, 8}
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="../_images/Lesson3_deeplearning_crop_segmentation_42_0.png" src="../_images/Lesson3_deeplearning_crop_segmentation_42_0.png" />
+<img alt="../_images/Lesson3_deeplearning_crop_segmentation_43_0.png" src="../_images/Lesson3_deeplearning_crop_segmentation_43_0.png" />
 </div>
 </div>
 <p>…same check for the test images:</p>
@@ -1056,10 +1116,17 @@ Values in test partition:  {0, 1, 2, 3, 4, 5, 6, 7, 8}
 <span class="n">foreground_list_x</span> <span class="o">=</span> <span class="p">[]</span>
 <span class="n">foreground_list_y</span> <span class="o">=</span> <span class="p">[]</span>
 <span class="k">for</span> <span class="n">x</span><span class="p">,</span><span class="n">y</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">x_test_filenames</span><span class="p">,</span> <span class="n">y_test_filenames</span><span class="p">):</span> 
-    <span class="n">img</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">Image</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">y</span><span class="p">))</span> 
-    <span class="k">if</span> <span class="n">img</span><span class="o">.</span><span class="n">max</span><span class="p">()</span><span class="o">&gt;</span><span class="mi">0</span><span class="p">:</span>
+    <span class="k">try</span><span class="p">:</span>
+      <span class="n">filename_split</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">splitext</span><span class="p">(</span><span class="n">y</span><span class="p">)</span> 
+      <span class="n">filename_zero</span><span class="p">,</span> <span class="n">fileext</span> <span class="o">=</span> <span class="n">filename_split</span> 
+      <span class="n">basename</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">basename</span><span class="p">(</span><span class="n">filename_zero</span><span class="p">)</span> 
+      <span class="k">if</span> <span class="n">basename</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">background_list_train</span><span class="p">:</span>
         <span class="n">foreground_list_x</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
         <span class="n">foreground_list_y</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">y</span><span class="p">)</span>
+      <span class="k">else</span><span class="p">:</span>
+        <span class="k">continue</span>
+    <span class="k">except</span><span class="p">:</span>
+      <span class="k">continue</span>
 
 <span class="n">num_foreground_examples</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">foreground_list_y</span><span class="p">)</span>
 
@@ -1091,14 +1158,18 @@ Values in test partition:  {0, 1, 2, 3, 4, 5, 6, 7, 8}
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="../_images/Lesson3_deeplearning_crop_segmentation_44_0.png" src="../_images/Lesson3_deeplearning_crop_segmentation_44_0.png" />
+<img alt="../_images/Lesson3_deeplearning_crop_segmentation_45_0.png" src="../_images/Lesson3_deeplearning_crop_segmentation_45_0.png" />
 </div>
 </div>
 </div>
 <div class="section" id="define-the-model">
 <h3>Define the model<a class="headerlink" href="#define-the-model" title="Permalink to this headline">¶</a></h3>
-<p>The model being used here is a modified U-Net. A U-Net consists of an encoder (downsampler) and decoder (upsampler). In-order to learn robust features, and reduce the number of trainable parameters, a pretrained model can be used as the encoder. Thus, the encoder for this task will be a pretrained MobileNetV2 model, whose intermediate outputs will be used, and the decoder will be the upsample block already implemented in TensorFlow Examples in the Pix2pix tutorial.</p>
-<p>The reason to output ten channels is because there are ten possible labels for each pixel. Think of this as multi-classification where each pixel is being classified into ten classes.</p>
+<p>The model being used here is a modified U-Net. A U-Net consists of an encoder (downsampler) and decoder (upsampler). In-order to learn robust features, and reduce the number of trainable parameters, an optionally pretrained model can be used as the encoder. Thus, the encoder for this task will be a pretrained MobileNetV2 model, whose intermediate outputs will be used, and the decoder will be the upsample block already implemented in TensorFlow Examples in the Pix2pix tutorial.</p>
+<div class="figure align-default" id="unet-mobilenetv2-arch-arch-fig">
+<a class="reference internal image-reference" href="../_images/Unet_mobilenetv2_arch_arch.png"><img alt="../_images/Unet_mobilenetv2_arch_arch.png" src="../_images/Unet_mobilenetv2_arch_arch.png" style="width: 650px;" /></a>
+<p class="caption"><span class="caption-number">Fig. 6 </span><span class="caption-text">U-shaped MobileNetV2 (adapted U-Net) architecture diagram (from <a class="reference external" href="https://www.researchgate.net/publication/339266308_Surface-Defect_Segmentation_using_U-shaped_Inverted_Residuals">Ronneberger et al., 2015</a>).</span><a class="headerlink" href="#unet-mobilenetv2-arch-arch-fig" title="Permalink to this image">¶</a></p>
+</div>
+<p>The reason to output nine channels is because there are nine possible labels for each pixel. Think of this as multi-classification where each pixel is being classified into nine classes.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># set number of model output channels to the number of classes (including background)</span>
@@ -1107,32 +1178,25 @@ Values in test partition:  {0, 1, 2, 3, 4, 5, 6, 7, 8}
 </div>
 </div>
 </div>
-<p>As mentioned, the encoder will be a pretrained MobileNetV2 model which is prepared and ready to use in tf.keras.applications. The encoder consists of specific outputs from intermediate layers in the model. Note that the encoder will be trained during the training process, as it would necessitate optical imagery if transfer learning were to be used, and in this example we are using spectral indices.</p>
+<p>As mentioned, the encoder will be an optionally pretrained MobileNetV2 model which is prepared and ready to use in tf.keras.applications. The encoder consists of specific outputs from intermediate layers in the model. Note that the encoder will be trained during the training process, as it would necessitate optical imagery if transfer learning were to be used, and in this example we are using spectral indices.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">base_model</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">keras</span><span class="o">.</span><span class="n">applications</span><span class="o">.</span><span class="n">MobileNetV2</span><span class="p">(</span><span class="n">input_shape</span><span class="o">=</span><span class="p">[</span><span class="mi">224</span><span class="p">,</span> <span class="mi">224</span><span class="p">,</span> <span class="mi">3</span><span class="p">],</span> <span class="n">include_top</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
 
 <span class="c1"># Use the activations of these layers</span>
 <span class="n">layer_names</span> <span class="o">=</span> <span class="p">[</span>
-    <span class="s1">&#39;block_1_expand_relu&#39;</span><span class="p">,</span>   <span class="c1"># 64x64</span>
-    <span class="s1">&#39;block_3_expand_relu&#39;</span><span class="p">,</span>   <span class="c1"># 32x32</span>
-    <span class="s1">&#39;block_6_expand_relu&#39;</span><span class="p">,</span>   <span class="c1"># 16x16</span>
-    <span class="s1">&#39;block_13_expand_relu&#39;</span><span class="p">,</span>  <span class="c1"># 8x8</span>
-    <span class="s1">&#39;block_16_project&#39;</span><span class="p">,</span>      <span class="c1"># 4x4</span>
+    <span class="s1">&#39;block_1_expand_relu&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;block_3_expand_relu&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;block_6_expand_relu&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;block_13_expand_relu&#39;</span><span class="p">,</span> 
+    <span class="s1">&#39;block_16_project&#39;</span><span class="p">,</span> 
 <span class="p">]</span>
 <span class="n">layers</span> <span class="o">=</span> <span class="p">[</span><span class="n">base_model</span><span class="o">.</span><span class="n">get_layer</span><span class="p">(</span><span class="n">name</span><span class="p">)</span><span class="o">.</span><span class="n">output</span> <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">layer_names</span><span class="p">]</span>
 
 <span class="c1"># Create the feature extraction model</span>
 <span class="n">down_stack</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">keras</span><span class="o">.</span><span class="n">Model</span><span class="p">(</span><span class="n">inputs</span><span class="o">=</span><span class="n">base_model</span><span class="o">.</span><span class="n">input</span><span class="p">,</span> <span class="n">outputs</span><span class="o">=</span><span class="n">layers</span><span class="p">)</span>
 
-<span class="n">down_stack</span><span class="o">.</span><span class="n">trainable</span> <span class="o">=</span> <span class="kc">True</span> <span class="c1">#False</span>
-</pre></div>
-</div>
-</div>
-<div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Downloading data from https://storage.googleapis.com/tensorflow/keras-applications/mobilenet_v2/mobilenet_v2_weights_tf_dim_ordering_tf_kernels_1.0_224_no_top.h5
-9412608/9406464 [==============================] - 0s 0us/step
-9420800/9406464 [==============================] - 0s 0us/step
+<span class="n">down_stack</span><span class="o">.</span><span class="n">trainable</span> <span class="o">=</span> <span class="kc">True</span> <span class="c1"># Set this to False if using pre-trained weights</span>
 </pre></div>
 </div>
 </div>
@@ -1141,10 +1205,10 @@ Values in test partition:  {0, 1, 2, 3, 4, 5, 6, 7, 8}
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">up_stack</span> <span class="o">=</span> <span class="p">[</span>
-    <span class="n">pix2pix</span><span class="o">.</span><span class="n">upsample</span><span class="p">(</span><span class="mi">512</span><span class="p">,</span> <span class="mi">3</span><span class="p">),</span>  <span class="c1"># 4x4 -&gt; 8x8</span>
-    <span class="n">pix2pix</span><span class="o">.</span><span class="n">upsample</span><span class="p">(</span><span class="mi">256</span><span class="p">,</span> <span class="mi">3</span><span class="p">),</span>  <span class="c1"># 8x8 -&gt; 16x16</span>
-    <span class="n">pix2pix</span><span class="o">.</span><span class="n">upsample</span><span class="p">(</span><span class="mi">128</span><span class="p">,</span> <span class="mi">3</span><span class="p">),</span>  <span class="c1"># 16x16 -&gt; 32x32</span>
-    <span class="n">pix2pix</span><span class="o">.</span><span class="n">upsample</span><span class="p">(</span><span class="mi">64</span><span class="p">,</span> <span class="mi">3</span><span class="p">),</span>   <span class="c1"># 32x32 -&gt; 64x64</span>
+    <span class="n">pix2pix</span><span class="o">.</span><span class="n">upsample</span><span class="p">(</span><span class="mi">512</span><span class="p">,</span> <span class="mi">3</span><span class="p">),</span>
+    <span class="n">pix2pix</span><span class="o">.</span><span class="n">upsample</span><span class="p">(</span><span class="mi">256</span><span class="p">,</span> <span class="mi">3</span><span class="p">),</span>
+    <span class="n">pix2pix</span><span class="o">.</span><span class="n">upsample</span><span class="p">(</span><span class="mi">128</span><span class="p">,</span> <span class="mi">3</span><span class="p">),</span>
+    <span class="n">pix2pix</span><span class="o">.</span><span class="n">upsample</span><span class="p">(</span><span class="mi">64</span><span class="p">,</span> <span class="mi">3</span><span class="p">),</span>
 <span class="p">]</span>
 </pre></div>
 </div>
@@ -1182,7 +1246,7 @@ Values in test partition:  {0, 1, 2, 3, 4, 5, 6, 7, 8}
 </div>
 <div class="section" id="train-the-model">
 <h3>Train the model<a class="headerlink" href="#train-the-model" title="Permalink to this headline">¶</a></h3>
-<p>Now, all that is left to do is to compile and train the model. The loss being used here is SparseCategoricalFocalLoss(from_logits=True). The reason to use this loss function is 1) because the network is trying to assign each pixel a label, just like multi-class prediction, and 2) because focal loss weights the relative contribution of each class by the distribution in the dataset to emphasize under-represented classes and dampen over-represented classes. In the true segmentation mask, each pixel has a value between 0-9. The network here is outputting ten channels. Essentially, each channel is trying to learn to predict a class, and losses.SparseCategoricalCrossentropy(from_logits=True) is the recommended loss for such a scenario. Using the output of the network, the label assigned to the pixel is the channel with the highest value. This is what the create_mask function is doing.</p>
+<p>Now, all that is left to do is to compile and train the model. The loss being used here is SparseCategoricalFocalLoss(from_logits=True). The reason to use this loss function is 1) because the network is trying to assign each pixel a label, just like multi-class prediction, and 2) because focal loss weights the relative contribution of each class by the distribution in the dataset to emphasize under-represented classes and dampen over-represented classes. In the true segmentation mask, each pixel has a value between 0-9. The network here is outputting ten channels. Essentially, each channel is trying to learn to predict a class, and SparseCategoricalFocalLoss(from_logits=True) is the recommended loss for such a scenario. Using the output of the network, the label assigned to the pixel is the channel with the highest value. This is what the create_mask function is doing.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">model</span> <span class="o">=</span> <span class="n">unet_model</span><span class="p">(</span><span class="n">OUTPUT_CHANNELS</span><span class="p">)</span>
@@ -1190,18 +1254,107 @@ Values in test partition:  {0, 1, 2, 3, 4, 5, 6, 7, 8}
 </div>
 </div>
 </div>
-<p>Notice there is a class imbalance problem in the dataset. For that reason, we will use a loss function called focal loss. It uses a parameter to weigh the losses contributed by each class to prevent bias towards the over-represented.</p>
-<p>We will measure our model’s performance during training by per-pixel accuracy.</p>
+<p>Check the compiled network</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="n">model</span><span class="o">.</span><span class="n">summary</span><span class="p">())</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Model: &quot;model_4&quot;
+__________________________________________________________________________________________________
+ Layer (type)                   Output Shape         Param #     Connected to                     
+==================================================================================================
+ input_5 (InputLayer)           [(None, 224, 224, 3  0           []                               
+                                )]                                                                
+                                                                                                  
+ model_3 (Functional)           [(None, 112, 112, 9  1841984     [&#39;input_5[0][0]&#39;]                
+                                6),                                                               
+                                 (None, 56, 56, 144                                               
+                                ),                                                                
+                                 (None, 28, 28, 192                                               
+                                ),                                                                
+                                 (None, 14, 14, 576                                               
+                                ),                                                                
+                                 (None, 7, 7, 320)]                                               
+                                                                                                  
+ sequential_4 (Sequential)      (None, 14, 14, 512)  1476608     [&#39;model_3[0][4]&#39;]                
+                                                                                                  
+ concatenate_8 (Concatenate)    (None, 14, 14, 1088  0           [&#39;sequential_4[0][0]&#39;,           
+                                )                                 &#39;model_3[0][3]&#39;]                
+                                                                                                  
+ sequential_5 (Sequential)      (None, 28, 28, 256)  2507776     [&#39;concatenate_8[0][0]&#39;]          
+                                                                                                  
+ concatenate_9 (Concatenate)    (None, 28, 28, 448)  0           [&#39;sequential_5[0][0]&#39;,           
+                                                                  &#39;model_3[0][2]&#39;]                
+                                                                                                  
+ sequential_6 (Sequential)      (None, 56, 56, 128)  516608      [&#39;concatenate_9[0][0]&#39;]          
+                                                                                                  
+ concatenate_10 (Concatenate)   (None, 56, 56, 272)  0           [&#39;sequential_6[0][0]&#39;,           
+                                                                  &#39;model_3[0][1]&#39;]                
+                                                                                                  
+ sequential_7 (Sequential)      (None, 112, 112, 64  156928      [&#39;concatenate_10[0][0]&#39;]         
+                                )                                                                 
+                                                                                                  
+ concatenate_11 (Concatenate)   (None, 112, 112, 16  0           [&#39;sequential_7[0][0]&#39;,           
+                                0)                                &#39;model_3[0][0]&#39;]                
+                                                                                                  
+ conv2d_transpose_10 (Conv2DTra  (None, 224, 224, 9)  12969      [&#39;concatenate_11[0][0]&#39;]         
+ nspose)                                                                                          
+                                                                                                  
+==================================================================================================
+Total params: 6,512,873
+Trainable params: 6,480,041
+Non-trainable params: 32,832
+__________________________________________________________________________________________________
+None
+</pre></div>
+</div>
+</div>
+</div>
+<p>Find the class weights for the focal loss function to help address class imbalance.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">train_df_para</span> <span class="o">=</span> <span class="n">gpd</span><span class="o">.</span><span class="n">read_file</span><span class="p">(</span><span class="s1">&#39;TerraBio_Para.geojson&#39;</span><span class="p">)</span>
+<span class="n">train_df_imaflora</span> <span class="o">=</span> <span class="n">gpd</span><span class="o">.</span><span class="n">read_file</span><span class="p">(</span><span class="s1">&#39;TerraBio_Imaflora.geojson&#39;</span><span class="p">)</span>
+<span class="n">train_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">([</span><span class="n">train_df_para</span><span class="p">,</span> <span class="n">train_df_imaflora</span><span class="p">])</span>
+<span class="n">inv_freq</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="mi">1</span><span class="o">/</span><span class="p">(</span><span class="n">train_df</span><span class="o">.</span><span class="n">landcover</span><span class="o">.</span><span class="n">value_counts</span><span class="p">()</span><span class="o">/</span><span class="nb">len</span><span class="p">(</span><span class="n">train_df</span><span class="p">)))</span>
+<span class="n">inv_freq</span> <span class="o">=</span> <span class="p">[</span><span class="mf">0.</span><span class="p">,</span><span class="o">*</span><span class="n">inv_freq</span><span class="p">]</span>
+<span class="n">class_weights</span> <span class="o">=</span> <span class="p">{</span><span class="mi">0</span> <span class="p">:</span> <span class="n">inv_freq</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="mi">1</span><span class="p">:</span> <span class="n">inv_freq</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="mi">2</span><span class="p">:</span> <span class="n">inv_freq</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span> <span class="mi">3</span><span class="p">:</span> <span class="n">inv_freq</span><span class="p">[</span><span class="mi">3</span><span class="p">],</span> 
+                <span class="mi">4</span><span class="p">:</span> <span class="n">inv_freq</span><span class="p">[</span><span class="mi">4</span><span class="p">],</span> <span class="mi">5</span><span class="p">:</span> <span class="n">inv_freq</span><span class="p">[</span><span class="mi">5</span><span class="p">],</span> <span class="mi">6</span><span class="p">:</span> <span class="n">inv_freq</span><span class="p">[</span><span class="mi">6</span><span class="p">],</span>
+                <span class="mi">7</span><span class="p">:</span> <span class="n">inv_freq</span><span class="p">[</span><span class="mi">7</span><span class="p">],</span> <span class="mi">8</span><span class="p">:</span> <span class="n">inv_freq</span><span class="p">[</span><span class="mi">8</span><span class="p">]}</span>
+
+<span class="k">def</span> <span class="nf">NormalizeData</span><span class="p">(</span><span class="n">data</span><span class="p">):</span>
+    <span class="k">return</span> <span class="p">(</span><span class="n">data</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="n">data</span><span class="p">))</span> <span class="o">/</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">data</span><span class="p">)</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="n">data</span><span class="p">))</span>
+
+<span class="n">class_weights_list</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">class_weights</span><span class="o">.</span><span class="n">values</span><span class="p">())</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;class weights: &quot;</span><span class="p">,</span> <span class="n">class_weights_list</span><span class="p">)</span>
+<span class="n">scaled_class_weights</span> <span class="o">=</span> <span class="n">NormalizeData</span><span class="p">(</span><span class="n">class_weights_list</span><span class="p">)</span>
+<span class="n">scaled_class_weights_list</span> <span class="o">=</span> <span class="n">scaled_class_weights</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span> 
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;scaled class weights: &quot;</span><span class="p">,</span> <span class="n">scaled_class_weights_list</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>class weights:  [0.0, 3.3813084112149534, 4.444717444717445, 6.7, 8.222727272727273, 10.049999999999999, 10.832335329341317, 95.21052631578947, 164.45454545454544]
+scaled class weights:  [0.0, 0.020560747663551406, 0.027027027027027032, 0.040740740740740744, 0.05, 0.06111111111111111, 0.0658682634730539, 0.5789473684210527, 1.0]
+</pre></div>
+</div>
+</div>
+</div>
+<p>In the SparseCategoricalFocalLoss function, gamma is the focusing parameter. Higher values of gamma make dominant, or “easy to classify”, examples contribute less to the loss relative to rare, or “difficult to classify”, examples. The value for gamma must be non-negative. A gamma value of 2 is considered empirically best for most cases. You can experiment by adding the class weights as a paramter to SparseCategoricalFocalLoss, e.g. <code class="docutils literal notranslate"><span class="pre">SparseCategoricalFocalLoss(gamma=2,</span> <span class="pre">class_weight=scaled_class_weights_list,</span> <span class="pre">from_logits=True)</span></code>. Logits are the un-normalized log probabilities of each class per pixel, which we scale to a range of 0-1 and take the highest probability to decide the final class of the pixel.</p>
+<p>We will measure our model’s performance during training by per-pixel accuracy. Adam is a “best of class” optimizer widely used in classification models, and the learning rate was selected from experimentation across several values.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">model</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="n">optimizer</span><span class="o">=</span><span class="n">tf</span><span class="o">.</span><span class="n">keras</span><span class="o">.</span><span class="n">optimizers</span><span class="o">.</span><span class="n">Adam</span><span class="p">(</span><span class="n">learning_rate</span><span class="o">=</span><span class="mf">0.00001</span><span class="p">),</span>
-              <span class="n">loss</span><span class="o">=</span><span class="n">SparseCategoricalFocalLoss</span><span class="p">(</span><span class="n">gamma</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">from_logits</span><span class="o">=</span><span class="kc">True</span><span class="p">),</span>
+              <span class="n">loss</span><span class="o">=</span><span class="n">SparseCategoricalFocalLoss</span><span class="p">(</span><span class="n">gamma</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">from_logits</span><span class="o">=</span><span class="kc">True</span><span class="p">),</span> 
               <span class="n">metrics</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;accuracy&#39;</span><span class="p">])</span>
 </pre></div>
 </div>
 </div>
 </div>
-<p>Let’s try out the pre-trained model to see what it predicts before training.</p>
+<p>Let’s try out the un/pre-trained model to see what it predicts before training.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">create_mask</span><span class="p">(</span><span class="n">pred_mask</span><span class="p">):</span>
@@ -1234,7 +1387,7 @@ Values in test partition:  {0, 1, 2, 3, 4, 5, 6, 7, 8}
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="../_images/Lesson3_deeplearning_crop_segmentation_60_0.png" src="../_images/Lesson3_deeplearning_crop_segmentation_60_0.png" />
+<img alt="../_images/Lesson3_deeplearning_crop_segmentation_65_0.png" src="../_images/Lesson3_deeplearning_crop_segmentation_65_0.png" />
 </div>
 </div>
 <p>Let’s observe how the model improves while it is training. To accomplish this task, a callback function is defined below to plot a validation image and it’s predicted mask after each epoch.</p>
@@ -1251,7 +1404,7 @@ Values in test partition:  {0, 1, 2, 3, 4, 5, 6, 7, 8}
 </div>
 <div class="section" id="fit-and-view">
 <h4>Fit and View<a class="headerlink" href="#fit-and-view" title="Permalink to this headline">¶</a></h4>
-<p>Now we will actually train the model for 100 epochs (full cycles through the training dataset), visualizing predictions on a validation image after each epoch.</p>
+<p>Now we will actually train the model for 50 epochs (full cycles through the training dataset), visualizing predictions on a validation image after each epoch.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">EPOCHS</span> <span class="o">=</span> <span class="mi">50</span>
@@ -1266,11 +1419,11 @@ Values in test partition:  {0, 1, 2, 3, 4, 5, 6, 7, 8}
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="../_images/Lesson3_deeplearning_crop_segmentation_64_0.png" src="../_images/Lesson3_deeplearning_crop_segmentation_64_0.png" />
+<img alt="../_images/Lesson3_deeplearning_crop_segmentation_69_0.png" src="../_images/Lesson3_deeplearning_crop_segmentation_69_0.png" />
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Sample Prediction after epoch 50
 
 
-395/395 [==============================] - 41s 105ms/step - loss: 0.0208 - accuracy: 0.9865 - val_loss: 0.0593 - val_accuracy: 0.9700
+395/395 [==============================] - 42s 106ms/step - loss: 0.0265 - accuracy: 0.9822 - val_loss: 0.0518 - val_accuracy: 0.9711
 </pre></div>
 </div>
 </div>
@@ -1296,7 +1449,7 @@ Values in test partition:  {0, 1, 2, 3, 4, 5, 6, 7, 8}
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="../_images/Lesson3_deeplearning_crop_segmentation_66_0.png" src="../_images/Lesson3_deeplearning_crop_segmentation_66_0.png" />
+<img alt="../_images/Lesson3_deeplearning_crop_segmentation_71_0.png" src="../_images/Lesson3_deeplearning_crop_segmentation_71_0.png" />
 </div>
 </div>
 </div>
@@ -1306,7 +1459,7 @@ Values in test partition:  {0, 1, 2, 3, 4, 5, 6, 7, 8}
 <p>We will export the final model weights.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">save_model_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">root_dir</span><span class="p">,</span><span class="s1">&#39;indices_model_out_lr00001_batchs8_ep50_nopretrainweights_v2/&#39;</span><span class="p">)</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">save_model_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">root_dir</span><span class="p">,</span><span class="s1">&#39;indices_model_out_lr00001_batchs8_ep50_nopretrain_focalloss/&#39;</span><span class="p">)</span>
 <span class="k">if</span> <span class="p">(</span><span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isdir</span><span class="p">(</span><span class="n">save_model_path</span><span class="p">)):</span>
   <span class="n">os</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="n">save_model_path</span><span class="p">)</span>
 <span class="n">model</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="n">save_model_path</span><span class="p">)</span>
@@ -1314,7 +1467,7 @@ Values in test partition:  {0, 1, 2, 3, 4, 5, 6, 7, 8}
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>INFO:tensorflow:Assets written to: /content/gdrive/My Drive/servir-tf/terrabio/indices_model_out_lr00001_batchs8_ep50_nopretrainweights_v2/assets
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>INFO:tensorflow:Assets written to: /content/gdrive/My Drive/servir-tf-devseed/indices_model_out_lr00001_batchs8_ep50_nopretrain_focalloss/assets
 </pre></div>
 </div>
 <div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>/usr/local/lib/python3.7/dist-packages/keras/engine/functional.py:1410: CustomMaskWarning: Custom mask layers require a config and must override get_config. When loading, the custom mask layer must be passed to the custom_objects argument.
@@ -1396,7 +1549,7 @@ Values in test partition:  {0, 1, 2, 3, 4, 5, 6, 7, 8}
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="../_images/Lesson3_deeplearning_crop_segmentation_74_0.png" src="../_images/Lesson3_deeplearning_crop_segmentation_74_0.png" />
+<img alt="../_images/Lesson3_deeplearning_crop_segmentation_79_0.png" src="../_images/Lesson3_deeplearning_crop_segmentation_79_0.png" />
 </div>
 </div>
 </div>
@@ -1404,7 +1557,7 @@ Values in test partition:  {0, 1, 2, 3, 4, 5, 6, 7, 8}
 <h4>Multi image example<a class="headerlink" href="#multi-image-example" title="Permalink to this headline">¶</a></h4>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">tiled_prediction_dir</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">root_dir</span><span class="p">,</span><span class="s1">&#39;predictions_test/&#39;</span><span class="p">)</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">tiled_prediction_dir</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">root_dir</span><span class="p">,</span><span class="s1">&#39;predictions_test_focal_loss/&#39;</span><span class="p">)</span>
 <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">tiled_prediction_dir</span><span class="p">):</span>
     <span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="n">tiled_prediction_dir</span><span class="p">)</span>
     
@@ -1419,7 +1572,7 @@ Values in test partition:  {0, 1, 2, 3, 4, 5, 6, 7, 8}
                                    <span class="n">foreground_list_y</span><span class="p">[</span><span class="n">img_num</span><span class="p">:</span><span class="n">img_num</span><span class="o">+</span><span class="mi">1</span><span class="p">],</span>
                                    <span class="n">preproc_fn</span><span class="o">=</span><span class="n">test_preprocessing_fn</span><span class="p">,</span>
                                    <span class="n">batch_size</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
-                                   <span class="n">shuffle</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+                                   <span class="n">shuffle</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
     <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span> 
       <span class="nb">print</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">))</span>
 
@@ -1449,261 +1602,261 @@ Values in test partition:  {0, 1, 2, 3, 4, 5, 6, 7, 8}
     <span class="n">filename_split</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">splitext</span><span class="p">(</span><span class="n">foreground_list_x</span><span class="p">[</span><span class="n">img_num</span><span class="p">])</span> 
     <span class="n">filename_zero</span><span class="p">,</span> <span class="n">fileext</span> <span class="o">=</span> <span class="n">filename_split</span> 
     <span class="n">basename</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">basename</span><span class="p">(</span><span class="n">filename_zero</span><span class="p">)</span> 
-    <span class="n">tf</span><span class="o">.</span><span class="n">keras</span><span class="o">.</span><span class="n">preprocessing</span><span class="o">.</span><span class="n">image</span><span class="o">.</span><span class="n">save_img</span><span class="p">(</span><span class="n">tiled_prediction_dir</span><span class="o">+</span><span class="s1">&#39;/&#39;</span><span class="o">+</span><span class="n">basename</span><span class="o">+</span><span class="s2">&quot;.png&quot;</span><span class="p">,</span><span class="n">pred_mask</span><span class="p">)</span>    
+    <span class="n">tf</span><span class="o">.</span><span class="n">keras</span><span class="o">.</span><span class="n">preprocessing</span><span class="o">.</span><span class="n">image</span><span class="o">.</span><span class="n">save_img</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">tiled_prediction_dir</span><span class="p">,</span> <span class="s2">&quot;</span><span class="si">{}</span><span class="s2">.png&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">basename</span><span class="p">)),</span><span class="n">pred_mask</span><span class="p">)</span>    
 </pre></div>
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[&#39;/content/gdrive/My Drive/servir-tf/terrabio/tiled/labels/tile_terrabio_21138.png&#39;]
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[&#39;/content/gdrive/My Drive/servir-tf-devseed/labels/tile_terrabio_21138.png&#39;]
 [0 2 5 6 7]
 </pre></div>
 </div>
-<img alt="../_images/Lesson3_deeplearning_crop_segmentation_76_1.png" src="../_images/Lesson3_deeplearning_crop_segmentation_76_1.png" />
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[&#39;/content/gdrive/My Drive/servir-tf/terrabio/tiled/labels/tile_terrabio_21426.png&#39;]
+<img alt="../_images/Lesson3_deeplearning_crop_segmentation_81_1.png" src="../_images/Lesson3_deeplearning_crop_segmentation_81_1.png" />
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[&#39;/content/gdrive/My Drive/servir-tf-devseed/labels/tile_terrabio_21426.png&#39;]
 [0 5]
 </pre></div>
 </div>
-<img alt="../_images/Lesson3_deeplearning_crop_segmentation_76_3.png" src="../_images/Lesson3_deeplearning_crop_segmentation_76_3.png" />
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[&#39;/content/gdrive/My Drive/servir-tf/terrabio/tiled/labels/tile_terrabio_15673.png&#39;]
+<img alt="../_images/Lesson3_deeplearning_crop_segmentation_81_3.png" src="../_images/Lesson3_deeplearning_crop_segmentation_81_3.png" />
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[&#39;/content/gdrive/My Drive/servir-tf-devseed/labels/tile_terrabio_15673.png&#39;]
 [0 2 5]
 </pre></div>
 </div>
-<img alt="../_images/Lesson3_deeplearning_crop_segmentation_76_5.png" src="../_images/Lesson3_deeplearning_crop_segmentation_76_5.png" />
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[&#39;/content/gdrive/My Drive/servir-tf/terrabio/tiled/labels/tile_terrabio_32990.png&#39;]
+<img alt="../_images/Lesson3_deeplearning_crop_segmentation_81_5.png" src="../_images/Lesson3_deeplearning_crop_segmentation_81_5.png" />
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[&#39;/content/gdrive/My Drive/servir-tf-devseed/labels/tile_terrabio_32990.png&#39;]
 [0 5]
 </pre></div>
 </div>
-<img alt="../_images/Lesson3_deeplearning_crop_segmentation_76_7.png" src="../_images/Lesson3_deeplearning_crop_segmentation_76_7.png" />
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[&#39;/content/gdrive/My Drive/servir-tf/terrabio/tiled/labels/tile_terrabio_15379.png&#39;]
+<img alt="../_images/Lesson3_deeplearning_crop_segmentation_81_7.png" src="../_images/Lesson3_deeplearning_crop_segmentation_81_7.png" />
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[&#39;/content/gdrive/My Drive/servir-tf-devseed/labels/tile_terrabio_15379.png&#39;]
 [0 2]
 </pre></div>
 </div>
-<img alt="../_images/Lesson3_deeplearning_crop_segmentation_76_9.png" src="../_images/Lesson3_deeplearning_crop_segmentation_76_9.png" />
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[&#39;/content/gdrive/My Drive/servir-tf/terrabio/tiled/labels/tile_terrabio_10608.png&#39;]
+<img alt="../_images/Lesson3_deeplearning_crop_segmentation_81_9.png" src="../_images/Lesson3_deeplearning_crop_segmentation_81_9.png" />
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[&#39;/content/gdrive/My Drive/servir-tf-devseed/labels/tile_terrabio_10608.png&#39;]
 [0 7]
 </pre></div>
 </div>
-<img alt="../_images/Lesson3_deeplearning_crop_segmentation_76_11.png" src="../_images/Lesson3_deeplearning_crop_segmentation_76_11.png" />
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[&#39;/content/gdrive/My Drive/servir-tf/terrabio/tiled/labels/tile_terrabio_20090.png&#39;]
+<img alt="../_images/Lesson3_deeplearning_crop_segmentation_81_11.png" src="../_images/Lesson3_deeplearning_crop_segmentation_81_11.png" />
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[&#39;/content/gdrive/My Drive/servir-tf-devseed/labels/tile_terrabio_20090.png&#39;]
 [0 1 5]
 </pre></div>
 </div>
-<img alt="../_images/Lesson3_deeplearning_crop_segmentation_76_13.png" src="../_images/Lesson3_deeplearning_crop_segmentation_76_13.png" />
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[&#39;/content/gdrive/My Drive/servir-tf/terrabio/tiled/labels/tile_terrabio_15110.png&#39;]
+<img alt="../_images/Lesson3_deeplearning_crop_segmentation_81_13.png" src="../_images/Lesson3_deeplearning_crop_segmentation_81_13.png" />
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[&#39;/content/gdrive/My Drive/servir-tf-devseed/labels/tile_terrabio_15110.png&#39;]
 [0 1 2 5]
 </pre></div>
 </div>
-<img alt="../_images/Lesson3_deeplearning_crop_segmentation_76_15.png" src="../_images/Lesson3_deeplearning_crop_segmentation_76_15.png" />
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[&#39;/content/gdrive/My Drive/servir-tf/terrabio/tiled/labels/tile_terrabio_19112.png&#39;]
+<img alt="../_images/Lesson3_deeplearning_crop_segmentation_81_15.png" src="../_images/Lesson3_deeplearning_crop_segmentation_81_15.png" />
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[&#39;/content/gdrive/My Drive/servir-tf-devseed/labels/tile_terrabio_19112.png&#39;]
 [0 6]
 </pre></div>
 </div>
-<img alt="../_images/Lesson3_deeplearning_crop_segmentation_76_17.png" src="../_images/Lesson3_deeplearning_crop_segmentation_76_17.png" />
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[&#39;/content/gdrive/My Drive/servir-tf/terrabio/tiled/labels/tile_terrabio_23053.png&#39;]
+<img alt="../_images/Lesson3_deeplearning_crop_segmentation_81_17.png" src="../_images/Lesson3_deeplearning_crop_segmentation_81_17.png" />
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[&#39;/content/gdrive/My Drive/servir-tf-devseed/labels/tile_terrabio_23053.png&#39;]
 [0 2 3 5 6]
 </pre></div>
 </div>
-<img alt="../_images/Lesson3_deeplearning_crop_segmentation_76_19.png" src="../_images/Lesson3_deeplearning_crop_segmentation_76_19.png" />
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[&#39;/content/gdrive/My Drive/servir-tf/terrabio/tiled/labels/tile_terrabio_20959.png&#39;]
+<img alt="../_images/Lesson3_deeplearning_crop_segmentation_81_19.png" src="../_images/Lesson3_deeplearning_crop_segmentation_81_19.png" />
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[&#39;/content/gdrive/My Drive/servir-tf-devseed/labels/tile_terrabio_20959.png&#39;]
 [0 2]
 </pre></div>
 </div>
-<img alt="../_images/Lesson3_deeplearning_crop_segmentation_76_21.png" src="../_images/Lesson3_deeplearning_crop_segmentation_76_21.png" />
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[&#39;/content/gdrive/My Drive/servir-tf/terrabio/tiled/labels/tile_terrabio_31280.png&#39;]
+<img alt="../_images/Lesson3_deeplearning_crop_segmentation_81_21.png" src="../_images/Lesson3_deeplearning_crop_segmentation_81_21.png" />
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[&#39;/content/gdrive/My Drive/servir-tf-devseed/labels/tile_terrabio_31280.png&#39;]
 [0 5]
 </pre></div>
 </div>
-<img alt="../_images/Lesson3_deeplearning_crop_segmentation_76_23.png" src="../_images/Lesson3_deeplearning_crop_segmentation_76_23.png" />
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[&#39;/content/gdrive/My Drive/servir-tf/terrabio/tiled/labels/tile_terrabio_21393.png&#39;]
+<img alt="../_images/Lesson3_deeplearning_crop_segmentation_81_23.png" src="../_images/Lesson3_deeplearning_crop_segmentation_81_23.png" />
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[&#39;/content/gdrive/My Drive/servir-tf-devseed/labels/tile_terrabio_21393.png&#39;]
 [0 2 5 6]
 </pre></div>
 </div>
-<img alt="../_images/Lesson3_deeplearning_crop_segmentation_76_25.png" src="../_images/Lesson3_deeplearning_crop_segmentation_76_25.png" />
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[&#39;/content/gdrive/My Drive/servir-tf/terrabio/tiled/labels/tile_terrabio_8358.png&#39;]
+<img alt="../_images/Lesson3_deeplearning_crop_segmentation_81_25.png" src="../_images/Lesson3_deeplearning_crop_segmentation_81_25.png" />
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[&#39;/content/gdrive/My Drive/servir-tf-devseed/labels/tile_terrabio_8358.png&#39;]
 [0 7]
 </pre></div>
 </div>
-<img alt="../_images/Lesson3_deeplearning_crop_segmentation_76_27.png" src="../_images/Lesson3_deeplearning_crop_segmentation_76_27.png" />
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[&#39;/content/gdrive/My Drive/servir-tf/terrabio/tiled/labels/tile_terrabio_32988.png&#39;]
+<img alt="../_images/Lesson3_deeplearning_crop_segmentation_81_27.png" src="../_images/Lesson3_deeplearning_crop_segmentation_81_27.png" />
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[&#39;/content/gdrive/My Drive/servir-tf-devseed/labels/tile_terrabio_32988.png&#39;]
 [0 5]
 </pre></div>
 </div>
-<img alt="../_images/Lesson3_deeplearning_crop_segmentation_76_29.png" src="../_images/Lesson3_deeplearning_crop_segmentation_76_29.png" />
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[&#39;/content/gdrive/My Drive/servir-tf/terrabio/tiled/labels/tile_terrabio_17162.png&#39;]
+<img alt="../_images/Lesson3_deeplearning_crop_segmentation_81_29.png" src="../_images/Lesson3_deeplearning_crop_segmentation_81_29.png" />
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[&#39;/content/gdrive/My Drive/servir-tf-devseed/labels/tile_terrabio_17162.png&#39;]
 [0 2 5]
 </pre></div>
 </div>
-<img alt="../_images/Lesson3_deeplearning_crop_segmentation_76_31.png" src="../_images/Lesson3_deeplearning_crop_segmentation_76_31.png" />
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[&#39;/content/gdrive/My Drive/servir-tf/terrabio/tiled/labels/tile_terrabio_21140.png&#39;]
+<img alt="../_images/Lesson3_deeplearning_crop_segmentation_81_31.png" src="../_images/Lesson3_deeplearning_crop_segmentation_81_31.png" />
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[&#39;/content/gdrive/My Drive/servir-tf-devseed/labels/tile_terrabio_21140.png&#39;]
 [0 2 5]
 </pre></div>
 </div>
-<img alt="../_images/Lesson3_deeplearning_crop_segmentation_76_33.png" src="../_images/Lesson3_deeplearning_crop_segmentation_76_33.png" />
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[&#39;/content/gdrive/My Drive/servir-tf/terrabio/tiled/labels/tile_terrabio_35845.png&#39;]
+<img alt="../_images/Lesson3_deeplearning_crop_segmentation_81_33.png" src="../_images/Lesson3_deeplearning_crop_segmentation_81_33.png" />
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[&#39;/content/gdrive/My Drive/servir-tf-devseed/labels/tile_terrabio_35845.png&#39;]
 [0 6]
 </pre></div>
 </div>
-<img alt="../_images/Lesson3_deeplearning_crop_segmentation_76_35.png" src="../_images/Lesson3_deeplearning_crop_segmentation_76_35.png" />
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[&#39;/content/gdrive/My Drive/servir-tf/terrabio/tiled/labels/tile_terrabio_14904.png&#39;]
+<img alt="../_images/Lesson3_deeplearning_crop_segmentation_81_35.png" src="../_images/Lesson3_deeplearning_crop_segmentation_81_35.png" />
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[&#39;/content/gdrive/My Drive/servir-tf-devseed/labels/tile_terrabio_14904.png&#39;]
 [0 2 5 6]
 </pre></div>
 </div>
-<img alt="../_images/Lesson3_deeplearning_crop_segmentation_76_37.png" src="../_images/Lesson3_deeplearning_crop_segmentation_76_37.png" />
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[&#39;/content/gdrive/My Drive/servir-tf/terrabio/tiled/labels/tile_terrabio_18212.png&#39;]
+<img alt="../_images/Lesson3_deeplearning_crop_segmentation_81_37.png" src="../_images/Lesson3_deeplearning_crop_segmentation_81_37.png" />
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[&#39;/content/gdrive/My Drive/servir-tf-devseed/labels/tile_terrabio_18212.png&#39;]
 [0 6]
 </pre></div>
 </div>
-<img alt="../_images/Lesson3_deeplearning_crop_segmentation_76_39.png" src="../_images/Lesson3_deeplearning_crop_segmentation_76_39.png" />
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[&#39;/content/gdrive/My Drive/servir-tf/terrabio/tiled/labels/tile_terrabio_20660.png&#39;]
+<img alt="../_images/Lesson3_deeplearning_crop_segmentation_81_39.png" src="../_images/Lesson3_deeplearning_crop_segmentation_81_39.png" />
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[&#39;/content/gdrive/My Drive/servir-tf-devseed/labels/tile_terrabio_20660.png&#39;]
 [0 5 7]
 </pre></div>
 </div>
-<img alt="../_images/Lesson3_deeplearning_crop_segmentation_76_41.png" src="../_images/Lesson3_deeplearning_crop_segmentation_76_41.png" />
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[&#39;/content/gdrive/My Drive/servir-tf/terrabio/tiled/labels/tile_terrabio_13560.png&#39;]
+<img alt="../_images/Lesson3_deeplearning_crop_segmentation_81_41.png" src="../_images/Lesson3_deeplearning_crop_segmentation_81_41.png" />
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[&#39;/content/gdrive/My Drive/servir-tf-devseed/labels/tile_terrabio_13560.png&#39;]
 [0 7]
 </pre></div>
 </div>
-<img alt="../_images/Lesson3_deeplearning_crop_segmentation_76_43.png" src="../_images/Lesson3_deeplearning_crop_segmentation_76_43.png" />
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[&#39;/content/gdrive/My Drive/servir-tf/terrabio/tiled/labels/tile_terrabio_23200.png&#39;]
+<img alt="../_images/Lesson3_deeplearning_crop_segmentation_81_43.png" src="../_images/Lesson3_deeplearning_crop_segmentation_81_43.png" />
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[&#39;/content/gdrive/My Drive/servir-tf-devseed/labels/tile_terrabio_23200.png&#39;]
 [0 2 3 5 6 8]
 </pre></div>
 </div>
-<img alt="../_images/Lesson3_deeplearning_crop_segmentation_76_45.png" src="../_images/Lesson3_deeplearning_crop_segmentation_76_45.png" />
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[&#39;/content/gdrive/My Drive/servir-tf/terrabio/tiled/labels/tile_terrabio_15078.png&#39;]
+<img alt="../_images/Lesson3_deeplearning_crop_segmentation_81_45.png" src="../_images/Lesson3_deeplearning_crop_segmentation_81_45.png" />
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[&#39;/content/gdrive/My Drive/servir-tf-devseed/labels/tile_terrabio_15078.png&#39;]
 [0 5]
 </pre></div>
 </div>
-<img alt="../_images/Lesson3_deeplearning_crop_segmentation_76_47.png" src="../_images/Lesson3_deeplearning_crop_segmentation_76_47.png" />
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[&#39;/content/gdrive/My Drive/servir-tf/terrabio/tiled/labels/tile_terrabio_22032.png&#39;]
+<img alt="../_images/Lesson3_deeplearning_crop_segmentation_81_47.png" src="../_images/Lesson3_deeplearning_crop_segmentation_81_47.png" />
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[&#39;/content/gdrive/My Drive/servir-tf-devseed/labels/tile_terrabio_22032.png&#39;]
 [0 7]
 </pre></div>
 </div>
-<img alt="../_images/Lesson3_deeplearning_crop_segmentation_76_49.png" src="../_images/Lesson3_deeplearning_crop_segmentation_76_49.png" />
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[&#39;/content/gdrive/My Drive/servir-tf/terrabio/tiled/labels/tile_terrabio_32381.png&#39;]
+<img alt="../_images/Lesson3_deeplearning_crop_segmentation_81_49.png" src="../_images/Lesson3_deeplearning_crop_segmentation_81_49.png" />
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[&#39;/content/gdrive/My Drive/servir-tf-devseed/labels/tile_terrabio_32381.png&#39;]
 [0 1 4]
 </pre></div>
 </div>
-<img alt="../_images/Lesson3_deeplearning_crop_segmentation_76_51.png" src="../_images/Lesson3_deeplearning_crop_segmentation_76_51.png" />
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[&#39;/content/gdrive/My Drive/servir-tf/terrabio/tiled/labels/tile_terrabio_24852.png&#39;]
+<img alt="../_images/Lesson3_deeplearning_crop_segmentation_81_51.png" src="../_images/Lesson3_deeplearning_crop_segmentation_81_51.png" />
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[&#39;/content/gdrive/My Drive/servir-tf-devseed/labels/tile_terrabio_24852.png&#39;]
 [0 2 5]
 </pre></div>
 </div>
-<img alt="../_images/Lesson3_deeplearning_crop_segmentation_76_53.png" src="../_images/Lesson3_deeplearning_crop_segmentation_76_53.png" />
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[&#39;/content/gdrive/My Drive/servir-tf/terrabio/tiled/labels/tile_terrabio_6242.png&#39;]
+<img alt="../_images/Lesson3_deeplearning_crop_segmentation_81_53.png" src="../_images/Lesson3_deeplearning_crop_segmentation_81_53.png" />
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[&#39;/content/gdrive/My Drive/servir-tf-devseed/labels/tile_terrabio_6242.png&#39;]
 [0 5]
 </pre></div>
 </div>
-<img alt="../_images/Lesson3_deeplearning_crop_segmentation_76_55.png" src="../_images/Lesson3_deeplearning_crop_segmentation_76_55.png" />
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[&#39;/content/gdrive/My Drive/servir-tf/terrabio/tiled/labels/tile_terrabio_28141.png&#39;]
+<img alt="../_images/Lesson3_deeplearning_crop_segmentation_81_55.png" src="../_images/Lesson3_deeplearning_crop_segmentation_81_55.png" />
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[&#39;/content/gdrive/My Drive/servir-tf-devseed/labels/tile_terrabio_28141.png&#39;]
 [0 2]
 </pre></div>
 </div>
-<img alt="../_images/Lesson3_deeplearning_crop_segmentation_76_57.png" src="../_images/Lesson3_deeplearning_crop_segmentation_76_57.png" />
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[&#39;/content/gdrive/My Drive/servir-tf/terrabio/tiled/labels/tile_terrabio_23057.png&#39;]
+<img alt="../_images/Lesson3_deeplearning_crop_segmentation_81_57.png" src="../_images/Lesson3_deeplearning_crop_segmentation_81_57.png" />
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[&#39;/content/gdrive/My Drive/servir-tf-devseed/labels/tile_terrabio_23057.png&#39;]
 [0 2]
 </pre></div>
 </div>
-<img alt="../_images/Lesson3_deeplearning_crop_segmentation_76_59.png" src="../_images/Lesson3_deeplearning_crop_segmentation_76_59.png" />
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[&#39;/content/gdrive/My Drive/servir-tf/terrabio/tiled/labels/tile_terrabio_17507.png&#39;]
+<img alt="../_images/Lesson3_deeplearning_crop_segmentation_81_59.png" src="../_images/Lesson3_deeplearning_crop_segmentation_81_59.png" />
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[&#39;/content/gdrive/My Drive/servir-tf-devseed/labels/tile_terrabio_17507.png&#39;]
 [0 7]
 </pre></div>
 </div>
-<img alt="../_images/Lesson3_deeplearning_crop_segmentation_76_61.png" src="../_images/Lesson3_deeplearning_crop_segmentation_76_61.png" />
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[&#39;/content/gdrive/My Drive/servir-tf/terrabio/tiled/labels/tile_terrabio_20365.png&#39;]
+<img alt="../_images/Lesson3_deeplearning_crop_segmentation_81_61.png" src="../_images/Lesson3_deeplearning_crop_segmentation_81_61.png" />
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[&#39;/content/gdrive/My Drive/servir-tf-devseed/labels/tile_terrabio_20365.png&#39;]
 [0 2 5 6]
 </pre></div>
 </div>
-<img alt="../_images/Lesson3_deeplearning_crop_segmentation_76_63.png" src="../_images/Lesson3_deeplearning_crop_segmentation_76_63.png" />
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[&#39;/content/gdrive/My Drive/servir-tf/terrabio/tiled/labels/tile_terrabio_32844.png&#39;]
+<img alt="../_images/Lesson3_deeplearning_crop_segmentation_81_63.png" src="../_images/Lesson3_deeplearning_crop_segmentation_81_63.png" />
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[&#39;/content/gdrive/My Drive/servir-tf-devseed/labels/tile_terrabio_32844.png&#39;]
 [0 5 7]
 </pre></div>
 </div>
-<img alt="../_images/Lesson3_deeplearning_crop_segmentation_76_65.png" src="../_images/Lesson3_deeplearning_crop_segmentation_76_65.png" />
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[&#39;/content/gdrive/My Drive/servir-tf/terrabio/tiled/labels/tile_terrabio_18206.png&#39;]
+<img alt="../_images/Lesson3_deeplearning_crop_segmentation_81_65.png" src="../_images/Lesson3_deeplearning_crop_segmentation_81_65.png" />
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[&#39;/content/gdrive/My Drive/servir-tf-devseed/labels/tile_terrabio_18206.png&#39;]
 [0 5]
 </pre></div>
 </div>
-<img alt="../_images/Lesson3_deeplearning_crop_segmentation_76_67.png" src="../_images/Lesson3_deeplearning_crop_segmentation_76_67.png" />
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[&#39;/content/gdrive/My Drive/servir-tf/terrabio/tiled/labels/tile_terrabio_22024.png&#39;]
+<img alt="../_images/Lesson3_deeplearning_crop_segmentation_81_67.png" src="../_images/Lesson3_deeplearning_crop_segmentation_81_67.png" />
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[&#39;/content/gdrive/My Drive/servir-tf-devseed/labels/tile_terrabio_22024.png&#39;]
 [0 7]
 </pre></div>
 </div>
-<img alt="../_images/Lesson3_deeplearning_crop_segmentation_76_69.png" src="../_images/Lesson3_deeplearning_crop_segmentation_76_69.png" />
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[&#39;/content/gdrive/My Drive/servir-tf/terrabio/tiled/labels/tile_terrabio_16287.png&#39;]
+<img alt="../_images/Lesson3_deeplearning_crop_segmentation_81_69.png" src="../_images/Lesson3_deeplearning_crop_segmentation_81_69.png" />
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[&#39;/content/gdrive/My Drive/servir-tf-devseed/labels/tile_terrabio_16287.png&#39;]
 [0 6]
 </pre></div>
 </div>
-<img alt="../_images/Lesson3_deeplearning_crop_segmentation_76_71.png" src="../_images/Lesson3_deeplearning_crop_segmentation_76_71.png" />
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[&#39;/content/gdrive/My Drive/servir-tf/terrabio/tiled/labels/tile_terrabio_34480.png&#39;]
+<img alt="../_images/Lesson3_deeplearning_crop_segmentation_81_71.png" src="../_images/Lesson3_deeplearning_crop_segmentation_81_71.png" />
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[&#39;/content/gdrive/My Drive/servir-tf-devseed/labels/tile_terrabio_34480.png&#39;]
 [0 6]
 </pre></div>
 </div>
-<img alt="../_images/Lesson3_deeplearning_crop_segmentation_76_73.png" src="../_images/Lesson3_deeplearning_crop_segmentation_76_73.png" />
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[&#39;/content/gdrive/My Drive/servir-tf/terrabio/tiled/labels/tile_terrabio_21281.png&#39;]
+<img alt="../_images/Lesson3_deeplearning_crop_segmentation_81_73.png" src="../_images/Lesson3_deeplearning_crop_segmentation_81_73.png" />
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[&#39;/content/gdrive/My Drive/servir-tf-devseed/labels/tile_terrabio_21281.png&#39;]
 [0 2 5]
 </pre></div>
 </div>
-<img alt="../_images/Lesson3_deeplearning_crop_segmentation_76_75.png" src="../_images/Lesson3_deeplearning_crop_segmentation_76_75.png" />
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[&#39;/content/gdrive/My Drive/servir-tf/terrabio/tiled/labels/tile_terrabio_14509.png&#39;]
+<img alt="../_images/Lesson3_deeplearning_crop_segmentation_81_75.png" src="../_images/Lesson3_deeplearning_crop_segmentation_81_75.png" />
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[&#39;/content/gdrive/My Drive/servir-tf-devseed/labels/tile_terrabio_14509.png&#39;]
 [0 5]
 </pre></div>
 </div>
-<img alt="../_images/Lesson3_deeplearning_crop_segmentation_76_77.png" src="../_images/Lesson3_deeplearning_crop_segmentation_76_77.png" />
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[&#39;/content/gdrive/My Drive/servir-tf/terrabio/tiled/labels/tile_terrabio_22735.png&#39;]
+<img alt="../_images/Lesson3_deeplearning_crop_segmentation_81_77.png" src="../_images/Lesson3_deeplearning_crop_segmentation_81_77.png" />
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[&#39;/content/gdrive/My Drive/servir-tf-devseed/labels/tile_terrabio_22735.png&#39;]
 [0 1]
 </pre></div>
 </div>
-<img alt="../_images/Lesson3_deeplearning_crop_segmentation_76_79.png" src="../_images/Lesson3_deeplearning_crop_segmentation_76_79.png" />
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[&#39;/content/gdrive/My Drive/servir-tf/terrabio/tiled/labels/tile_terrabio_21118.png&#39;]
+<img alt="../_images/Lesson3_deeplearning_crop_segmentation_81_79.png" src="../_images/Lesson3_deeplearning_crop_segmentation_81_79.png" />
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[&#39;/content/gdrive/My Drive/servir-tf-devseed/labels/tile_terrabio_21118.png&#39;]
 [0 7]
 </pre></div>
 </div>
-<img alt="../_images/Lesson3_deeplearning_crop_segmentation_76_81.png" src="../_images/Lesson3_deeplearning_crop_segmentation_76_81.png" />
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[&#39;/content/gdrive/My Drive/servir-tf/terrabio/tiled/labels/tile_terrabio_20394.png&#39;]
+<img alt="../_images/Lesson3_deeplearning_crop_segmentation_81_81.png" src="../_images/Lesson3_deeplearning_crop_segmentation_81_81.png" />
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[&#39;/content/gdrive/My Drive/servir-tf-devseed/labels/tile_terrabio_20394.png&#39;]
 [0 7]
 </pre></div>
 </div>
-<img alt="../_images/Lesson3_deeplearning_crop_segmentation_76_83.png" src="../_images/Lesson3_deeplearning_crop_segmentation_76_83.png" />
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[&#39;/content/gdrive/My Drive/servir-tf/terrabio/tiled/labels/tile_terrabio_10759.png&#39;]
+<img alt="../_images/Lesson3_deeplearning_crop_segmentation_81_83.png" src="../_images/Lesson3_deeplearning_crop_segmentation_81_83.png" />
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[&#39;/content/gdrive/My Drive/servir-tf-devseed/labels/tile_terrabio_10759.png&#39;]
 [0 7]
 </pre></div>
 </div>
-<img alt="../_images/Lesson3_deeplearning_crop_segmentation_76_85.png" src="../_images/Lesson3_deeplearning_crop_segmentation_76_85.png" />
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[&#39;/content/gdrive/My Drive/servir-tf/terrabio/tiled/labels/tile_terrabio_19642.png&#39;]
+<img alt="../_images/Lesson3_deeplearning_crop_segmentation_81_85.png" src="../_images/Lesson3_deeplearning_crop_segmentation_81_85.png" />
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[&#39;/content/gdrive/My Drive/servir-tf-devseed/labels/tile_terrabio_19642.png&#39;]
 [0 1 2 6]
 </pre></div>
 </div>
-<img alt="../_images/Lesson3_deeplearning_crop_segmentation_76_87.png" src="../_images/Lesson3_deeplearning_crop_segmentation_76_87.png" />
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[&#39;/content/gdrive/My Drive/servir-tf/terrabio/tiled/labels/tile_terrabio_16867.png&#39;]
+<img alt="../_images/Lesson3_deeplearning_crop_segmentation_81_87.png" src="../_images/Lesson3_deeplearning_crop_segmentation_81_87.png" />
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[&#39;/content/gdrive/My Drive/servir-tf-devseed/labels/tile_terrabio_16867.png&#39;]
 [0 1 2 5]
 </pre></div>
 </div>
-<img alt="../_images/Lesson3_deeplearning_crop_segmentation_76_89.png" src="../_images/Lesson3_deeplearning_crop_segmentation_76_89.png" />
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[&#39;/content/gdrive/My Drive/servir-tf/terrabio/tiled/labels/tile_terrabio_34421.png&#39;]
+<img alt="../_images/Lesson3_deeplearning_crop_segmentation_81_89.png" src="../_images/Lesson3_deeplearning_crop_segmentation_81_89.png" />
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[&#39;/content/gdrive/My Drive/servir-tf-devseed/labels/tile_terrabio_34421.png&#39;]
 [0 5]
 </pre></div>
 </div>
-<img alt="../_images/Lesson3_deeplearning_crop_segmentation_76_91.png" src="../_images/Lesson3_deeplearning_crop_segmentation_76_91.png" />
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[&#39;/content/gdrive/My Drive/servir-tf/terrabio/tiled/labels/tile_terrabio_23051.png&#39;]
+<img alt="../_images/Lesson3_deeplearning_crop_segmentation_81_91.png" src="../_images/Lesson3_deeplearning_crop_segmentation_81_91.png" />
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[&#39;/content/gdrive/My Drive/servir-tf-devseed/labels/tile_terrabio_23051.png&#39;]
 [0 1 2]
 </pre></div>
 </div>
-<img alt="../_images/Lesson3_deeplearning_crop_segmentation_76_93.png" src="../_images/Lesson3_deeplearning_crop_segmentation_76_93.png" />
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[&#39;/content/gdrive/My Drive/servir-tf/terrabio/tiled/labels/tile_terrabio_24117.png&#39;]
+<img alt="../_images/Lesson3_deeplearning_crop_segmentation_81_93.png" src="../_images/Lesson3_deeplearning_crop_segmentation_81_93.png" />
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[&#39;/content/gdrive/My Drive/servir-tf-devseed/labels/tile_terrabio_24117.png&#39;]
 [0 5]
 </pre></div>
 </div>
-<img alt="../_images/Lesson3_deeplearning_crop_segmentation_76_95.png" src="../_images/Lesson3_deeplearning_crop_segmentation_76_95.png" />
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[&#39;/content/gdrive/My Drive/servir-tf/terrabio/tiled/labels/tile_terrabio_22178.png&#39;]
+<img alt="../_images/Lesson3_deeplearning_crop_segmentation_81_95.png" src="../_images/Lesson3_deeplearning_crop_segmentation_81_95.png" />
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[&#39;/content/gdrive/My Drive/servir-tf-devseed/labels/tile_terrabio_22178.png&#39;]
 [0 5]
 </pre></div>
 </div>
-<img alt="../_images/Lesson3_deeplearning_crop_segmentation_76_97.png" src="../_images/Lesson3_deeplearning_crop_segmentation_76_97.png" />
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[&#39;/content/gdrive/My Drive/servir-tf/terrabio/tiled/labels/tile_terrabio_19942.png&#39;]
+<img alt="../_images/Lesson3_deeplearning_crop_segmentation_81_97.png" src="../_images/Lesson3_deeplearning_crop_segmentation_81_97.png" />
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[&#39;/content/gdrive/My Drive/servir-tf-devseed/labels/tile_terrabio_19942.png&#39;]
 [0 1 2 5 6]
 </pre></div>
 </div>
-<img alt="../_images/Lesson3_deeplearning_crop_segmentation_76_99.png" src="../_images/Lesson3_deeplearning_crop_segmentation_76_99.png" />
+<img alt="../_images/Lesson3_deeplearning_crop_segmentation_81_99.png" src="../_images/Lesson3_deeplearning_crop_segmentation_81_99.png" />
 </div>
 </div>
 </div>
@@ -1775,7 +1928,7 @@ Values in test partition:  {0, 1, 2, 3, 4, 5, 6, 7, 8}
 <div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>(8.5, -0.5)
 </pre></div>
 </div>
-<img alt="../_images/Lesson3_deeplearning_crop_segmentation_80_1.png" src="../_images/Lesson3_deeplearning_crop_segmentation_80_1.png" />
+<img alt="../_images/Lesson3_deeplearning_crop_segmentation_85_1.png" src="../_images/Lesson3_deeplearning_crop_segmentation_85_1.png" />
 </div>
 </div>
 <p>Now let’s compute the f1 score</p>
@@ -1788,7 +1941,7 @@ Values in test partition:  {0, 1, 2, 3, 4, 5, 6, 7, 8}
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>0.18144884465263766
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>0.19515148549827882
 </pre></div>
 </div>
 </div>
