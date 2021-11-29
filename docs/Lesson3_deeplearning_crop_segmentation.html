@@ -52,7 +52,7 @@
     <link rel="shortcut icon" href="../_static/ds.png"/>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="Appendix" href="appendix.html" />
+    <link rel="next" title="Annex to introduction content" href="Lesson1a_annex.html" />
     <link rel="prev" title="Process dataset for use with deep learning segmentation network" href="Lesson2b_prep_data_ML_segmentation.html" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="docsearch:language" content="en" />
@@ -111,6 +111,11 @@
  <li class="toctree-l1 current active">
   <a class="current reference internal" href="#">
    Semantic segmentation with deep learning
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="Lesson1a_annex.html">
+   Annex to introduction content
   </a>
  </li>
  <li class="toctree-l1">
@@ -1167,7 +1172,7 @@ Number of test examples: 447
 <p>The model being used here is a modified U-Net. A U-Net consists of an encoder (downsampler) and decoder (upsampler). In-order to learn robust features, and reduce the number of trainable parameters, an optionally pretrained model can be used as the encoder. Thus, the encoder for this task will be a pretrained MobileNetV2 model, whose intermediate outputs will be used, and the decoder will be the upsample block already implemented in TensorFlow Examples in the Pix2pix tutorial.</p>
 <div class="figure align-default" id="unet-mobilenetv2-arch-arch-fig">
 <a class="reference internal image-reference" href="../_images/Unet_mobilenetv2_arch_arch.png"><img alt="../_images/Unet_mobilenetv2_arch_arch.png" src="../_images/Unet_mobilenetv2_arch_arch.png" style="width: 650px;" /></a>
-<p class="caption"><span class="caption-number">Fig. 6 </span><span class="caption-text">U-shaped MobileNetV2 (adapted U-Net) architecture diagram (from <a class="reference external" href="https://www.researchgate.net/publication/339266308_Surface-Defect_Segmentation_using_U-shaped_Inverted_Residuals">Ronneberger et al., 2015</a>).</span><a class="headerlink" href="#unet-mobilenetv2-arch-arch-fig" title="Permalink to this image">¶</a></p>
+<p class="caption"><span class="caption-number">Fig. 14 </span><span class="caption-text">U-shaped MobileNetV2 (adapted U-Net) architecture diagram (from <a class="reference external" href="https://www.researchgate.net/publication/339266308_Surface-Defect_Segmentation_using_U-shaped_Inverted_Residuals">Sarakon et al., 2019</a>).</span><a class="headerlink" href="#unet-mobilenetv2-arch-arch-fig" title="Permalink to this image">¶</a></p>
 </div>
 <p>The reason to output nine channels is because there are nine possible labels for each pixel. Think of this as multi-classification where each pixel is being classified into nine classes.</p>
 <div class="cell docutils container">
@@ -1989,10 +1994,10 @@ scaled class weights:  [0.0, 0.020560747663551406, 0.027027027027027032, 0.04074
         </a>
     </div>
      <div id="next">
-        <a class="right-next" href="appendix.html" title="next page">
+        <a class="right-next" href="Lesson1a_annex.html" title="next page">
             <div class="prevnext-info">
                 <p class="prevnext-label">next</p>
-                <p class="prevnext-title">Appendix</p>
+                <p class="prevnext-title">Annex to introduction content</p>
             </div>
             <i class="prevnext-label fas fa-angle-right"></i>
         </a>

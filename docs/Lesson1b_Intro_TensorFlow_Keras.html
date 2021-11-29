@@ -114,6 +114,11 @@
   </a>
  </li>
  <li class="toctree-l1">
+  <a class="reference internal" href="Lesson1a_annex.html">
+   Annex to introduction content
+  </a>
+ </li>
+ <li class="toctree-l1">
   <a class="reference internal" href="appendix.html">
    Appendix
   </a>
@@ -246,12 +251,12 @@
      </li>
      <li class="toc-h4 nav-item toc-entry">
       <a class="reference internal nav-link" href="#tensorflows-structure">
-       Tensorflow’s Structure
+       Tensorflow’s structure
       </a>
      </li>
      <li class="toc-h4 nav-item toc-entry">
-      <a class="reference internal nav-link" href="#what-are-tensorflow-components">
-       What are Tensorflow Components?
+      <a class="reference internal nav-link" href="#what-are-the-key-tensorflow-components">
+       What are the key Tensorflow components?
       </a>
      </li>
      <li class="toc-h4 nav-item toc-entry">
@@ -283,10 +288,10 @@
 <h1>Introduction to TensorFlow and Keras<a class="headerlink" href="#introduction-to-tensorflow-and-keras" title="Permalink to this headline">¶</a></h1>
 <div class="section" id="objectives">
 <h2>Objectives<a class="headerlink" href="#objectives" title="Permalink to this headline">¶</a></h2>
-<p>The goal of this notebook is to teach some basics of machine learning, deep learning and the TensorFlow framework. Here you will find both the explanations of key concepts and the illustrative programs.</p>
+<p>The goal of this notebook is to teach some basics of the TensorFlow framework and the Keras API.</p>
 <div class="section" id="what-is-tensorflow">
 <h3>What is TensorFlow?<a class="headerlink" href="#what-is-tensorflow" title="Permalink to this headline">¶</a></h3>
-<p><a class="reference external" href="https://www.tensorflow.org/guide%5D">TensorFlow</a> is an open-source framework developed by Google for building various machine learning and deep learning models. Although originally released in late 2015, the first stable version arrived in 2017. TensorFlow is free and open-source, thanks to the Apache Open Source license.</p>
+<p><a class="reference external" href="https://www.tensorflow.org/guide%5D">TensorFlow</a> is an open-source framework developed in late 2015 by Google for building various machine learning and deep learning models. TensorFlow is free and open-source, thanks to the Apache Open Source license.</p>
 <p>The main objective of using TensorFlow is to reduce the complexity of implementing computations on large numerical data sets. In practice, these large computations can manifest as training and inference with machine learning or deep learning models.</p>
 <p>TensorFlow was designed to operate with multiple CPUs or GPUs, as well as a growing number of mobile operating systems. The framework includes wrappers in Python, C++, and Java.</p>
 <div class="section" id="how-does-it-work">
@@ -294,7 +299,7 @@
 <p>TensorFlow accepts inputs as a multi-dimensional array called a Tensor, which allows the programmer to create dataflow graphs and structures specifying how data travels through. The framework is designed to support creation of a flowchart of operations to be applied to input Tensors, which travel in one direction and out the other.</p>
 </div>
 <div class="section" id="tensorflows-structure">
-<h4>Tensorflow’s Structure<a class="headerlink" href="#tensorflows-structure" title="Permalink to this headline">¶</a></h4>
+<h4>Tensorflow’s structure<a class="headerlink" href="#tensorflows-structure" title="Permalink to this headline">¶</a></h4>
 <p>There are three main components to TensorFlow’s structure.</p>
 <ol class="simple">
 <li><p>preprocessing the data</p></li>
@@ -303,19 +308,24 @@
 </ol>
 <p>The name Tensorflow derives from the way in which the framework receives input in the form of a multi-dimensional array, i.e. the tensors. These tensors travel sequentially through the specified flowchart of the operations, entering at one end and culminate as output at the other end.</p>
 </div>
-<div class="section" id="what-are-tensorflow-components">
-<h4>What are Tensorflow Components?<a class="headerlink" href="#what-are-tensorflow-components" title="Permalink to this headline">¶</a></h4>
+<div class="section" id="what-are-the-key-tensorflow-components">
+<h4>What are the key Tensorflow components?<a class="headerlink" href="#what-are-the-key-tensorflow-components" title="Permalink to this headline">¶</a></h4>
 <p><strong>Tensor</strong>
-Tensors, the basic unit of data in this framework, are involved in every computation of Tensorflow. A tensor is an n-dimensional vector or matrix. In theory, a tensor may represent any form of data. The values belonging to a tensor all share the same data type and often the same shape / dimensionality. A tensor can describe the input data and the output of a calculation.</p>
-<p>In TensorFlow, all operations are carried out within a graph, which in effect is a series of computations that happen in order. Each indivisual operation is referred to as an op node. All nodes are linked together, so the graph itself is a depiction of the operations and relationships that exist between the nodes. The tensor as a means to supply the operation with data is considered the “edge” of the nodes.</p>
+A tensor is an n-dimensional vector or matrix. In theory, a tensor may represent any form of data. The values belonging to a tensor all share the same data type and often the same shape / dimensionality. A tensor can describe the input data and the output of a calculation.</p>
+<p>In TensorFlow, all operations are carried out within a graph, which in effect is a series of computations that happen in order. Each indivisual operation is referred to as an op node.</p>
 <p><strong>Graphs</strong>
 TensorFlow uses a graph framework. Graphs collect and summarize all of the calculations and offer several benefits:</p>
 <ol class="simple">
 <li><p>They are designed to work on CPUs or GPUs, as well as on mobile devices.</p></li>
 <li><p>Graphs are portable which enables the computations to be saved for immediate or later usage. Otherwsie stated, the graph can be frozen and run at a later time.</p></li>
 <li><p>Graph calculations are executed by linking tensors together.</p></li>
-<li><p>For each teansor, there is a node and an edge. The node carries out the mathematical process and produces endpoint outputs. The input/output connections node are represented by the edges.</p></li>
+<li><p>For each tensor, there is a node and an edge. The node carries out the mathematical process and produces endpoint outputs. The input/output connections are represented by the edges.</p></li>
+<li><p>All nodes are linked together, so the graph itself is a depiction of the operations and relationships that exist between the nodes.</p></li>
 </ol>
+<div class="figure align-default" id="tfgraph-fig">
+<a class="reference internal image-reference" href="https://miro.medium.com/max/1838/1*aOYUa3hHKi9HlYnnFAipUQ.gif"><img alt="https://miro.medium.com/max/1838/1*aOYUa3hHKi9HlYnnFAipUQ.gif" src="https://miro.medium.com/max/1838/1*aOYUa3hHKi9HlYnnFAipUQ.gif" style="width: 650px;" /></a>
+<p class="caption"><span class="caption-number">Fig. 12 </span><span class="caption-text">TensorFlow graph example (from <a class="reference external" href="https://medium.com/the-artificial-impostor/notes-understanding-tensorflow-part-1-5f0ebb253ad4">https://medium.com/the-artificial-impostor/notes-understanding-tensorflow-part-1-5f0ebb253ad4</a>).</span><a class="headerlink" href="#tfgraph-fig" title="Permalink to this image">¶</a></p>
+</div>
 </div>
 <div class="section" id="why-do-so-many-people-like-tensorflow">
 <h4>Why do so many people like Tensorflow?<a class="headerlink" href="#why-do-so-many-people-like-tensorflow" title="Permalink to this headline">¶</a></h4>
@@ -324,9 +334,8 @@ TensorFlow uses a graph framework. Graphs collect and summarize all of the calcu
 </div>
 <div class="section" id="what-is-keras">
 <h3>What is Keras?<a class="headerlink" href="#what-is-keras" title="Permalink to this headline">¶</a></h3>
-<p><a class="reference external" href="https://keras.io/about/">Keras</a> is an API built on Python, with human readability at the forefront of its design. With simple and consistent structures and methods extensible across many machine learning and deep learning applications, Keras reduces the cognitive load associated with programming models. Furthermore, the API seeks to minimize the need for programmer interaction by abstracting many complexities into easily callable functions. Lastly, Keras features clear &amp; actionable error messaging, complemented by comprehensive and digestible documentation and developer guides.</p>
-<p>Keras is what some might call a wrapper for TensorFlow. By that, one means to say that Keras simplifies a programmer’s interaction with TensorFlow through refinement of key methods and constructs.</p>
-<p>Importantly, Keras is intended for rapid experimentation.</p>
+<p><a class="reference external" href="https://keras.io/about/">Keras</a> is an API built on Python which reduces the cognitive load associated with programming models through human readability and simple and consistent structures.</p>
+<p>Keras is what some might call a wrapper for TensorFlow. It is intended for rapid experimentation.</p>
 <p>Tha main components of Keras include:</p>
 <ol class="simple">
 <li><p>A models API, which enables one to construct a model with varying levels of complexity depending on use case. We will use the <a class="reference external" href="https://keras.io/guides/functional_api/">Functional API</a> subclass.</p></li>
@@ -340,7 +349,7 @@ TensorFlow uses a graph framework. Graphs collect and summarize all of the calcu
 <p>With the Functional API, our main workflow will follow the diagram below.</p>
 <div class="figure align-default" id="keras-fig">
 <a class="reference internal image-reference" href="../_images/Keras_functional_API.jpg"><img alt="../_images/Keras_functional_API.jpg" src="../_images/Keras_functional_API.jpg" style="width: 650px;" /></a>
-<p class="caption"><span class="caption-number">Fig. 5 </span><span class="caption-text">Keras Functional API diagram (from <span class="xref myst">https://miro.com/app/board/o9J_lhnKhVE=/</span>).</span><a class="headerlink" href="#keras-fig" title="Permalink to this image">¶</a></p>
+<p class="caption"><span class="caption-number">Fig. 13 </span><span class="caption-text">Keras Functional API diagram (from <span class="xref myst">https://miro.com/app/board/o9J_lhnKhVE=/</span>).</span><a class="headerlink" href="#keras-fig" title="Permalink to this image">¶</a></p>
 </div>
 </div>
 </div>
