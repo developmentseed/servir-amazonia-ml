@@ -249,17 +249,17 @@
      Objectives
     </a>
    </li>
+  </ul>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#setup-notebook">
+   Setup Notebook
+  </a>
+  <ul class="nav section-nav flex-column">
    <li class="toc-h3 nav-item toc-entry">
-    <a class="reference internal nav-link" href="#setup-notebook">
-     Setup Notebook
+    <a class="reference internal nav-link" href="#getting-set-up-with-the-data">
+     Getting set up with the data
     </a>
-    <ul class="nav section-nav flex-column">
-     <li class="toc-h4 nav-item toc-entry">
-      <a class="reference internal nav-link" href="#getting-set-up-with-the-data">
-       Getting set up with the data
-      </a>
-     </li>
-    </ul>
    </li>
    <li class="toc-h3 nav-item toc-entry">
     <a class="reference internal nav-link" href="#enabling-gpu">
@@ -387,8 +387,9 @@ and <strong>accuracy</strong>. We’ll also generate confusion matrices during e
 <p><strong>Audience:</strong> This post is geared towards intermediate users who are comfortable with basic machine learning concepts.</p>
 <p><strong>Time Estimated</strong>: 60-120 min</p>
 </div>
+</div>
 <div class="section" id="setup-notebook">
-<h3>Setup Notebook<a class="headerlink" href="#setup-notebook" title="Permalink to this headline">¶</a></h3>
+<h2>Setup Notebook<a class="headerlink" href="#setup-notebook" title="Permalink to this headline">¶</a></h2>
 <div class="admonition-version-control admonition">
 <p class="admonition-title"><strong>Version control</strong></p>
 <p>Colab updates without warning to users, which can cause notebooks to break. Therefore, we are pinning library versions.</p>
@@ -439,6 +440,21 @@ and <strong>accuracy</strong>. We’ll also generate confusion matrices during e
 </pre></div>
 </div>
 </div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>     |████████████████████████████████| 19.3 MB 311 kB/s 
+     |████████████████████████████████| 1.0 MB 5.2 MB/s 
+     |████████████████████████████████| 6.3 MB 36.8 MB/s 
+     |████████████████████████████████| 15.4 MB 33.3 MB/s 
+?25h  Building wheel for tensorflow-examples (setup.py) ... ?25l?25hdone
+<span class=" -Color -Color-Yellow">  WARNING: Built wheel for tensorflow-examples is invalid: Metadata 1.2 mandates PEP 440 version, but &#39;e120e031fc3e3e65f256c239840732c1181d4136-&#39; is not</span>
+    Running setup.py install for tensorflow-examples ... ?25l?25hdone
+<span class=" -Color -Color-Yellow">  DEPRECATION: tensorflow-examples was installed using the legacy &#39;setup.py install&#39; method, because a wheel could not be built for it. A possible replacement is to fix the wheel build issue reported above. You can find discussion regarding this at https://github.com/pypa/pip/issues/8368.</span>
+     |████████████████████████████████| 4.1 MB 5.2 MB/s 
+     |████████████████████████████████| 1.0 MB 5.1 MB/s 
+?25h
+</pre></div>
+</div>
+</div>
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
@@ -485,7 +501,7 @@ and <strong>accuracy</strong>. We’ll also generate confusion matrices during e
 </div>
 </div>
 <div class="section" id="getting-set-up-with-the-data">
-<h4>Getting set up with the data<a class="headerlink" href="#getting-set-up-with-the-data" title="Permalink to this headline">¶</a></h4>
+<h3>Getting set up with the data<a class="headerlink" href="#getting-set-up-with-the-data" title="Permalink to this headline">¶</a></h3>
 <div class="admonition important">
 <p class="admonition-title">Important</p>
 <p>Create drive shortcuts of the tiled imagery to your own My Drive Folder by Right-Clicking on the Shared folder <code class="docutils literal notranslate"><span class="pre">servir-tf-devseed</span></code>. Then, this folder will be available at the following path that is accessible with the google.colab <code class="docutils literal notranslate"><span class="pre">drive</span></code> module: <code class="docutils literal notranslate"><span class="pre">'/content/gdrive/My</span> <span class="pre">Drive/servir-tf-devseed/'</span></code></p>
@@ -520,7 +536,8 @@ and <strong>accuracy</strong>. We’ll also generate confusion matrices during e
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># set your root directory and tiled data folders</span>
 <span class="k">if</span> <span class="s1">&#39;google.colab&#39;</span> <span class="ow">in</span> <span class="nb">str</span><span class="p">(</span><span class="n">get_ipython</span><span class="p">()):</span>
-    <span class="n">root_dir</span> <span class="o">=</span> <span class="s1">&#39;/content/gdrive/My Drive/servir-tf-devseed/&#39;</span>  
+    <span class="n">root_dir</span> <span class="o">=</span> <span class="s1">&#39;/content/gdrive/My Drive/servir-tf-devseed/&#39;</span> 
+    <span class="n">workshop_dir</span> <span class="o">=</span> <span class="s1">&#39;/content/gdrive/My Drive/servir-tf-devseed-workshop&#39;</span>
     <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Running on Colab&#39;</span><span class="p">)</span>
 <span class="k">else</span><span class="p">:</span>
     <span class="n">root_dir</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="s2">&quot;./data/servir-tf-devseed&quot;</span><span class="p">)</span>
@@ -547,7 +564,6 @@ and <strong>accuracy</strong>. We’ll also generate confusion matrices during e
 <div class="cell_output docutils container">
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>/content/gdrive/MyDrive/servir-tf/data/servir-tf-devseed
 </pre></div>
-</div>
 </div>
 </div>
 </div>
@@ -778,9 +794,11 @@ Number of test examples: 447
 </div>
 <div class="section" id="visualize-the-data">
 <h3>Visualize the data<a class="headerlink" href="#visualize-the-data" title="Permalink to this headline">¶</a></h3>
-<div class="cell docutils container">
-<div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">display_num</span> <span class="o">=</span> <span class="mi">3</span>
+<div class="admonition important">
+<p class="admonition-title">Important</p>
+<p>The code below loads foreground examples randomly. We won’t run this since it takes over a while on colab due to slow I/O.</p>
+</div>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">display_num</span> <span class="o">=</span> <span class="mi">3</span>
 
 <span class="n">background_list_train</span> <span class="o">=</span> <span class="p">[</span><span class="n">line</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span> <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="nb">open</span><span class="p">(</span><span class="s2">&quot;background_list_train.txt&quot;</span><span class="p">,</span> <span class="s1">&#39;r&#39;</span><span class="p">)]</span>
 
@@ -804,10 +822,43 @@ Number of test examples: 447
 
 <span class="c1"># randomlize the choice of image and label pairs</span>
 <span class="n">r_choices</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">choice</span><span class="p">(</span><span class="n">num_foreground_examples</span><span class="p">,</span> <span class="n">display_num</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>This cell plots training foreground samples by pathname, which is much faster on colab.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">display_num</span> <span class="o">=</span> <span class="mi">3</span>
+
+<span class="n">background_list_train</span> <span class="o">=</span> <span class="p">[</span><span class="n">line</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span> <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="nb">open</span><span class="p">(</span><span class="s2">&quot;background_list_train.txt&quot;</span><span class="p">,</span> <span class="s1">&#39;r&#39;</span><span class="p">)]</span>
+
+<span class="n">foreground_list_x</span> <span class="o">=</span> <span class="p">[</span>
+                     <span class="s1">&#39;/content/gdrive/My Drive/servir-tf-devseed/indices/tile_terrabio_15684.png&#39;</span><span class="p">,</span> 
+                     <span class="s1">&#39;/content/gdrive/My Drive/servir-tf-devseed/indices/tile_terrabio_23056.png&#39;</span><span class="p">,</span> 
+                     <span class="s1">&#39;/content/gdrive/My Drive/servir-tf-devseed/indices/tile_terrabio_21877.png&#39;</span>
+                     <span class="p">]</span>
+
+<span class="n">foreground_list_y</span> <span class="o">=</span> <span class="p">[</span>
+                     <span class="s1">&#39;/content/gdrive/My Drive/servir-tf-devseed/labels/tile_terrabio_15684.png&#39;</span><span class="p">,</span> 
+                     <span class="s1">&#39;/content/gdrive/My Drive/servir-tf-devseed/labels/tile_terrabio_23056.png&#39;</span><span class="p">,</span> 
+                     <span class="s1">&#39;/content/gdrive/My Drive/servir-tf-devseed/labels/tile_terrabio_21877.png&#39;</span>
+                     <span class="p">]</span>
+
+<span class="c1"># confirm files exist</span>
+<span class="k">for</span> <span class="n">fx</span><span class="p">,</span> <span class="n">fy</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">foreground_list_x</span><span class="p">,</span> <span class="n">foreground_list_y</span><span class="p">):</span>
+  <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">fx</span><span class="p">)</span> <span class="ow">and</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">fy</span><span class="p">):</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">fx</span><span class="p">,</span> <span class="s2">&quot; and &quot;</span><span class="p">,</span> <span class="n">fy</span><span class="p">,</span> <span class="s2">&quot; exist.&quot;</span><span class="p">)</span>
+  <span class="k">else</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">fx</span><span class="p">,</span> <span class="s2">&quot; and &quot;</span><span class="p">,</span> <span class="n">fy</span><span class="p">,</span> <span class="s2">&quot; don&#39;t exist.&quot;</span><span class="p">)</span>
+
+<span class="n">num_foreground_examples</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">foreground_list_y</span><span class="p">)</span>
+
+<span class="c1"># randomlize the choice of image and label pairs</span>
+<span class="c1">#r_choices = np.random.choice(num_foreground_examples, display_num)</span>
 
 <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="mi">15</span><span class="p">))</span>
 <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">display_num</span> <span class="o">*</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">):</span>
-  <span class="n">img_num</span> <span class="o">=</span> <span class="n">r_choices</span><span class="p">[</span><span class="n">i</span> <span class="o">//</span> <span class="mi">2</span><span class="p">]</span>
+  <span class="c1">#img_num = r_choices[i // 2]</span>
+  <span class="n">img_num</span> <span class="o">=</span> <span class="n">i</span> <span class="o">//</span> <span class="mi">2</span>
   <span class="n">x_pathname</span> <span class="o">=</span> <span class="n">foreground_list_x</span><span class="p">[</span><span class="n">img_num</span><span class="p">]</span>
   <span class="n">y_pathname</span> <span class="o">=</span> <span class="n">foreground_list_y</span><span class="p">[</span><span class="n">img_num</span><span class="p">]</span>
   
@@ -828,7 +879,7 @@ Number of test examples: 447
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="../_images/Lesson3_deeplearning_crop_segmentation_27_0.png" src="../_images/Lesson3_deeplearning_crop_segmentation_27_0.png" />
+<img alt="../_images/Lesson3_deeplearning_crop_segmentation_29_0.png" src="../_images/Lesson3_deeplearning_crop_segmentation_29_0.png" />
 </div>
 </div>
 </div>
@@ -1059,7 +1110,7 @@ Number of test examples: 447
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="../_images/Lesson3_deeplearning_crop_segmentation_41_0.png" src="../_images/Lesson3_deeplearning_crop_segmentation_41_0.png" />
+<img alt="../_images/Lesson3_deeplearning_crop_segmentation_43_0.png" src="../_images/Lesson3_deeplearning_crop_segmentation_43_0.png" />
 </div>
 </div>
 <p>…same check for the validation images:</p>
@@ -1111,7 +1162,7 @@ Number of test examples: 447
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="../_images/Lesson3_deeplearning_crop_segmentation_43_0.png" src="../_images/Lesson3_deeplearning_crop_segmentation_43_0.png" />
+<img alt="../_images/Lesson3_deeplearning_crop_segmentation_45_0.png" src="../_images/Lesson3_deeplearning_crop_segmentation_45_0.png" />
 </div>
 </div>
 <p>…same check for the test images:</p>
@@ -1163,7 +1214,7 @@ Number of test examples: 447
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="../_images/Lesson3_deeplearning_crop_segmentation_45_0.png" src="../_images/Lesson3_deeplearning_crop_segmentation_45_0.png" />
+<img alt="../_images/Lesson3_deeplearning_crop_segmentation_47_0.png" src="../_images/Lesson3_deeplearning_crop_segmentation_47_0.png" />
 </div>
 </div>
 </div>
@@ -1348,12 +1399,12 @@ scaled class weights:  [0.0, 0.020560747663551406, 0.027027027027027032, 0.04074
 </div>
 </div>
 </div>
-<p>In the SparseCategoricalFocalLoss function, gamma is the focusing parameter. Higher values of gamma make dominant, or “easy to classify”, examples contribute less to the loss relative to rare, or “difficult to classify”, examples. The value for gamma must be non-negative. A gamma value of 2 is considered empirically best for most cases. You can experiment by adding the class weights as a paramter to SparseCategoricalFocalLoss, e.g. <code class="docutils literal notranslate"><span class="pre">SparseCategoricalFocalLoss(gamma=2,</span> <span class="pre">class_weight=scaled_class_weights_list,</span> <span class="pre">from_logits=True)</span></code>. Logits are the un-normalized log probabilities of each class per pixel, which we scale to a range of 0-1 and take the highest probability to decide the final class of the pixel.</p>
-<p>We will measure our model’s performance during training by per-pixel accuracy. Adam is a “best of class” optimizer widely used in classification models, and the learning rate was selected from experimentation across several values.</p>
+<p>In the SparseCategoricalFocalLoss function, gamma is the focusing parameter. Higher values of gamma make dominant, or “easy to classify”, examples contribute less to the loss relative to rare, or “difficult to classify”, examples. The value for gamma must be non-negative. You can experiment by adding the class weights as a paramter to SparseCategoricalFocalLoss, e.g. <code class="docutils literal notranslate"><span class="pre">SparseCategoricalFocalLoss(gamma=2,</span> <span class="pre">class_weight=scaled_class_weights_list,</span> <span class="pre">from_logits=True)</span></code>.</p>
+<p>We will measure our model’s performance during training by per-pixel accuracy.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">model</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="n">optimizer</span><span class="o">=</span><span class="n">tf</span><span class="o">.</span><span class="n">keras</span><span class="o">.</span><span class="n">optimizers</span><span class="o">.</span><span class="n">Adam</span><span class="p">(</span><span class="n">learning_rate</span><span class="o">=</span><span class="mf">0.00001</span><span class="p">),</span>
-              <span class="n">loss</span><span class="o">=</span><span class="n">SparseCategoricalFocalLoss</span><span class="p">(</span><span class="n">gamma</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">from_logits</span><span class="o">=</span><span class="kc">True</span><span class="p">),</span> 
+              <span class="n">loss</span><span class="o">=</span><span class="n">SparseCategoricalFocalLoss</span><span class="p">(</span><span class="n">gamma</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">from_logits</span><span class="o">=</span><span class="kc">True</span><span class="p">),</span> <span class="c1">#tf.keras.losses.SparseCategoricalCrossentropy(from_logits=True),</span>
               <span class="n">metrics</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;accuracy&#39;</span><span class="p">])</span>
 </pre></div>
 </div>
@@ -1392,7 +1443,7 @@ scaled class weights:  [0.0, 0.020560747663551406, 0.027027027027027032, 0.04074
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="../_images/Lesson3_deeplearning_crop_segmentation_65_0.png" src="../_images/Lesson3_deeplearning_crop_segmentation_65_0.png" />
+<img alt="../_images/Lesson3_deeplearning_crop_segmentation_67_0.png" src="../_images/Lesson3_deeplearning_crop_segmentation_67_0.png" />
 </div>
 </div>
 <p>Let’s observe how the model improves while it is training. To accomplish this task, a callback function is defined below to plot a validation image and it’s predicted mask after each epoch.</p>
@@ -1424,7 +1475,7 @@ scaled class weights:  [0.0, 0.020560747663551406, 0.027027027027027032, 0.04074
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="../_images/Lesson3_deeplearning_crop_segmentation_69_0.png" src="../_images/Lesson3_deeplearning_crop_segmentation_69_0.png" />
+<img alt="../_images/Lesson3_deeplearning_crop_segmentation_71_0.png" src="../_images/Lesson3_deeplearning_crop_segmentation_71_0.png" />
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Sample Prediction after epoch 50
 
 
@@ -1454,7 +1505,7 @@ scaled class weights:  [0.0, 0.020560747663551406, 0.027027027027027032, 0.04074
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="../_images/Lesson3_deeplearning_crop_segmentation_71_0.png" src="../_images/Lesson3_deeplearning_crop_segmentation_71_0.png" />
+<img alt="../_images/Lesson3_deeplearning_crop_segmentation_73_0.png" src="../_images/Lesson3_deeplearning_crop_segmentation_73_0.png" />
 </div>
 </div>
 </div>
@@ -1464,7 +1515,9 @@ scaled class weights:  [0.0, 0.020560747663551406, 0.027027027027027032, 0.04074
 <p>We will export the final model weights.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">save_model_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">root_dir</span><span class="p">,</span><span class="s1">&#39;indices_model_out_lr00001_batchs8_ep50_nopretrain_focalloss/&#39;</span><span class="p">)</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">if</span> <span class="p">(</span><span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isdir</span><span class="p">(</span><span class="n">workshop_dir</span><span class="p">)):</span>
+  <span class="n">os</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="n">workshop_dir</span><span class="p">)</span>
+<span class="n">save_model_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">workshop_dir</span><span class="p">,</span><span class="s1">&#39;indices_model_out_lr00001_batchs8_ep50_nopretrain_focalloss/&#39;</span><span class="p">)</span>
 <span class="k">if</span> <span class="p">(</span><span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isdir</span><span class="p">(</span><span class="n">save_model_path</span><span class="p">)):</span>
   <span class="n">os</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="n">save_model_path</span><span class="p">)</span>
 <span class="n">model</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="n">save_model_path</span><span class="p">)</span>
@@ -1554,7 +1607,7 @@ scaled class weights:  [0.0, 0.020560747663551406, 0.027027027027027032, 0.04074
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="../_images/Lesson3_deeplearning_crop_segmentation_79_0.png" src="../_images/Lesson3_deeplearning_crop_segmentation_79_0.png" />
+<img alt="../_images/Lesson3_deeplearning_crop_segmentation_81_0.png" src="../_images/Lesson3_deeplearning_crop_segmentation_81_0.png" />
 </div>
 </div>
 </div>
@@ -1562,7 +1615,7 @@ scaled class weights:  [0.0, 0.020560747663551406, 0.027027027027027032, 0.04074
 <h4>Multi image example<a class="headerlink" href="#multi-image-example" title="Permalink to this headline">¶</a></h4>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">tiled_prediction_dir</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">root_dir</span><span class="p">,</span><span class="s1">&#39;predictions_test_focal_loss/&#39;</span><span class="p">)</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">tiled_prediction_dir</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">workshop_dir</span><span class="p">,</span><span class="s1">&#39;predictions_test_focal_loss/&#39;</span><span class="p">)</span>
 <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">tiled_prediction_dir</span><span class="p">):</span>
     <span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="n">tiled_prediction_dir</span><span class="p">)</span>
     
@@ -1616,252 +1669,252 @@ scaled class weights:  [0.0, 0.020560747663551406, 0.027027027027027032, 0.04074
 [0 2 5 6 7]
 </pre></div>
 </div>
-<img alt="../_images/Lesson3_deeplearning_crop_segmentation_81_1.png" src="../_images/Lesson3_deeplearning_crop_segmentation_81_1.png" />
+<img alt="../_images/Lesson3_deeplearning_crop_segmentation_83_1.png" src="../_images/Lesson3_deeplearning_crop_segmentation_83_1.png" />
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[&#39;/content/gdrive/My Drive/servir-tf-devseed/labels/tile_terrabio_21426.png&#39;]
 [0 5]
 </pre></div>
 </div>
-<img alt="../_images/Lesson3_deeplearning_crop_segmentation_81_3.png" src="../_images/Lesson3_deeplearning_crop_segmentation_81_3.png" />
+<img alt="../_images/Lesson3_deeplearning_crop_segmentation_83_3.png" src="../_images/Lesson3_deeplearning_crop_segmentation_83_3.png" />
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[&#39;/content/gdrive/My Drive/servir-tf-devseed/labels/tile_terrabio_15673.png&#39;]
 [0 2 5]
 </pre></div>
 </div>
-<img alt="../_images/Lesson3_deeplearning_crop_segmentation_81_5.png" src="../_images/Lesson3_deeplearning_crop_segmentation_81_5.png" />
+<img alt="../_images/Lesson3_deeplearning_crop_segmentation_83_5.png" src="../_images/Lesson3_deeplearning_crop_segmentation_83_5.png" />
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[&#39;/content/gdrive/My Drive/servir-tf-devseed/labels/tile_terrabio_32990.png&#39;]
 [0 5]
 </pre></div>
 </div>
-<img alt="../_images/Lesson3_deeplearning_crop_segmentation_81_7.png" src="../_images/Lesson3_deeplearning_crop_segmentation_81_7.png" />
+<img alt="../_images/Lesson3_deeplearning_crop_segmentation_83_7.png" src="../_images/Lesson3_deeplearning_crop_segmentation_83_7.png" />
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[&#39;/content/gdrive/My Drive/servir-tf-devseed/labels/tile_terrabio_15379.png&#39;]
 [0 2]
 </pre></div>
 </div>
-<img alt="../_images/Lesson3_deeplearning_crop_segmentation_81_9.png" src="../_images/Lesson3_deeplearning_crop_segmentation_81_9.png" />
+<img alt="../_images/Lesson3_deeplearning_crop_segmentation_83_9.png" src="../_images/Lesson3_deeplearning_crop_segmentation_83_9.png" />
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[&#39;/content/gdrive/My Drive/servir-tf-devseed/labels/tile_terrabio_10608.png&#39;]
 [0 7]
 </pre></div>
 </div>
-<img alt="../_images/Lesson3_deeplearning_crop_segmentation_81_11.png" src="../_images/Lesson3_deeplearning_crop_segmentation_81_11.png" />
+<img alt="../_images/Lesson3_deeplearning_crop_segmentation_83_11.png" src="../_images/Lesson3_deeplearning_crop_segmentation_83_11.png" />
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[&#39;/content/gdrive/My Drive/servir-tf-devseed/labels/tile_terrabio_20090.png&#39;]
 [0 1 5]
 </pre></div>
 </div>
-<img alt="../_images/Lesson3_deeplearning_crop_segmentation_81_13.png" src="../_images/Lesson3_deeplearning_crop_segmentation_81_13.png" />
+<img alt="../_images/Lesson3_deeplearning_crop_segmentation_83_13.png" src="../_images/Lesson3_deeplearning_crop_segmentation_83_13.png" />
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[&#39;/content/gdrive/My Drive/servir-tf-devseed/labels/tile_terrabio_15110.png&#39;]
 [0 1 2 5]
 </pre></div>
 </div>
-<img alt="../_images/Lesson3_deeplearning_crop_segmentation_81_15.png" src="../_images/Lesson3_deeplearning_crop_segmentation_81_15.png" />
+<img alt="../_images/Lesson3_deeplearning_crop_segmentation_83_15.png" src="../_images/Lesson3_deeplearning_crop_segmentation_83_15.png" />
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[&#39;/content/gdrive/My Drive/servir-tf-devseed/labels/tile_terrabio_19112.png&#39;]
 [0 6]
 </pre></div>
 </div>
-<img alt="../_images/Lesson3_deeplearning_crop_segmentation_81_17.png" src="../_images/Lesson3_deeplearning_crop_segmentation_81_17.png" />
+<img alt="../_images/Lesson3_deeplearning_crop_segmentation_83_17.png" src="../_images/Lesson3_deeplearning_crop_segmentation_83_17.png" />
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[&#39;/content/gdrive/My Drive/servir-tf-devseed/labels/tile_terrabio_23053.png&#39;]
 [0 2 3 5 6]
 </pre></div>
 </div>
-<img alt="../_images/Lesson3_deeplearning_crop_segmentation_81_19.png" src="../_images/Lesson3_deeplearning_crop_segmentation_81_19.png" />
+<img alt="../_images/Lesson3_deeplearning_crop_segmentation_83_19.png" src="../_images/Lesson3_deeplearning_crop_segmentation_83_19.png" />
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[&#39;/content/gdrive/My Drive/servir-tf-devseed/labels/tile_terrabio_20959.png&#39;]
 [0 2]
 </pre></div>
 </div>
-<img alt="../_images/Lesson3_deeplearning_crop_segmentation_81_21.png" src="../_images/Lesson3_deeplearning_crop_segmentation_81_21.png" />
+<img alt="../_images/Lesson3_deeplearning_crop_segmentation_83_21.png" src="../_images/Lesson3_deeplearning_crop_segmentation_83_21.png" />
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[&#39;/content/gdrive/My Drive/servir-tf-devseed/labels/tile_terrabio_31280.png&#39;]
 [0 5]
 </pre></div>
 </div>
-<img alt="../_images/Lesson3_deeplearning_crop_segmentation_81_23.png" src="../_images/Lesson3_deeplearning_crop_segmentation_81_23.png" />
+<img alt="../_images/Lesson3_deeplearning_crop_segmentation_83_23.png" src="../_images/Lesson3_deeplearning_crop_segmentation_83_23.png" />
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[&#39;/content/gdrive/My Drive/servir-tf-devseed/labels/tile_terrabio_21393.png&#39;]
 [0 2 5 6]
 </pre></div>
 </div>
-<img alt="../_images/Lesson3_deeplearning_crop_segmentation_81_25.png" src="../_images/Lesson3_deeplearning_crop_segmentation_81_25.png" />
+<img alt="../_images/Lesson3_deeplearning_crop_segmentation_83_25.png" src="../_images/Lesson3_deeplearning_crop_segmentation_83_25.png" />
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[&#39;/content/gdrive/My Drive/servir-tf-devseed/labels/tile_terrabio_8358.png&#39;]
 [0 7]
 </pre></div>
 </div>
-<img alt="../_images/Lesson3_deeplearning_crop_segmentation_81_27.png" src="../_images/Lesson3_deeplearning_crop_segmentation_81_27.png" />
+<img alt="../_images/Lesson3_deeplearning_crop_segmentation_83_27.png" src="../_images/Lesson3_deeplearning_crop_segmentation_83_27.png" />
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[&#39;/content/gdrive/My Drive/servir-tf-devseed/labels/tile_terrabio_32988.png&#39;]
 [0 5]
 </pre></div>
 </div>
-<img alt="../_images/Lesson3_deeplearning_crop_segmentation_81_29.png" src="../_images/Lesson3_deeplearning_crop_segmentation_81_29.png" />
+<img alt="../_images/Lesson3_deeplearning_crop_segmentation_83_29.png" src="../_images/Lesson3_deeplearning_crop_segmentation_83_29.png" />
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[&#39;/content/gdrive/My Drive/servir-tf-devseed/labels/tile_terrabio_17162.png&#39;]
 [0 2 5]
 </pre></div>
 </div>
-<img alt="../_images/Lesson3_deeplearning_crop_segmentation_81_31.png" src="../_images/Lesson3_deeplearning_crop_segmentation_81_31.png" />
+<img alt="../_images/Lesson3_deeplearning_crop_segmentation_83_31.png" src="../_images/Lesson3_deeplearning_crop_segmentation_83_31.png" />
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[&#39;/content/gdrive/My Drive/servir-tf-devseed/labels/tile_terrabio_21140.png&#39;]
 [0 2 5]
 </pre></div>
 </div>
-<img alt="../_images/Lesson3_deeplearning_crop_segmentation_81_33.png" src="../_images/Lesson3_deeplearning_crop_segmentation_81_33.png" />
+<img alt="../_images/Lesson3_deeplearning_crop_segmentation_83_33.png" src="../_images/Lesson3_deeplearning_crop_segmentation_83_33.png" />
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[&#39;/content/gdrive/My Drive/servir-tf-devseed/labels/tile_terrabio_35845.png&#39;]
 [0 6]
 </pre></div>
 </div>
-<img alt="../_images/Lesson3_deeplearning_crop_segmentation_81_35.png" src="../_images/Lesson3_deeplearning_crop_segmentation_81_35.png" />
+<img alt="../_images/Lesson3_deeplearning_crop_segmentation_83_35.png" src="../_images/Lesson3_deeplearning_crop_segmentation_83_35.png" />
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[&#39;/content/gdrive/My Drive/servir-tf-devseed/labels/tile_terrabio_14904.png&#39;]
 [0 2 5 6]
 </pre></div>
 </div>
-<img alt="../_images/Lesson3_deeplearning_crop_segmentation_81_37.png" src="../_images/Lesson3_deeplearning_crop_segmentation_81_37.png" />
+<img alt="../_images/Lesson3_deeplearning_crop_segmentation_83_37.png" src="../_images/Lesson3_deeplearning_crop_segmentation_83_37.png" />
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[&#39;/content/gdrive/My Drive/servir-tf-devseed/labels/tile_terrabio_18212.png&#39;]
 [0 6]
 </pre></div>
 </div>
-<img alt="../_images/Lesson3_deeplearning_crop_segmentation_81_39.png" src="../_images/Lesson3_deeplearning_crop_segmentation_81_39.png" />
+<img alt="../_images/Lesson3_deeplearning_crop_segmentation_83_39.png" src="../_images/Lesson3_deeplearning_crop_segmentation_83_39.png" />
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[&#39;/content/gdrive/My Drive/servir-tf-devseed/labels/tile_terrabio_20660.png&#39;]
 [0 5 7]
 </pre></div>
 </div>
-<img alt="../_images/Lesson3_deeplearning_crop_segmentation_81_41.png" src="../_images/Lesson3_deeplearning_crop_segmentation_81_41.png" />
+<img alt="../_images/Lesson3_deeplearning_crop_segmentation_83_41.png" src="../_images/Lesson3_deeplearning_crop_segmentation_83_41.png" />
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[&#39;/content/gdrive/My Drive/servir-tf-devseed/labels/tile_terrabio_13560.png&#39;]
 [0 7]
 </pre></div>
 </div>
-<img alt="../_images/Lesson3_deeplearning_crop_segmentation_81_43.png" src="../_images/Lesson3_deeplearning_crop_segmentation_81_43.png" />
+<img alt="../_images/Lesson3_deeplearning_crop_segmentation_83_43.png" src="../_images/Lesson3_deeplearning_crop_segmentation_83_43.png" />
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[&#39;/content/gdrive/My Drive/servir-tf-devseed/labels/tile_terrabio_23200.png&#39;]
 [0 2 3 5 6 8]
 </pre></div>
 </div>
-<img alt="../_images/Lesson3_deeplearning_crop_segmentation_81_45.png" src="../_images/Lesson3_deeplearning_crop_segmentation_81_45.png" />
+<img alt="../_images/Lesson3_deeplearning_crop_segmentation_83_45.png" src="../_images/Lesson3_deeplearning_crop_segmentation_83_45.png" />
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[&#39;/content/gdrive/My Drive/servir-tf-devseed/labels/tile_terrabio_15078.png&#39;]
 [0 5]
 </pre></div>
 </div>
-<img alt="../_images/Lesson3_deeplearning_crop_segmentation_81_47.png" src="../_images/Lesson3_deeplearning_crop_segmentation_81_47.png" />
+<img alt="../_images/Lesson3_deeplearning_crop_segmentation_83_47.png" src="../_images/Lesson3_deeplearning_crop_segmentation_83_47.png" />
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[&#39;/content/gdrive/My Drive/servir-tf-devseed/labels/tile_terrabio_22032.png&#39;]
 [0 7]
 </pre></div>
 </div>
-<img alt="../_images/Lesson3_deeplearning_crop_segmentation_81_49.png" src="../_images/Lesson3_deeplearning_crop_segmentation_81_49.png" />
+<img alt="../_images/Lesson3_deeplearning_crop_segmentation_83_49.png" src="../_images/Lesson3_deeplearning_crop_segmentation_83_49.png" />
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[&#39;/content/gdrive/My Drive/servir-tf-devseed/labels/tile_terrabio_32381.png&#39;]
 [0 1 4]
 </pre></div>
 </div>
-<img alt="../_images/Lesson3_deeplearning_crop_segmentation_81_51.png" src="../_images/Lesson3_deeplearning_crop_segmentation_81_51.png" />
+<img alt="../_images/Lesson3_deeplearning_crop_segmentation_83_51.png" src="../_images/Lesson3_deeplearning_crop_segmentation_83_51.png" />
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[&#39;/content/gdrive/My Drive/servir-tf-devseed/labels/tile_terrabio_24852.png&#39;]
 [0 2 5]
 </pre></div>
 </div>
-<img alt="../_images/Lesson3_deeplearning_crop_segmentation_81_53.png" src="../_images/Lesson3_deeplearning_crop_segmentation_81_53.png" />
+<img alt="../_images/Lesson3_deeplearning_crop_segmentation_83_53.png" src="../_images/Lesson3_deeplearning_crop_segmentation_83_53.png" />
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[&#39;/content/gdrive/My Drive/servir-tf-devseed/labels/tile_terrabio_6242.png&#39;]
 [0 5]
 </pre></div>
 </div>
-<img alt="../_images/Lesson3_deeplearning_crop_segmentation_81_55.png" src="../_images/Lesson3_deeplearning_crop_segmentation_81_55.png" />
+<img alt="../_images/Lesson3_deeplearning_crop_segmentation_83_55.png" src="../_images/Lesson3_deeplearning_crop_segmentation_83_55.png" />
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[&#39;/content/gdrive/My Drive/servir-tf-devseed/labels/tile_terrabio_28141.png&#39;]
 [0 2]
 </pre></div>
 </div>
-<img alt="../_images/Lesson3_deeplearning_crop_segmentation_81_57.png" src="../_images/Lesson3_deeplearning_crop_segmentation_81_57.png" />
+<img alt="../_images/Lesson3_deeplearning_crop_segmentation_83_57.png" src="../_images/Lesson3_deeplearning_crop_segmentation_83_57.png" />
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[&#39;/content/gdrive/My Drive/servir-tf-devseed/labels/tile_terrabio_23057.png&#39;]
 [0 2]
 </pre></div>
 </div>
-<img alt="../_images/Lesson3_deeplearning_crop_segmentation_81_59.png" src="../_images/Lesson3_deeplearning_crop_segmentation_81_59.png" />
+<img alt="../_images/Lesson3_deeplearning_crop_segmentation_83_59.png" src="../_images/Lesson3_deeplearning_crop_segmentation_83_59.png" />
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[&#39;/content/gdrive/My Drive/servir-tf-devseed/labels/tile_terrabio_17507.png&#39;]
 [0 7]
 </pre></div>
 </div>
-<img alt="../_images/Lesson3_deeplearning_crop_segmentation_81_61.png" src="../_images/Lesson3_deeplearning_crop_segmentation_81_61.png" />
+<img alt="../_images/Lesson3_deeplearning_crop_segmentation_83_61.png" src="../_images/Lesson3_deeplearning_crop_segmentation_83_61.png" />
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[&#39;/content/gdrive/My Drive/servir-tf-devseed/labels/tile_terrabio_20365.png&#39;]
 [0 2 5 6]
 </pre></div>
 </div>
-<img alt="../_images/Lesson3_deeplearning_crop_segmentation_81_63.png" src="../_images/Lesson3_deeplearning_crop_segmentation_81_63.png" />
+<img alt="../_images/Lesson3_deeplearning_crop_segmentation_83_63.png" src="../_images/Lesson3_deeplearning_crop_segmentation_83_63.png" />
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[&#39;/content/gdrive/My Drive/servir-tf-devseed/labels/tile_terrabio_32844.png&#39;]
 [0 5 7]
 </pre></div>
 </div>
-<img alt="../_images/Lesson3_deeplearning_crop_segmentation_81_65.png" src="../_images/Lesson3_deeplearning_crop_segmentation_81_65.png" />
+<img alt="../_images/Lesson3_deeplearning_crop_segmentation_83_65.png" src="../_images/Lesson3_deeplearning_crop_segmentation_83_65.png" />
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[&#39;/content/gdrive/My Drive/servir-tf-devseed/labels/tile_terrabio_18206.png&#39;]
 [0 5]
 </pre></div>
 </div>
-<img alt="../_images/Lesson3_deeplearning_crop_segmentation_81_67.png" src="../_images/Lesson3_deeplearning_crop_segmentation_81_67.png" />
+<img alt="../_images/Lesson3_deeplearning_crop_segmentation_83_67.png" src="../_images/Lesson3_deeplearning_crop_segmentation_83_67.png" />
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[&#39;/content/gdrive/My Drive/servir-tf-devseed/labels/tile_terrabio_22024.png&#39;]
 [0 7]
 </pre></div>
 </div>
-<img alt="../_images/Lesson3_deeplearning_crop_segmentation_81_69.png" src="../_images/Lesson3_deeplearning_crop_segmentation_81_69.png" />
+<img alt="../_images/Lesson3_deeplearning_crop_segmentation_83_69.png" src="../_images/Lesson3_deeplearning_crop_segmentation_83_69.png" />
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[&#39;/content/gdrive/My Drive/servir-tf-devseed/labels/tile_terrabio_16287.png&#39;]
 [0 6]
 </pre></div>
 </div>
-<img alt="../_images/Lesson3_deeplearning_crop_segmentation_81_71.png" src="../_images/Lesson3_deeplearning_crop_segmentation_81_71.png" />
+<img alt="../_images/Lesson3_deeplearning_crop_segmentation_83_71.png" src="../_images/Lesson3_deeplearning_crop_segmentation_83_71.png" />
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[&#39;/content/gdrive/My Drive/servir-tf-devseed/labels/tile_terrabio_34480.png&#39;]
 [0 6]
 </pre></div>
 </div>
-<img alt="../_images/Lesson3_deeplearning_crop_segmentation_81_73.png" src="../_images/Lesson3_deeplearning_crop_segmentation_81_73.png" />
+<img alt="../_images/Lesson3_deeplearning_crop_segmentation_83_73.png" src="../_images/Lesson3_deeplearning_crop_segmentation_83_73.png" />
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[&#39;/content/gdrive/My Drive/servir-tf-devseed/labels/tile_terrabio_21281.png&#39;]
 [0 2 5]
 </pre></div>
 </div>
-<img alt="../_images/Lesson3_deeplearning_crop_segmentation_81_75.png" src="../_images/Lesson3_deeplearning_crop_segmentation_81_75.png" />
+<img alt="../_images/Lesson3_deeplearning_crop_segmentation_83_75.png" src="../_images/Lesson3_deeplearning_crop_segmentation_83_75.png" />
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[&#39;/content/gdrive/My Drive/servir-tf-devseed/labels/tile_terrabio_14509.png&#39;]
 [0 5]
 </pre></div>
 </div>
-<img alt="../_images/Lesson3_deeplearning_crop_segmentation_81_77.png" src="../_images/Lesson3_deeplearning_crop_segmentation_81_77.png" />
+<img alt="../_images/Lesson3_deeplearning_crop_segmentation_83_77.png" src="../_images/Lesson3_deeplearning_crop_segmentation_83_77.png" />
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[&#39;/content/gdrive/My Drive/servir-tf-devseed/labels/tile_terrabio_22735.png&#39;]
 [0 1]
 </pre></div>
 </div>
-<img alt="../_images/Lesson3_deeplearning_crop_segmentation_81_79.png" src="../_images/Lesson3_deeplearning_crop_segmentation_81_79.png" />
+<img alt="../_images/Lesson3_deeplearning_crop_segmentation_83_79.png" src="../_images/Lesson3_deeplearning_crop_segmentation_83_79.png" />
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[&#39;/content/gdrive/My Drive/servir-tf-devseed/labels/tile_terrabio_21118.png&#39;]
 [0 7]
 </pre></div>
 </div>
-<img alt="../_images/Lesson3_deeplearning_crop_segmentation_81_81.png" src="../_images/Lesson3_deeplearning_crop_segmentation_81_81.png" />
+<img alt="../_images/Lesson3_deeplearning_crop_segmentation_83_81.png" src="../_images/Lesson3_deeplearning_crop_segmentation_83_81.png" />
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[&#39;/content/gdrive/My Drive/servir-tf-devseed/labels/tile_terrabio_20394.png&#39;]
 [0 7]
 </pre></div>
 </div>
-<img alt="../_images/Lesson3_deeplearning_crop_segmentation_81_83.png" src="../_images/Lesson3_deeplearning_crop_segmentation_81_83.png" />
+<img alt="../_images/Lesson3_deeplearning_crop_segmentation_83_83.png" src="../_images/Lesson3_deeplearning_crop_segmentation_83_83.png" />
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[&#39;/content/gdrive/My Drive/servir-tf-devseed/labels/tile_terrabio_10759.png&#39;]
 [0 7]
 </pre></div>
 </div>
-<img alt="../_images/Lesson3_deeplearning_crop_segmentation_81_85.png" src="../_images/Lesson3_deeplearning_crop_segmentation_81_85.png" />
+<img alt="../_images/Lesson3_deeplearning_crop_segmentation_83_85.png" src="../_images/Lesson3_deeplearning_crop_segmentation_83_85.png" />
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[&#39;/content/gdrive/My Drive/servir-tf-devseed/labels/tile_terrabio_19642.png&#39;]
 [0 1 2 6]
 </pre></div>
 </div>
-<img alt="../_images/Lesson3_deeplearning_crop_segmentation_81_87.png" src="../_images/Lesson3_deeplearning_crop_segmentation_81_87.png" />
+<img alt="../_images/Lesson3_deeplearning_crop_segmentation_83_87.png" src="../_images/Lesson3_deeplearning_crop_segmentation_83_87.png" />
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[&#39;/content/gdrive/My Drive/servir-tf-devseed/labels/tile_terrabio_16867.png&#39;]
 [0 1 2 5]
 </pre></div>
 </div>
-<img alt="../_images/Lesson3_deeplearning_crop_segmentation_81_89.png" src="../_images/Lesson3_deeplearning_crop_segmentation_81_89.png" />
+<img alt="../_images/Lesson3_deeplearning_crop_segmentation_83_89.png" src="../_images/Lesson3_deeplearning_crop_segmentation_83_89.png" />
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[&#39;/content/gdrive/My Drive/servir-tf-devseed/labels/tile_terrabio_34421.png&#39;]
 [0 5]
 </pre></div>
 </div>
-<img alt="../_images/Lesson3_deeplearning_crop_segmentation_81_91.png" src="../_images/Lesson3_deeplearning_crop_segmentation_81_91.png" />
+<img alt="../_images/Lesson3_deeplearning_crop_segmentation_83_91.png" src="../_images/Lesson3_deeplearning_crop_segmentation_83_91.png" />
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[&#39;/content/gdrive/My Drive/servir-tf-devseed/labels/tile_terrabio_23051.png&#39;]
 [0 1 2]
 </pre></div>
 </div>
-<img alt="../_images/Lesson3_deeplearning_crop_segmentation_81_93.png" src="../_images/Lesson3_deeplearning_crop_segmentation_81_93.png" />
+<img alt="../_images/Lesson3_deeplearning_crop_segmentation_83_93.png" src="../_images/Lesson3_deeplearning_crop_segmentation_83_93.png" />
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[&#39;/content/gdrive/My Drive/servir-tf-devseed/labels/tile_terrabio_24117.png&#39;]
 [0 5]
 </pre></div>
 </div>
-<img alt="../_images/Lesson3_deeplearning_crop_segmentation_81_95.png" src="../_images/Lesson3_deeplearning_crop_segmentation_81_95.png" />
+<img alt="../_images/Lesson3_deeplearning_crop_segmentation_83_95.png" src="../_images/Lesson3_deeplearning_crop_segmentation_83_95.png" />
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[&#39;/content/gdrive/My Drive/servir-tf-devseed/labels/tile_terrabio_22178.png&#39;]
 [0 5]
 </pre></div>
 </div>
-<img alt="../_images/Lesson3_deeplearning_crop_segmentation_81_97.png" src="../_images/Lesson3_deeplearning_crop_segmentation_81_97.png" />
+<img alt="../_images/Lesson3_deeplearning_crop_segmentation_83_97.png" src="../_images/Lesson3_deeplearning_crop_segmentation_83_97.png" />
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[&#39;/content/gdrive/My Drive/servir-tf-devseed/labels/tile_terrabio_19942.png&#39;]
 [0 1 2 5 6]
 </pre></div>
 </div>
-<img alt="../_images/Lesson3_deeplearning_crop_segmentation_81_99.png" src="../_images/Lesson3_deeplearning_crop_segmentation_81_99.png" />
+<img alt="../_images/Lesson3_deeplearning_crop_segmentation_83_99.png" src="../_images/Lesson3_deeplearning_crop_segmentation_83_99.png" />
 </div>
 </div>
 </div>
@@ -1933,7 +1986,7 @@ scaled class weights:  [0.0, 0.020560747663551406, 0.027027027027027032, 0.04074
 <div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>(8.5, -0.5)
 </pre></div>
 </div>
-<img alt="../_images/Lesson3_deeplearning_crop_segmentation_85_1.png" src="../_images/Lesson3_deeplearning_crop_segmentation_85_1.png" />
+<img alt="../_images/Lesson3_deeplearning_crop_segmentation_87_1.png" src="../_images/Lesson3_deeplearning_crop_segmentation_87_1.png" />
 </div>
 </div>
 <p>Now let’s compute the f1 score</p>
