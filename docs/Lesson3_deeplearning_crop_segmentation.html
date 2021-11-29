@@ -622,9 +622,10 @@ and <strong>accuracy</strong>. We’ll also generate confusion matrices during e
 <div class="section" id="read-into-tensorflow-datasets">
 <h3>Read into tensorflow datasets<a class="headerlink" href="#read-into-tensorflow-datasets" title="Permalink to this headline">¶</a></h3>
 <p>Now we will compile the spectral index image and label tiles into training, validation, and test datasets for use with TensorFlow.</p>
-<div class="admonition important">
-<p class="admonition-title">Important</p>
-<p>Normally we would read the image files from the directories and then process forward from there with background removal with the next <strong>three</strong> illustrated functions, however, due to slow I/O in Google Colab we will read the images list with 90% background removal already performed from a pre-saved list in the shared drive.</p>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p><strong>Long running cells</strong> <br />
+Normally we would read the image files from the directories and then process forward from there with background removal with the next <strong>three</strong> illustrated functions, however, due to slow I/O in Google Colab we will read the images list with 90% background removal already performed from a pre-saved list in the shared drive.</p>
 </div>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># get lists of image and label tile pairs for training and testing</span>
 
@@ -758,9 +759,10 @@ Number of test examples: 447
 </div>
 </div>
 </div>
-<div class="admonition important">
-<p class="admonition-title">Important</p>
-<p>The code below checks for values in train, val, and test partitions. We won’t run this since it takes over 10 minutes on colab due to slow I/O.</p>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p><strong>Long running cell</strong> <br />
+The code below checks for values in train, val, and test partitions. We won’t run this since it takes over 10 minutes on colab due to slow I/O.</p>
 </div>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">vals_train</span> <span class="o">=</span> <span class="p">[]</span>
 <span class="n">vals_val</span> <span class="o">=</span> <span class="p">[]</span>
@@ -794,10 +796,12 @@ Number of test examples: 447
 </div>
 <div class="section" id="visualize-the-data">
 <h3>Visualize the data<a class="headerlink" href="#visualize-the-data" title="Permalink to this headline">¶</a></h3>
-<div class="admonition important">
-<p class="admonition-title">Important</p>
-<p>The code below loads foreground examples randomly. We won’t run this since it takes over a while on colab due to slow I/O.</p>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p><strong>Long running cell</strong> <br />
+The code below loads foreground examples randomly. We won’t run this since it takes over a while on colab due to slow I/O.</p>
 </div>
+<div>&#8681</div> 
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">display_num</span> <span class="o">=</span> <span class="mi">3</span>
 
 <span class="n">background_list_train</span> <span class="o">=</span> <span class="p">[</span><span class="n">line</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span> <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="nb">open</span><span class="p">(</span><span class="s2">&quot;background_list_train.txt&quot;</span><span class="p">,</span> <span class="s1">&#39;r&#39;</span><span class="p">)]</span>
@@ -824,7 +828,10 @@ Number of test examples: 447
 <span class="n">r_choices</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">choice</span><span class="p">(</span><span class="n">num_foreground_examples</span><span class="p">,</span> <span class="n">display_num</span><span class="p">)</span>
 </pre></div>
 </div>
-<p>This cell plots training foreground samples by pathname, which is much faster on colab.</p>
+<div class="admonition important">
+<p class="admonition-title">Important</p>
+<p>Instead, we will read and plot a few sample foreground training images and labels from their pathnames. Note: this may still take a few execution tries to work. Google colab in practice takes some time to connect to data in Google Drive, so sometimes this returns an error on the first (few) attempt(s).</p>
+</div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">display_num</span> <span class="o">=</span> <span class="mi">3</span>
