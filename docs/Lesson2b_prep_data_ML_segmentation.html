@@ -954,15 +954,15 @@ The code below loads foreground examples randomly. We won’t run this since it 
 <span class="n">background_list_train</span> <span class="o">=</span> <span class="p">[</span><span class="n">line</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span> <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="nb">open</span><span class="p">(</span><span class="s2">&quot;background_list_train.txt&quot;</span><span class="p">,</span> <span class="s1">&#39;r&#39;</span><span class="p">)]</span>
 
 <span class="n">foreground_list_x</span> <span class="o">=</span> <span class="p">[</span>
-                     <span class="s1">&#39;/content/gdrive/My Drive/servir-tf-devseed/indices/tile_terrabio_15684.png&#39;</span><span class="p">,</span> 
-                     <span class="s1">&#39;/content/gdrive/My Drive/servir-tf-devseed/indices/tile_terrabio_23056.png&#39;</span><span class="p">,</span> 
-                     <span class="s1">&#39;/content/gdrive/My Drive/servir-tf-devseed/indices/tile_terrabio_21877.png&#39;</span>
+                     <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">img_dir</span><span class="si">}</span><span class="s1">/tile_terrabio_15684.png&#39;</span><span class="p">,</span> 
+                     <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">img_dir</span><span class="si">}</span><span class="s1">/tile_terrabio_23056.png&#39;</span><span class="p">,</span> 
+                     <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">img_dir</span><span class="si">}</span><span class="s1">/tile_terrabio_21877.png&#39;</span>
                      <span class="p">]</span>
 
 <span class="n">foreground_list_y</span> <span class="o">=</span> <span class="p">[</span>
-                     <span class="s1">&#39;/content/gdrive/My Drive/servir-tf-devseed/labels/tile_terrabio_15684.png&#39;</span><span class="p">,</span> 
-                     <span class="s1">&#39;/content/gdrive/My Drive/servir-tf-devseed/labels/tile_terrabio_23056.png&#39;</span><span class="p">,</span> 
-                     <span class="s1">&#39;/content/gdrive/My Drive/servir-tf-devseed/labels/tile_terrabio_21877.png&#39;</span>
+                     <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">label_dir</span><span class="si">}</span><span class="s1">/tile_terrabio_15684.png&#39;</span><span class="p">,</span> 
+                     <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">label_dir</span><span class="si">}</span><span class="s1">/tile_terrabio_23056.png&#39;</span><span class="p">,</span> 
+                     <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">label_dir</span><span class="si">}</span><span class="s1">/tile_terrabio_21877.png&#39;</span>
                      <span class="p">]</span>
                      
 <span class="c1"># confirm files exist</span>
