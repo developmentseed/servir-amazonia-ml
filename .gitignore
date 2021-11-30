@@ -28,3 +28,5 @@ g
 # os & tools
 .DS_Store
 .idea
+
+ds_book/docs/data
