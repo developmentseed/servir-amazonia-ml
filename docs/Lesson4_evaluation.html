@@ -52,6 +52,8 @@
     <link rel="shortcut icon" href="../_static/ds.png"/>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Annex to introduction content" href="Lesson1a_annex.html" />
+    <link rel="prev" title="Semantic segmentation with deep learning" href="Lesson3_deeplearning_crop_segmentation.html" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="docsearch:language" content="en" />
     
@@ -85,7 +87,7 @@
   <input type="search" class="form-control" name="q" id="search-input" placeholder="Search this book..." aria-label="Search this book..." autocomplete="off" >
 </form><nav class="bd-links" id="bd-docs-nav" aria-label="Main">
     <div class="bd-toc-item active">
-        <ul class="nav bd-sidenav">
+        <ul class="current nav bd-sidenav">
  <li class="toctree-l1">
   <a class="reference internal" href="Lesson1a_Intro_ML_NN_DL.html">
    Introduction to machine learning, neural networks and deep learning
@@ -109,6 +111,11 @@
  <li class="toctree-l1">
   <a class="reference internal" href="Lesson3_deeplearning_crop_segmentation.html">
    Semantic segmentation with deep learning
+  </a>
+ </li>
+ <li class="toctree-l1 current active">
+  <a class="current reference internal" href="#">
+   Evaluating Semantic Segmentation Models
   </a>
  </li>
  <li class="toctree-l1">
@@ -352,15 +359,20 @@
 </div>
 <div class="section" id="getting-set-up-with-the-data">
 <h3>Getting set up with the data<a class="headerlink" href="#getting-set-up-with-the-data" title="Permalink to this headline">¶</a></h3>
-<p>Create drive shortcuts of the tiled imagery to your own My Drive Folder by Right-Clicking on the Shared folder <code class="docutils literal notranslate"><span class="pre">terrabio</span></code>. Then, this folder will be available at the following path that is accessible with the google.colab <code class="docutils literal notranslate"><span class="pre">drive</span></code> module: <code class="docutils literal notranslate"><span class="pre">'/content/gdrive/My</span> <span class="pre">Drive/servir-tf/terrabio/'</span></code></p>
-<p>We’ll be working witht he following folders in the <code class="docutils literal notranslate"><span class="pre">tiled</span></code> folder:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>tiled/
+<div class="admonition important">
+<p class="admonition-title">Important</p>
+<p>Create drive shortcuts of the tiled imagery to your own My Drive Folder by Right-Clicking on the Shared folder <code class="docutils literal notranslate"><span class="pre">servir-tf-devseed</span></code>. Then, this folder will be available at the following path that is accessible with the google.colab <code class="docutils literal notranslate"><span class="pre">drive</span></code> module: <code class="docutils literal notranslate"><span class="pre">'/content/gdrive/My</span> <span class="pre">Drive/servir-tf-devseed/'</span></code></p>
+</div>
+<p>We’ll be working witht he following folders in the <code class="docutils literal notranslate"><span class="pre">servir-tf-devseed</span></code> folder:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>servir-tf-devseed/
 ├── images/
 ├── images_bright/
 ├── indices/
 ├── indices_800/
 ├── labels/
-└── labels_800/
+├── labels_800/
+├── background_list_train.txt
+└── terrabio_classes.csv
 </pre></div>
 </div>
 <div class="cell docutils container">
@@ -739,6 +751,24 @@
 
 <div class='prev-next-bottom'>
     
+    <div id="prev">
+        <a class="left-prev" href="Lesson3_deeplearning_crop_segmentation.html" title="previous page">
+            <i class="prevnext-label fas fa-angle-left"></i>
+            <div class="prevnext-info">
+                <p class="prevnext-label">previous</p>
+                <p class="prevnext-title">Semantic segmentation with deep learning</p>
+            </div>
+        </a>
+    </div>
+     <div id="next">
+        <a class="right-next" href="Lesson1a_annex.html" title="next page">
+            <div class="prevnext-info">
+                <p class="prevnext-label">next</p>
+                <p class="prevnext-title">Annex to introduction content</p>
+            </div>
+            <i class="prevnext-label fas fa-angle-right"></i>
+        </a>
+     </div>
 
 </div>
         
