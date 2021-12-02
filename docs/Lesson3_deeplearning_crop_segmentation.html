@@ -432,6 +432,7 @@ and <strong>accuracy</strong>. We’ll also generate confusion matrices during e
 <span class="c1">#!pip install -q matplotlib==3.5 # UNCOMMENT if running on LOCAL</span>
 <span class="o">!</span>pip install -q scikit-learn<span class="o">==</span><span class="m">1</span>.0.1
 <span class="o">!</span>pip install -q scikit-image<span class="o">==</span><span class="m">0</span>.18.3
+<span class="o">!</span>pip install -q tf-explain<span class="o">==</span><span class="m">0</span>.3.1
 </pre></div>
 </div>
 </div>
@@ -466,6 +467,8 @@ and <strong>accuracy</strong>. We’ll also generate confusion matrices during e
 <span class="kn">from</span> <span class="nn">keras.utils.vis_utils</span> <span class="kn">import</span> <span class="n">plot_model</span>
 
 <span class="kn">from</span> <span class="nn">tensorflow_examples.models.pix2pix</span> <span class="kn">import</span> <span class="n">pix2pix</span>
+
+<span class="kn">from</span> <span class="nn">tf_explain.callbacks.activations_visualization</span> <span class="kn">import</span> <span class="n">ActivationsVisualizationCallback</span>
 
 <span class="kn">import</span> <span class="nn">tensorflow_datasets</span> <span class="k">as</span> <span class="nn">tfds</span>
 <span class="n">tfds</span><span class="o">.</span><span class="n">disable_progress_bar</span><span class="p">()</span>
@@ -1199,7 +1202,7 @@ The code below loads foreground examples randomly. We won’t run this since it 
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">unet_model</span><span class="p">(</span><span class="n">output_channels</span><span class="p">):</span>
-  <span class="n">inputs</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">keras</span><span class="o">.</span><span class="n">layers</span><span class="o">.</span><span class="n">Input</span><span class="p">(</span><span class="n">shape</span><span class="o">=</span><span class="p">[</span><span class="mi">224</span><span class="p">,</span><span class="mi">224</span><span class="p">,</span><span class="mi">3</span><span class="p">])</span>
+  <span class="n">inputs</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">keras</span><span class="o">.</span><span class="n">layers</span><span class="o">.</span><span class="n">Input</span><span class="p">(</span><span class="n">shape</span><span class="o">=</span><span class="p">[</span><span class="mi">224</span><span class="p">,</span><span class="mi">224</span><span class="p">,</span><span class="mi">3</span><span class="p">],</span> <span class="n">name</span><span class="o">=</span><span class="s1">&#39;first_layer&#39;</span><span class="p">)</span>
   <span class="n">x</span> <span class="o">=</span> <span class="n">inputs</span>
 
   <span class="c1"># Downsampling through the model</span>
@@ -1216,7 +1219,7 @@ The code below loads foreground examples randomly. We won’t run this since it 
   <span class="c1"># This is the last layer of the model</span>
   <span class="n">last</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">keras</span><span class="o">.</span><span class="n">layers</span><span class="o">.</span><span class="n">Conv2DTranspose</span><span class="p">(</span>
       <span class="n">output_channels</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="n">strides</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>
-      <span class="n">padding</span><span class="o">=</span><span class="s1">&#39;same&#39;</span><span class="p">)</span>  <span class="c1">#64x64 -&gt; 224x224</span>
+      <span class="n">padding</span><span class="o">=</span><span class="s1">&#39;same&#39;</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s1">&#39;last_layer&#39;</span><span class="p">)</span>
 
   <span class="n">x</span> <span class="o">=</span> <span class="n">last</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
 
@@ -1236,10 +1239,11 @@ The code below loads foreground examples randomly. We won’t run this since it 
 </div>
 </div>
 </div>
-<p>Check the compiled network</p>
+<p>Check the network layer output shapes</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="n">model</span><span class="o">.</span><span class="n">summary</span><span class="p">())</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">for</span> <span class="n">layer</span> <span class="ow">in</span> <span class="n">model</span><span class="o">.</span><span class="n">layers</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">layer</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="n">layer</span><span class="o">.</span><span class="n">output_shape</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -1344,29 +1348,48 @@ The code below loads foreground examples randomly. We won’t run this since it 
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">log_dir</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">workshop_dir</span><span class="p">,</span><span class="s1">&#39;logs/&#39;</span><span class="p">)</span>
 <span class="n">log_fit_dir</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">workshop_dir</span><span class="p">,</span><span class="s1">&#39;logs&#39;</span><span class="p">,</span> <span class="s1">&#39;fit&#39;</span><span class="p">)</span>
 <span class="n">log_fit_session_dir</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">workshop_dir</span><span class="p">,</span><span class="s1">&#39;logs&#39;</span><span class="p">,</span> <span class="s1">&#39;fit&#39;</span><span class="p">,</span> <span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="s2">&quot;%Y%m</span><span class="si">%d</span><span class="s2">-%H%M%S&quot;</span><span class="p">))</span>
+<span class="n">visualizations_dir</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">workshop_dir</span><span class="p">,</span><span class="s1">&#39;logs&#39;</span><span class="p">,</span> <span class="s1">&#39;vizualizations&#39;</span><span class="p">)</span>
+<span class="n">visualizations_session_dir</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">workshop_dir</span><span class="p">,</span><span class="s1">&#39;logs&#39;</span><span class="p">,</span> <span class="s1">&#39;vizualizations&#39;</span><span class="p">,</span> <span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="s2">&quot;%Y%m</span><span class="si">%d</span><span class="s2">-%H%M%S&quot;</span><span class="p">))</span>
 
-<span class="k">if</span> <span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isdir</span><span class="p">(</span><span class="n">log_fit_dir</span><span class="p">)):</span>
-  <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Making fresh log dir.&quot;</span><span class="p">)</span>
-  <span class="n">shutil</span><span class="o">.</span><span class="n">rmtree</span><span class="p">(</span><span class="n">log_fit_dir</span><span class="p">)</span>
-<span class="k">else</span><span class="p">:</span>
-  <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Fresh log dir exists.&quot;</span><span class="p">)</span>
+<span class="n">dirs</span> <span class="o">=</span> <span class="p">[</span><span class="n">log_fit_dir</span><span class="p">,</span> <span class="n">visualizations_dir</span><span class="p">]</span>
+<span class="k">for</span> <span class="nb">dir</span> <span class="ow">in</span> <span class="n">dirs</span><span class="p">:</span>
+  <span class="k">if</span> <span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isdir</span><span class="p">(</span><span class="nb">dir</span><span class="p">)):</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Making fresh log dir.&quot;</span><span class="p">)</span>
+    <span class="n">shutil</span><span class="o">.</span><span class="n">rmtree</span><span class="p">(</span><span class="nb">dir</span><span class="p">)</span>
+  <span class="k">else</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Fresh log dir exists.&quot;</span><span class="p">)</span>
 
-<span class="n">dirs</span> <span class="o">=</span> <span class="p">[</span><span class="n">log_dir</span><span class="p">,</span> <span class="n">log_fit_dir</span><span class="p">,</span> <span class="n">log_fit_session_dir</span><span class="p">]</span>
+<span class="n">dirs</span> <span class="o">=</span> <span class="p">[</span><span class="n">log_dir</span><span class="p">,</span> <span class="n">log_fit_dir</span><span class="p">,</span> <span class="n">log_fit_session_dir</span><span class="p">,</span> <span class="n">visualizations_dir</span><span class="p">,</span> <span class="n">visualizations_session_dir</span><span class="p">]</span>
 <span class="k">for</span> <span class="nb">dir</span> <span class="ow">in</span> <span class="n">dirs</span><span class="p">:</span>
   <span class="k">if</span> <span class="p">(</span><span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isdir</span><span class="p">(</span><span class="nb">dir</span><span class="p">)):</span>
     <span class="n">os</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="nb">dir</span><span class="p">)</span>
 
-<span class="c1"># Using the file writer, log the reshaped image.</span>
-<span class="n">image</span> <span class="o">=</span> <span class="n">batch_of_imgs</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
-<span class="n">label</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">label</span><span class="p">,</span> <span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">224</span><span class="p">,</span> <span class="mi">224</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span>  <span class="c1"># y</span>
-
-<span class="n">file_writer</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">summary</span><span class="o">.</span><span class="n">create_file_writer</span><span class="p">(</span><span class="n">log_fit_session_dir</span><span class="p">)</span>
-<span class="k">with</span> <span class="n">file_writer</span><span class="o">.</span><span class="n">as_default</span><span class="p">():</span>
-  <span class="n">tf</span><span class="o">.</span><span class="n">summary</span><span class="o">.</span><span class="n">image</span><span class="p">(</span><span class="s2">&quot;Sample data&quot;</span><span class="p">,</span> <span class="n">label</span><span class="p">,</span> <span class="n">max_outputs</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">step</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
-
-
-<span class="n">tensorboard_callback</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">keras</span><span class="o">.</span><span class="n">callbacks</span><span class="o">.</span><span class="n">TensorBoard</span><span class="p">(</span><span class="n">log_dir</span><span class="o">=</span><span class="n">log_fit_session_dir</span><span class="p">,</span> <span class="n">histogram_freq</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">write_graph</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">write_images</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">write_steps_per_second</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">update_freq</span><span class="o">=</span><span class="s1">&#39;epoch&#39;</span><span class="p">,</span>
-    <span class="n">profile_batch</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">embeddings_freq</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">embeddings_metadata</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+<span class="n">tensorboard_callback</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">keras</span><span class="o">.</span><span class="n">callbacks</span><span class="o">.</span><span class="n">TensorBoard</span><span class="p">(</span><span class="n">log_dir</span><span class="o">=</span><span class="n">log_fit_session_dir</span><span class="p">,</span> <span class="n">histogram_freq</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">write_graph</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>We can also take a look at the layer activations in TensorBoard using tf-explain, so we’ll establish a callback to save activation visualizations to a dedicated directory which will serve the TensorBoard interface.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># get a batch of validation samples to plot activations for</span>
+<span class="k">for</span> <span class="n">example</span> <span class="ow">in</span> <span class="n">val_ds</span><span class="o">.</span><span class="n">take</span><span class="p">(</span><span class="mi">1</span><span class="p">):</span>
+  <span class="n">image_val</span><span class="p">,</span> <span class="n">label_val</span> <span class="o">=</span> <span class="n">example</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">example</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">callbacks</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="n">ActivationsVisualizationCallback</span><span class="p">(</span>
+        <span class="n">validation_data</span><span class="o">=</span><span class="p">(</span><span class="n">image_val</span><span class="p">,</span> <span class="n">label_val</span><span class="p">),</span>
+        <span class="n">layers_name</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;last_layer&quot;</span><span class="p">],</span> 
+        <span class="n">output_dir</span><span class="o">=</span><span class="n">visualizations_session_dir</span><span class="p">,</span>
+    <span class="p">),</span>
+    <span class="n">DisplayCallback</span><span class="p">(),</span>
+    <span class="n">tensorboard_callback</span>
+<span class="p">]</span>
 </pre></div>
 </div>
 </div>
@@ -1383,7 +1406,7 @@ The code below loads foreground examples randomly. We won’t run this since it 
                    <span class="n">epochs</span><span class="o">=</span><span class="n">EPOCHS</span><span class="p">,</span>
                    <span class="n">validation_data</span><span class="o">=</span><span class="n">val_ds</span><span class="p">,</span>
                    <span class="n">validation_steps</span><span class="o">=</span><span class="nb">int</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">ceil</span><span class="p">(</span><span class="n">num_val_examples</span> <span class="o">/</span> <span class="nb">float</span><span class="p">(</span><span class="n">batch_size</span><span class="p">))),</span>
-                   <span class="n">callbacks</span><span class="o">=</span><span class="p">[</span><span class="n">DisplayCallback</span><span class="p">(),</span> <span class="n">tensorboard_callback</span><span class="p">])</span> 
+                   <span class="n">callbacks</span><span class="o">=</span><span class="n">callbacks</span><span class="p">)</span> 
 </pre></div>
 </div>
 </div>
@@ -1412,7 +1435,8 @@ The code below loads foreground examples randomly. We won’t run this since it 
 </div>
 <div class="section" id="start-tensorboard">
 <h4>Start TensorBoard<a class="headerlink" href="#start-tensorboard" title="Permalink to this headline">¶</a></h4>
-<p>A brief overview of the dashboards shown (tabs in top navigation bar):</p>
+<p>You set the <code class="docutils literal notranslate"><span class="pre">logdir</span></code> in the below command to <code class="docutils literal notranslate"><span class="pre">..logs/vizualizations</span></code> to see the activations or <code class="docutils literal notranslate"><span class="pre">..logs/fit</span></code> to see the model scalars, graphs, distributions and histograms (described below).</p>
+<p>The dashboards can be selected from the tabs in top navigation bar.</p>
 <ol class="simple">
 <li><p>The Scalars dashboard shows how the loss and metrics change with every  epoch. You can use it to also track training speed, learning rate, and other scalar values.</p></li>
 <li><p>The Graphs dashboard helps you visualize your model. In this case, the Keras graph of layers is shown which can help you ensure it is built correctly.</p></li>
@@ -1420,7 +1444,7 @@ The code below loads foreground examples randomly. We won’t run this since it 
 </ol>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="o">%</span><span class="k">tensorboard</span> --logdir &#39;/content/gdrive/My Drive/servir-tf-devseed-workshop/logs/fit&#39;
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="o">%</span><span class="k">tensorboard</span> --logdir &#39;/content/gdrive/My Drive/servir-tf-devseed-workshop/logs/vizualizations&#39;
 </pre></div>
 </div>
 </div>
