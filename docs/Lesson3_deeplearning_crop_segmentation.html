@@ -422,17 +422,18 @@ and <strong>accuracy</strong>. We’ll also generate confusion matrices during e
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># install required libraries</span>
-<span class="o">!</span>pip install -q <span class="nv">rasterio</span><span class="o">==</span><span class="m">1</span>.2.10
-<span class="o">!</span>pip install -q <span class="nv">geopandas</span><span class="o">==</span><span class="m">0</span>.10.2
-<span class="o">!</span>pip install -q git+https://github.com/tensorflow/examples.git
-<span class="o">!</span>pip install -q -U tfds-nightly
-<span class="o">!</span>pip install -q focal-loss
-<span class="o">!</span>pip install -q tensorflow-addons<span class="o">==</span><span class="m">0</span>.8.3
-<span class="c1">#!pip install -q matplotlib==3.5 # UNCOMMENT if running on LOCAL</span>
-<span class="o">!</span>pip install -q scikit-learn<span class="o">==</span><span class="m">1</span>.0.1
-<span class="o">!</span>pip install -q scikit-image<span class="o">==</span><span class="m">0</span>.18.3
-<span class="o">!</span>pip install -q tf-explain<span class="o">==</span><span class="m">0</span>.3.1
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span># install required libraries
+!pip install -q rasterio==1.2.10
+!pip install -q geopandas==0.10.2
+!pip install -q git+https://github.com/tensorflow/examples.git
+!pip install -q -U tfds-nightly
+!pip install -q focal-loss
+!pip install -q tensorflow-addons==0.8.3
+#!pip install -q matplotlib==3.5 # UNCOMMENT if running on LOCAL
+!pip install -q scikit-learn==1.0.1
+!pip install -q scikit-image==0.18.3
+!pip install -q tf-explain==0.3.1
+!pip install -q segmentation_models # we&#39;ll use this for pretraining later and for the IOU segmentation performance metric
 </pre></div>
 </div>
 </div>
@@ -467,7 +468,7 @@ and <strong>accuracy</strong>. We’ll also generate confusion matrices during e
 <span class="kn">from</span> <span class="nn">keras.utils.vis_utils</span> <span class="kn">import</span> <span class="n">plot_model</span>
 
 <span class="kn">from</span> <span class="nn">tensorflow_examples.models.pix2pix</span> <span class="kn">import</span> <span class="n">pix2pix</span>
-
+<span class="kn">from</span> <span class="nn">segmentation_models.metrics</span> <span class="kn">import</span> <span class="n">iou_score</span>
 <span class="kn">from</span> <span class="nn">tf_explain.callbacks.activations_visualization</span> <span class="kn">import</span> <span class="n">ActivationsVisualizationCallback</span>
 
 <span class="kn">import</span> <span class="nn">tensorflow_datasets</span> <span class="k">as</span> <span class="nn">tfds</span>
@@ -480,6 +481,7 @@ and <strong>accuracy</strong>. We’ll also generate confusion matrices during e
 
 <span class="kn">from</span> <span class="nn">focal_loss</span> <span class="kn">import</span> <span class="n">SparseCategoricalFocalLoss</span>
 <span class="kn">from</span> <span class="nn">sklearn.metrics</span> <span class="kn">import</span> <span class="n">confusion_matrix</span><span class="p">,</span> <span class="n">f1_score</span>
+<span class="kn">import</span> <span class="nn">skimage.io</span> <span class="k">as</span> <span class="nn">skio</span>
 </pre></div>
 </div>
 </div>
@@ -507,6 +509,9 @@ and <strong>accuracy</strong>. We’ll also generate confusion matrices during e
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># set your root directory and tiled data folders</span>
 <span class="k">if</span> <span class="s1">&#39;google.colab&#39;</span> <span class="ow">in</span> <span class="nb">str</span><span class="p">(</span><span class="n">get_ipython</span><span class="p">()):</span>
+    <span class="c1"># this is a google colab specific command to ensure TF version 2 is used. </span>
+    <span class="c1"># it won&#39;t work in a regular jupyter notebook, for a regular notebook make sure you install TF version 2</span>
+    <span class="o">%</span><span class="k">tensorflow_version</span> 2.x
     <span class="c1"># mount google drive</span>
     <span class="kn">from</span> <span class="nn">google.colab</span> <span class="kn">import</span> <span class="n">drive</span>
     <span class="n">drive</span><span class="o">.</span><span class="n">mount</span><span class="p">(</span><span class="s1">&#39;/content/gdrive&#39;</span><span class="p">)</span>
@@ -539,11 +544,7 @@ and <strong>accuracy</strong>. We’ll also generate confusion matrices during e
 <p>If it’s not using a GPU you can change your session/notebook to use a GPU. See <a class="reference external" href="https://colab.research.google.com/notebooks/gpu.ipynb#scrollTo=sXnDmXR7RDr2">Instructions</a></p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># this is a google colab specific command to ensure TF version 2 is used. </span>
-<span class="c1"># it won&#39;t work in a regular jupyter notebook, for a regular notebook make sure you install TF version 2</span>
-<span class="o">%</span><span class="k">tensorflow_version</span> 2.x
-<span class="kn">import</span> <span class="nn">tensorflow</span> <span class="k">as</span> <span class="nn">tf</span>
-<span class="n">device_name</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">test</span><span class="o">.</span><span class="n">gpu_device_name</span><span class="p">()</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">device_name</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">test</span><span class="o">.</span><span class="n">gpu_device_name</span><span class="p">()</span>
 <span class="k">if</span> <span class="n">device_name</span> <span class="o">!=</span> <span class="s1">&#39;/device:GPU:0&#39;</span><span class="p">:</span>
   <span class="k">raise</span> <span class="ne">SystemError</span><span class="p">(</span><span class="s1">&#39;GPU device not found&#39;</span><span class="p">)</span>
 <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Found GPU at: </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">device_name</span><span class="p">))</span>
@@ -1278,7 +1279,7 @@ The code below loads foreground examples randomly. We won’t run this since it 
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">model</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="n">optimizer</span><span class="o">=</span><span class="n">tf</span><span class="o">.</span><span class="n">keras</span><span class="o">.</span><span class="n">optimizers</span><span class="o">.</span><span class="n">Adam</span><span class="p">(</span><span class="n">learning_rate</span><span class="o">=</span><span class="mf">0.00001</span><span class="p">),</span>
               <span class="n">loss</span><span class="o">=</span><span class="n">SparseCategoricalFocalLoss</span><span class="p">(</span><span class="n">gamma</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">from_logits</span><span class="o">=</span><span class="kc">True</span><span class="p">),</span> <span class="c1">#tf.keras.losses.SparseCategoricalCrossentropy(from_logits=True),</span>
-              <span class="n">metrics</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;accuracy&#39;</span><span class="p">])</span>
+              <span class="n">metrics</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;accuracy&#39;</span><span class="p">,</span> <span class="n">iou_score</span><span class="p">])</span>
 </pre></div>
 </div>
 </div>
@@ -1299,10 +1300,11 @@ The code below loads foreground examples randomly. We won’t run this since it 
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">show_predictions</span><span class="p">(</span><span class="n">image</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">mask</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">dataset</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">num</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
   <span class="k">if</span> <span class="n">image</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">dataset</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
     <span class="c1"># this is just for showing keras callback output. in practice this should be broken out into a different function</span>
-    <span class="n">sample_image</span><span class="p">,</span> <span class="n">sample_mask</span> <span class="o">=</span> <span class="n">batch_of_imgs</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">label</span><span class="p">[</span><span class="mi">0</span><span class="p">,:,:,:]</span>
+    <span class="n">sample_image</span> <span class="o">=</span> <span class="n">skio</span><span class="o">.</span><span class="n">imread</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">img_dir</span><span class="si">}</span><span class="s1">/tile_terrabio_17507.png&#39;</span><span class="p">)</span>
+    <span class="n">sample_mask</span> <span class="o">=</span> <span class="n">skio</span><span class="o">.</span><span class="n">imread</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">label_dir</span><span class="si">}</span><span class="s1">/tile_terrabio_17507.png&#39;</span><span class="p">)</span>
     <span class="n">mp</span> <span class="o">=</span> <span class="n">create_mask</span><span class="p">(</span><span class="n">model</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">sample_image</span><span class="p">[</span><span class="n">tf</span><span class="o">.</span><span class="n">newaxis</span><span class="p">,</span> <span class="o">...</span><span class="p">]))</span>
     <span class="n">mpe</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">keras</span><span class="o">.</span><span class="n">backend</span><span class="o">.</span><span class="n">eval</span><span class="p">(</span><span class="n">mp</span><span class="p">)</span>
-    <span class="n">display</span><span class="p">([</span><span class="n">sample_image</span><span class="p">,</span> <span class="n">sample_mask</span><span class="p">,</span> <span class="n">mpe</span><span class="p">])</span>
+    <span class="n">display</span><span class="p">([</span><span class="n">sample_image</span><span class="p">,</span> <span class="n">sample_mask</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="n">tf</span><span class="o">.</span><span class="n">newaxis</span><span class="p">],</span> <span class="n">mpe</span><span class="p">])</span>
   <span class="k">elif</span> <span class="n">dataset</span><span class="p">:</span>
     <span class="k">for</span> <span class="n">image</span><span class="p">,</span> <span class="n">mask</span> <span class="ow">in</span> <span class="n">dataset</span><span class="o">.</span><span class="n">take</span><span class="p">(</span><span class="n">num</span><span class="p">):</span>
       <span class="n">pred_mask</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">image</span><span class="p">)</span>
@@ -1435,7 +1437,7 @@ The code below loads foreground examples randomly. We won’t run this since it 
 </div>
 <div class="section" id="start-tensorboard">
 <h4>Start TensorBoard<a class="headerlink" href="#start-tensorboard" title="Permalink to this headline">¶</a></h4>
-<p>You set the <code class="docutils literal notranslate"><span class="pre">logdir</span></code> in the below command to <code class="docutils literal notranslate"><span class="pre">..logs/vizualizations</span></code> to see the activations or <code class="docutils literal notranslate"><span class="pre">..logs/fit</span></code> to see the model scalars, graphs, distributions and histograms (described below).</p>
+<p>You set the <code class="docutils literal notranslate"><span class="pre">logdir</span></code> in the below command to <code class="docutils literal notranslate"><span class="pre">..logs/visualizations</span></code> to see the activations or <code class="docutils literal notranslate"><span class="pre">..logs/fit</span></code> to see the model scalars, graphs, distributions and histograms (described below).</p>
 <p>The dashboards can be selected from the tabs in top navigation bar.</p>
 <ol class="simple">
 <li><p>The Scalars dashboard shows how the loss and metrics change with every  epoch. You can use it to also track training speed, learning rate, and other scalar values.</p></li>
@@ -1444,7 +1446,7 @@ The code below loads foreground examples randomly. We won’t run this since it 
 </ol>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="o">%</span><span class="k">tensorboard</span> --logdir &#39;/content/gdrive/My Drive/servir-tf-devseed-workshop/logs/vizualizations&#39;
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="o">%</span><span class="k">tensorboard</span> --logdir &quot;$visualizations_dir&quot;
 </pre></div>
 </div>
 </div>
@@ -1474,10 +1476,10 @@ The code below loads foreground examples randomly. We won’t run this since it 
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Optional, you can load the model from the saved version</span>
-<span class="n">load_from_checkpoint</span> <span class="o">=</span> <span class="kc">False</span>
+<span class="n">load_from_checkpoint</span> <span class="o">=</span> <span class="kc">True</span>
 <span class="k">if</span> <span class="n">load_from_checkpoint</span> <span class="o">==</span> <span class="kc">True</span><span class="p">:</span>
   <span class="n">save_model_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">workshop_dir</span><span class="p">,</span><span class="s1">&#39;model_out_batch_</span><span class="si">{}</span><span class="s1">_ep</span><span class="si">{}</span><span class="s1">_nopretrain_focalloss/&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">batch_size</span><span class="p">,</span> <span class="n">EPOCHS</span><span class="p">))</span>
-  <span class="n">model</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">keras</span><span class="o">.</span><span class="n">models</span><span class="o">.</span><span class="n">load_model</span><span class="p">(</span><span class="n">save_model_path</span><span class="p">)</span>
+  <span class="n">model</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">keras</span><span class="o">.</span><span class="n">models</span><span class="o">.</span><span class="n">load_model</span><span class="p">(</span><span class="n">save_model_path</span><span class="p">,</span> <span class="n">custom_objects</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;loss&quot;</span><span class="p">:</span> <span class="n">SparseCategoricalFocalLoss</span><span class="p">,</span> <span class="s2">&quot;iou_score&quot;</span><span class="p">:</span> <span class="n">iou_score</span><span class="p">})</span>
 <span class="k">else</span><span class="p">:</span>
   <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;inferencing from in memory model&quot;</span><span class="p">)</span>
 </pre></div>
@@ -1596,13 +1598,13 @@ The code below loads foreground examples randomly. We won’t run this since it 
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">path_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="n">x_test_filenames</span><span class="p">,</span> <span class="n">y_test_filenames</span><span class="p">,</span> <span class="n">pred_paths</span><span class="p">)),</span> <span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;img_names&quot;</span><span class="p">,</span> <span class="s2">&quot;label_names&quot;</span><span class="p">,</span> <span class="s2">&quot;pred_names&quot;</span><span class="p">])</span>
-</pre></div>
-</div>
-</div>
-</div>
-<div class="cell docutils container">
-<div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">path_df</span><span class="o">.</span><span class="n">to_csv</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">workshop_dir</span><span class="p">,</span> <span class="s2">&quot;test_file_paths.csv&quot;</span><span class="p">))</span>
+<span class="n">path_df</span><span class="o">.</span><span class="n">to_csv</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">workshop_dir</span><span class="p">,</span> <span class="s2">&quot;test_file_paths.csv&quot;</span><span class="p">))</span>
+
+<span class="n">path_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="n">x_train_filenames</span><span class="p">,</span> <span class="n">y_train_filenames</span><span class="p">)),</span> <span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;img_names&quot;</span><span class="p">,</span> <span class="s2">&quot;label_names&quot;</span><span class="p">])</span>
+<span class="n">path_df</span><span class="o">.</span><span class="n">to_csv</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">workshop_dir</span><span class="p">,</span> <span class="s2">&quot;train_file_paths.csv&quot;</span><span class="p">))</span>
+
+<span class="n">path_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="n">x_val_filenames</span><span class="p">,</span> <span class="n">y_val_filenames</span><span class="p">)),</span> <span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;img_names&quot;</span><span class="p">,</span> <span class="s2">&quot;label_names&quot;</span><span class="p">])</span>
+<span class="n">path_df</span><span class="o">.</span><span class="n">to_csv</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">workshop_dir</span><span class="p">,</span> <span class="s2">&quot;validate_file_paths.csv&quot;</span><span class="p">))</span>
 </pre></div>
 </div>
 </div>

@@ -243,8 +243,8 @@
   </a>
  </li>
  <li class="toc-h2 nav-item toc-entry">
-  <a class="reference internal nav-link" href="#setup-notebook">
-   Setup Notebook
+  <a class="reference internal nav-link" href="#part-2-limited-data-techniques">
+   Part 2: Limited Data Techniques
   </a>
   <ul class="nav section-nav flex-column">
    <li class="toc-h3 nav-item toc-entry">
@@ -255,6 +255,16 @@
    <li class="toc-h3 nav-item toc-entry">
     <a class="reference internal nav-link" href="#check-out-the-labels">
      Check out the labels
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#setting-up-our-augmentations">
+     Setting up our Augmentations
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#display-functions-for-monitoring-model-progress-and-visualizing-arrays">
+     Display functions for monitoring model progress and visualizing arrays
     </a>
    </li>
   </ul>
@@ -276,23 +286,37 @@
 <div><p>Strategies for efficiently collecting more data to target specific areas of underperforming models and techniques to adopt to maximize utility of the data</p>
 </div></blockquote>
 <p>After we have evaluated how well a model has performed, we do one of two things:</p>
-<ul class="simple">
+<ol class="simple">
 <li><p>decide we are happy with how the model has performed on the validation set, and report the model performance on the test set (and validation set). Hooray!</p></li>
 <li><p>Diagnose issues with our model in terms of false positives or false negatives and make a plan for improving performance on classes that are underperforming.</p></li>
-</ul>
+</ol>
 <p>One of the most fundamental and high impact practices to improve model performance, particularly with deep learning, is to increase the overall size of the training dataset, focusing on classes that are underperforming. However, in remote sensing it is difficult and time consuming to acquire high quality training data labels, particularly compared to other domains where computer vision and machine learning techniques are used.</p>
 <p>Because of this unique difficulty when annotating geospatial imagery, we need to do two things:</p>
-<ul class="simple">
+<ol class="simple">
 <li><p>closely inspect our original labeled dataset for quality issues, such as mismatch with the imagery due to date, incorrect class labels, and incorrect label boundaries</p></li>
-<li><p>weigh the cost and benefits of annotating new labels rather than trying other approaches to maximize our model’s performance with the data we already have.</p></li>
-</ul>
+<li><p>weigh the cost and benefits of annotating new labels or try other approaches to maximize our model’s performance with the data we already have.</p></li>
+</ol>
+<p>Part 1 of this Lesson will describe considerations for setting up an annotation campaign, keeping in mind data quality issues that have come up during the RAMI and Terrabio projects.</p>
+<p>Part 2 will cover techniques for maximizing the performance of models trained with limited data, assuming label quality is sufficient.</p>
 <div class="section" id="specific-concepts-that-will-be-covered">
 <h2>Specific concepts that will be covered<a class="headerlink" href="#specific-concepts-that-will-be-covered" title="Permalink to this headline">¶</a></h2>
+<p>Part 1:</p>
+<ul class="simple">
+<li><p>How to decide on a class hierarchy prior to an annotation campaign and what inputs should be made available to an annotator</p></li>
+<li><p>How to efficiently annotate geospatial imagery for semantic segmentation (pixel-wise classification)</p></li>
+<li><p>When it makes sense to annotate for instance segmentation (predictions are vectors) instead of semantic segmentation (predictions are rasters)</p></li>
+<li><p>Choosing a sampling strategy that represents classes of interest</p></li>
+</ul>
+<p>Part 2:</p>
+<ul class="simple">
+<li><p>Transfer Learning from pretrained models.  We’ll use a COCO model as an example.</p></li>
+<li><p>Data augmentation, or multiplying your training data with image transforms</p></li>
+</ul>
 <p><strong>Audience:</strong> This post is geared towards intermediate users who are comfortable with basic machine learning concepts.</p>
 <p><strong>Time Estimated</strong>: 60-120 min</p>
 </div>
-<div class="section" id="setup-notebook">
-<h2>Setup Notebook<a class="headerlink" href="#setup-notebook" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="part-2-limited-data-techniques">
+<h2>Part 2: Limited Data Techniques<a class="headerlink" href="#part-2-limited-data-techniques" title="Permalink to this headline">¶</a></h2>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># install required libraries</span>
@@ -305,41 +329,82 @@
 <span class="c1">#!pip install -q matplotlib==3.5 # UNCOMMENT if running on LOCAL</span>
 <span class="o">!</span>pip install -q scikit-learn<span class="o">==</span><span class="m">1</span>.0.1
 <span class="o">!</span>pip install -q scikit-image<span class="o">==</span><span class="m">0</span>.18.3
+<span class="o">!</span>pip install -q tf-explain<span class="o">==</span><span class="m">0</span>.3.1
+<span class="o">!</span>pip install -q segmentation_models
+<span class="o">!</span>pip install -q albumentations
 </pre></div>
 </div>
 </div>
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># mount google drive</span>
-<span class="kn">from</span> <span class="nn">google.colab</span> <span class="kn">import</span> <span class="n">drive</span>
-<span class="n">drive</span><span class="o">.</span><span class="n">mount</span><span class="p">(</span><span class="s1">&#39;/content/gdrive&#39;</span><span class="p">)</span>
-</pre></div>
-</div>
-</div>
-<div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Mounted at /content/gdrive
-</pre></div>
-</div>
-</div>
-</div>
-<div class="cell docutils container">
-<div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># set your root directory and tiled data folders</span>
-<span class="k">if</span> <span class="s1">&#39;google.colab&#39;</span> <span class="ow">in</span> <span class="nb">str</span><span class="p">(</span><span class="n">get_ipython</span><span class="p">()):</span>
-    <span class="n">root_dir</span> <span class="o">=</span> <span class="s1">&#39;/content/gdrive/My Drive/servir-tf/terrabio/&#39;</span> 
-    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Running on CoLab&#39;</span><span class="p">)</span>
-<span class="k">else</span><span class="p">:</span>
-    <span class="n">root_dir</span> <span class="o">=</span> <span class="s1">&#39;./data/&#39;</span> 
-    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Not running on CoLab, data needs to be downloaded locally at </span><span class="si">{</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">root_dir</span><span class="p">)</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># import required libraries</span>
+<span class="kn">import</span> <span class="nn">os</span><span class="o">,</span> <span class="nn">glob</span><span class="o">,</span> <span class="nn">functools</span><span class="o">,</span> <span class="nn">fnmatch</span><span class="o">,</span> <span class="nn">io</span><span class="o">,</span> <span class="nn">shutil</span>
+<span class="kn">from</span> <span class="nn">zipfile</span> <span class="kn">import</span> <span class="n">ZipFile</span>
+<span class="kn">from</span> <span class="nn">itertools</span> <span class="kn">import</span> <span class="n">product</span>
 
-<span class="n">img_dir</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">root_dir</span><span class="p">,</span><span class="s1">&#39;tiled/indices/&#39;</span><span class="p">)</span> <span class="c1"># or root_dir+&#39;tiled/images_bright/&#39; if using the optical tiles</span>
-<span class="n">label_dir</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">root_dir</span><span class="p">,</span><span class="s1">&#39;tiled/labels/&#39;</span><span class="p">)</span>
-</pre></div>
-</div>
-</div>
-<div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Running on CoLab
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+<span class="kn">import</span> <span class="nn">matplotlib</span> <span class="k">as</span> <span class="nn">mpl</span>
+<span class="n">mpl</span><span class="o">.</span><span class="n">rcParams</span><span class="p">[</span><span class="s1">&#39;axes.grid&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">False</span>
+<span class="n">mpl</span><span class="o">.</span><span class="n">rcParams</span><span class="p">[</span><span class="s1">&#39;figure.figsize&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="mi">12</span><span class="p">,</span><span class="mi">12</span><span class="p">)</span>
+
+<span class="kn">from</span> <span class="nn">sklearn.model_selection</span> <span class="kn">import</span> <span class="n">train_test_split</span>
+<span class="kn">import</span> <span class="nn">matplotlib.image</span> <span class="k">as</span> <span class="nn">mpimg</span>
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<span class="kn">from</span> <span class="nn">PIL</span> <span class="kn">import</span> <span class="n">Image</span>
+
+<span class="kn">import</span> <span class="nn">rasterio</span>
+<span class="kn">from</span> <span class="nn">rasterio</span> <span class="kn">import</span> <span class="n">features</span><span class="p">,</span> <span class="n">mask</span>
+
+<span class="kn">import</span> <span class="nn">geopandas</span> <span class="k">as</span> <span class="nn">gpd</span>
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+
+<span class="kn">import</span> <span class="nn">tensorflow</span> <span class="k">as</span> <span class="nn">tf</span>
+<span class="kn">from</span> <span class="nn">tensorflow.python.keras</span> <span class="kn">import</span> <span class="n">layers</span><span class="p">,</span> <span class="n">losses</span><span class="p">,</span> <span class="n">models</span>
+<span class="kn">from</span> <span class="nn">tensorflow.python.keras</span> <span class="kn">import</span> <span class="n">backend</span> <span class="k">as</span> <span class="n">K</span>  
+<span class="kn">import</span> <span class="nn">tensorflow_addons</span> <span class="k">as</span> <span class="nn">tfa</span>
+<span class="kn">from</span> <span class="nn">keras.utils.vis_utils</span> <span class="kn">import</span> <span class="n">plot_model</span>
+
+<span class="kn">from</span> <span class="nn">tensorflow_examples.models.pix2pix</span> <span class="kn">import</span> <span class="n">pix2pix</span>
+<span class="kn">from</span> <span class="nn">focal_loss</span> <span class="kn">import</span> <span class="n">SparseCategoricalFocalLoss</span>
+<span class="kn">from</span> <span class="nn">tf_explain.callbacks.activations_visualization</span> <span class="kn">import</span> <span class="n">ActivationsVisualizationCallback</span>
+
+<span class="kn">import</span> <span class="nn">tensorflow_datasets</span> <span class="k">as</span> <span class="nn">tfds</span>
+<span class="n">tfds</span><span class="o">.</span><span class="n">disable_progress_bar</span><span class="p">()</span>
+
+<span class="kn">from</span> <span class="nn">IPython.display</span> <span class="kn">import</span> <span class="n">clear_output</span>
+<span class="kn">from</span> <span class="nn">time</span> <span class="kn">import</span> <span class="n">sleep</span>
+<span class="kn">from</span> <span class="nn">tqdm.notebook</span> <span class="kn">import</span> <span class="n">tqdm</span>
+<span class="kn">import</span> <span class="nn">datetime</span>
+<span class="kn">import</span> <span class="nn">skimage.io</span> <span class="k">as</span> <span class="nn">skio</span>
+
+<span class="kn">import</span> <span class="nn">segmentation_models</span> <span class="k">as</span> <span class="nn">sm</span>
+<span class="kn">from</span> <span class="nn">segmentation_models.losses</span> <span class="kn">import</span> <span class="n">bce_jaccard_loss</span>
+
+<span class="kn">from</span> <span class="nn">albumentations</span> <span class="kn">import</span> <span class="p">(</span>
+    <span class="n">Compose</span><span class="p">,</span> <span class="n">Blur</span><span class="p">,</span> <span class="n">HorizontalFlip</span><span class="p">,</span> <span class="n">VerticalFlip</span><span class="p">,</span>
+    <span class="n">Rotate</span><span class="p">,</span> <span class="n">ChannelShuffle</span>
+<span class="p">)</span>
+
+<span class="c1"># set your root directory and tiled data folders</span>
+<span class="k">if</span> <span class="s1">&#39;google.colab&#39;</span> <span class="ow">in</span> <span class="nb">str</span><span class="p">(</span><span class="n">get_ipython</span><span class="p">()):</span>
+    <span class="c1"># this is a google colab specific command to ensure TF version 2 is used. </span>
+    <span class="c1"># it won&#39;t work in a regular jupyter notebook, for a regular notebook make sure you install TF version 2</span>
+    <span class="o">%</span><span class="k">tensorflow_version</span> 2.x
+    <span class="c1"># mount google drive</span>
+    <span class="kn">from</span> <span class="nn">google.colab</span> <span class="kn">import</span> <span class="n">drive</span>
+    <span class="n">drive</span><span class="o">.</span><span class="n">mount</span><span class="p">(</span><span class="s1">&#39;/content/gdrive&#39;</span><span class="p">)</span>
+    <span class="n">root_dir</span> <span class="o">=</span> <span class="s1">&#39;/content/gdrive/My Drive/servir-tf-devseed/&#39;</span> 
+    <span class="n">workshop_dir</span> <span class="o">=</span> <span class="s1">&#39;/content/gdrive/My Drive/servir-tf-devseed-workshop&#39;</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Running on Colab&#39;</span><span class="p">)</span>
+<span class="k">else</span><span class="p">:</span>
+    <span class="n">root_dir</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="s2">&quot;./data/servir-tf-devseed&quot;</span><span class="p">)</span>
+    <span class="n">workshop_dir</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="s1">&#39;./servir-tf-devseed-workshop&#39;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Not running on Colab, data needs to be downloaded locally at </span><span class="si">{</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">root_dir</span><span class="p">)</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+
+<span class="n">img_dir</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">root_dir</span><span class="p">,</span><span class="s1">&#39;indices/&#39;</span><span class="p">)</span> <span class="c1"># or os.path.join(root_dir,&#39;images_bright/&#39;) if using the optical tiles</span>
+<span class="n">label_dir</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">root_dir</span><span class="p">,</span><span class="s1">&#39;labels/&#39;</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -351,11 +416,6 @@
 </pre></div>
 </div>
 </div>
-<div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>/content/gdrive/My Drive/servir-tf/terrabio
-</pre></div>
-</div>
-</div>
 </div>
 <div class="section" id="enabling-gpu">
 <h3>Enabling GPU<a class="headerlink" href="#enabling-gpu" title="Permalink to this headline">¶</a></h3>
@@ -363,19 +423,10 @@
 <p>If it’s not using a GPU you can change your session/notebook to use a GPU. See <a class="reference external" href="https://colab.research.google.com/notebooks/gpu.ipynb#scrollTo=sXnDmXR7RDr2">Instructions</a></p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># this is a google colab specific command to ensure TF version 2 is used. </span>
-<span class="c1"># it won&#39;t work in a regular jupyter notebook, for a regular notebook make sure you install TF version 2</span>
-<span class="o">%</span><span class="k">tensorflow_version</span> 2.x
-<span class="kn">import</span> <span class="nn">tensorflow</span> <span class="k">as</span> <span class="nn">tf</span>
-<span class="n">device_name</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">test</span><span class="o">.</span><span class="n">gpu_device_name</span><span class="p">()</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">device_name</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">test</span><span class="o">.</span><span class="n">gpu_device_name</span><span class="p">()</span>
 <span class="k">if</span> <span class="n">device_name</span> <span class="o">!=</span> <span class="s1">&#39;/device:GPU:0&#39;</span><span class="p">:</span>
   <span class="k">raise</span> <span class="ne">SystemError</span><span class="p">(</span><span class="s1">&#39;GPU device not found&#39;</span><span class="p">)</span>
 <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Found GPU at: </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">device_name</span><span class="p">))</span>
-</pre></div>
-</div>
-</div>
-<div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Found GPU at: /device:GPU:0
 </pre></div>
 </div>
 </div>
@@ -386,23 +437,263 @@
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Read the classes</span>
-<span class="n">class_index</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">root_dir</span><span class="o">+</span><span class="s1">&#39;tiled/terrabio_classes.csv&#39;</span><span class="p">)</span>
+<span class="n">class_index</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">root_dir</span><span class="p">,</span><span class="s1">&#39;terrabio_classes.csv&#39;</span><span class="p">))</span>
 <span class="n">class_names</span> <span class="o">=</span> <span class="n">class_index</span><span class="o">.</span><span class="n">class_name</span><span class="o">.</span><span class="n">unique</span><span class="p">()</span>
 <span class="nb">print</span><span class="p">(</span><span class="n">class_index</span><span class="p">)</span> 
 </pre></div>
 </div>
 </div>
-<div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>   class_id   class_name
-0         0   Background
-1         1     Bushland
-2         2      Pasture
-3         3        Roads
-4         4        Cocoa
-5         5   Tree cover
-6         6    Developed
-7         7        Water
-8         8  Agriculture
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">train_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">workshop_dir</span><span class="p">,</span> <span class="s2">&quot;train_file_paths.csv&quot;</span><span class="p">))</span>
+<span class="n">validate_df</span> <span class="o">=</span>  <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">workshop_dir</span><span class="p">,</span> <span class="s2">&quot;validate_file_paths.csv&quot;</span><span class="p">))</span>
+<span class="n">test_df</span> <span class="o">=</span>  <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">workshop_dir</span><span class="p">,</span> <span class="s2">&quot;test_file_paths.csv&quot;</span><span class="p">))</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">x_train_filenames</span> <span class="o">=</span> <span class="n">train_df</span><span class="p">[</span><span class="s2">&quot;img_names&quot;</span><span class="p">]</span>
+<span class="n">y_train_filenames</span> <span class="o">=</span> <span class="n">train_df</span><span class="p">[</span><span class="s2">&quot;label_names&quot;</span><span class="p">]</span>
+<span class="n">x_val_filenames</span> <span class="o">=</span> <span class="n">train_df</span><span class="p">[</span><span class="s2">&quot;img_names&quot;</span><span class="p">]</span>
+<span class="n">y_val_filenames</span> <span class="o">=</span> <span class="n">train_df</span><span class="p">[</span><span class="s2">&quot;label_names&quot;</span><span class="p">]</span>
+<span class="n">x_test_filenames</span> <span class="o">=</span> <span class="n">train_df</span><span class="p">[</span><span class="s2">&quot;img_names&quot;</span><span class="p">]</span>
+<span class="n">y_test_filenames</span> <span class="o">=</span> <span class="n">train_df</span><span class="p">[</span><span class="s2">&quot;label_names&quot;</span><span class="p">]</span>
+
+<span class="n">num_train_examples</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">x_train_filenames</span><span class="p">)</span>
+<span class="n">num_val_examples</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">x_val_filenames</span><span class="p">)</span>
+<span class="n">num_test_examples</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">x_test_filenames</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+<div class="section" id="setting-up-our-augmentations">
+<h3>Setting up our Augmentations<a class="headerlink" href="#setting-up-our-augmentations" title="Permalink to this headline">¶</a></h3>
+<p><a class="reference external" href="https://albumentations.ai/docs/examples/tensorflow-example/">albumentations</a> is a library that contains hundreds of options for transforming images to multiply your training dataset. While each additional image may not be as additively valuable as independent samples, showing your model harder to classify copies of your existing samples can help improve your model’s ability to generalize. Plus, augmentations are basically free training data!</p>
+<p>Common augmentations include brightening images, applying blur, saturation, flipping, rotating, and randomly cropping and resizing. We’ll apply a few augmentations from the <code class="docutils literal notranslate"><span class="pre">albumentations</span></code> library to highlight how to set up an augmentation pipeline. This differs from coding your own augmentations, like we did in episode 3 with our horizontal flip and veritcal flip functions, saving time and lines of code.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># set input image shape</span>
+<span class="n">img_shape</span> <span class="o">=</span> <span class="p">(</span><span class="mi">224</span><span class="p">,</span> <span class="mi">224</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span>
+<span class="c1"># set batch size for model</span>
+<span class="n">batch_size</span> <span class="o">=</span> <span class="mi">8</span>
+
+<span class="n">transforms</span> <span class="o">=</span> <span class="n">Compose</span><span class="p">([</span>
+            <span class="n">Rotate</span><span class="p">(</span><span class="n">limit</span><span class="o">=</span><span class="mi">40</span><span class="p">),</span>
+            <span class="n">HorizontalFlip</span><span class="p">(),</span>
+            <span class="n">VerticalFlip</span><span class="p">(),</span>
+            <span class="n">Blur</span><span class="p">(</span><span class="n">blur_limit</span><span class="o">=</span><span class="p">[</span><span class="mi">10</span><span class="p">,</span><span class="mi">10</span><span class="p">],</span> <span class="n">p</span><span class="o">=.</span><span class="mi">9</span><span class="p">),</span>
+            <span class="n">ChannelShuffle</span><span class="p">(),</span>
+        <span class="p">])</span>
+
+<span class="k">def</span> <span class="nf">aug_fn</span><span class="p">(</span><span class="n">image</span><span class="p">,</span> <span class="n">img_size</span><span class="p">):</span>
+    <span class="n">data</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;image&quot;</span><span class="p">:</span><span class="n">image</span><span class="p">}</span>
+    <span class="n">aug_data</span> <span class="o">=</span> <span class="n">transforms</span><span class="p">(</span><span class="o">**</span><span class="n">data</span><span class="p">)</span>
+    <span class="n">aug_img</span> <span class="o">=</span> <span class="n">aug_data</span><span class="p">[</span><span class="s2">&quot;image&quot;</span><span class="p">]</span>
+    <span class="n">aug_img</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">cast</span><span class="p">(</span><span class="n">aug_img</span><span class="o">/</span><span class="mf">255.0</span><span class="p">,</span> <span class="n">tf</span><span class="o">.</span><span class="n">float32</span><span class="p">)</span>
+    <span class="n">aug_img</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">image</span><span class="o">.</span><span class="n">resize</span><span class="p">(</span><span class="n">aug_img</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="p">[</span><span class="n">img_size</span><span class="p">,</span> <span class="n">img_size</span><span class="p">])</span>
+    <span class="k">return</span> <span class="n">aug_img</span>
+
+<span class="c1"># Function to augment the images and labels</span>
+<span class="k">def</span> <span class="nf">_augment</span><span class="p">(</span><span class="n">img</span><span class="p">,</span> <span class="n">label_img</span><span class="p">,</span> <span class="n">img_size</span><span class="p">):</span> 
+  <span class="n">label_img</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">image</span><span class="o">.</span><span class="n">resize</span><span class="p">(</span><span class="n">label_img</span><span class="p">,</span> <span class="p">[</span><span class="mi">224</span><span class="p">,</span><span class="mi">224</span><span class="p">])</span>
+  <span class="n">img</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">image</span><span class="o">.</span><span class="n">resize</span><span class="p">(</span><span class="n">img</span><span class="p">,</span> <span class="p">[</span><span class="mi">224</span><span class="p">,</span><span class="mi">224</span><span class="p">])</span>
+  <span class="n">aug_img</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">numpy_function</span><span class="p">(</span><span class="n">func</span><span class="o">=</span><span class="n">aug_fn</span><span class="p">,</span> <span class="n">inp</span><span class="o">=</span><span class="p">[</span><span class="n">img</span><span class="p">,</span> <span class="n">img_size</span><span class="p">],</span> <span class="n">Tout</span><span class="o">=</span><span class="n">tf</span><span class="o">.</span><span class="n">float32</span><span class="p">)</span>
+  <span class="k">return</span> <span class="n">aug_img</span><span class="p">,</span> <span class="n">label_img</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>Now we will call our augmentation pipeline whenever we load a batch in our training or validation datasets. The augmentation pipeline that we form with <code class="docutils literal notranslate"><span class="pre">Compose()</span></code> is called in <code class="docutils literal notranslate"><span class="pre">get_baseline_dataset</span></code> during the dataset creation process.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># load your data</span>
+<span class="c1"># Function for reading the tiles into TensorFlow tensors </span>
+<span class="c1"># See TensorFlow documentation for explanation of tensor: https://www.tensorflow.org/guide/tensor</span>
+<span class="k">def</span> <span class="nf">_process_pathnames</span><span class="p">(</span><span class="n">fname</span><span class="p">,</span> <span class="n">label_path</span><span class="p">):</span>
+  <span class="c1"># We map this function onto each pathname pair  </span>
+  <span class="n">img_str</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">io</span><span class="o">.</span><span class="n">read_file</span><span class="p">(</span><span class="n">fname</span><span class="p">)</span>
+  <span class="n">img</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">image</span><span class="o">.</span><span class="n">decode_png</span><span class="p">(</span><span class="n">img_str</span><span class="p">,</span> <span class="n">channels</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span>
+
+  <span class="n">label_img_str</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">io</span><span class="o">.</span><span class="n">read_file</span><span class="p">(</span><span class="n">label_path</span><span class="p">)</span>
+
+  <span class="c1"># These are png images so they return as (num_frames, h, w, c)</span>
+  <span class="n">label_img</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">image</span><span class="o">.</span><span class="n">decode_png</span><span class="p">(</span><span class="n">label_img_str</span><span class="p">,</span> <span class="n">channels</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+  <span class="c1"># The label image should have any values between 0 and 8, indicating pixel wise</span>
+  <span class="c1"># foreground class or background (0). We take the first channel only. </span>
+  <span class="n">label_img</span> <span class="o">=</span> <span class="n">label_img</span><span class="p">[:,</span> <span class="p">:,</span> <span class="mi">0</span><span class="p">]</span>
+  <span class="n">label_img</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">expand_dims</span><span class="p">(</span><span class="n">label_img</span><span class="p">,</span> <span class="n">axis</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span>
+  <span class="k">return</span> <span class="n">img</span><span class="p">,</span> <span class="n">label_img</span>
+
+
+<span class="c1"># Main function to tie all of the above four dataset processing functions together </span>
+<span class="k">def</span> <span class="nf">get_baseline_dataset</span><span class="p">(</span><span class="n">filenames</span><span class="p">,</span> 
+                         <span class="n">labels</span><span class="p">,</span>
+                         <span class="n">threads</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span> 
+                         <span class="n">batch_size</span><span class="o">=</span><span class="n">batch_size</span><span class="p">,</span>
+                         <span class="n">shuffle</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>           
+  <span class="n">num_x</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">filenames</span><span class="p">)</span>
+  <span class="c1"># Create a dataset from the filenames and labels</span>
+  <span class="n">dataset</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">Dataset</span><span class="o">.</span><span class="n">from_tensor_slices</span><span class="p">((</span><span class="n">filenames</span><span class="p">,</span> <span class="n">labels</span><span class="p">))</span>
+  <span class="n">dataset</span> <span class="o">=</span> <span class="n">dataset</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="n">_process_pathnames</span><span class="p">,</span> <span class="n">num_parallel_calls</span><span class="o">=</span><span class="n">threads</span><span class="p">)</span>
+  <span class="c1"># Map our preprocessing function to every element in our dataset, taking</span>
+  <span class="c1"># advantage of multithreading</span>
+  <span class="n">dataset</span> <span class="o">=</span> <span class="n">dataset</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="n">functools</span><span class="o">.</span><span class="n">partial</span><span class="p">(</span><span class="n">_augment</span><span class="p">,</span> <span class="n">img_size</span><span class="o">=</span><span class="mi">224</span><span class="p">),</span> <span class="n">num_parallel_calls</span><span class="o">=</span><span class="n">threads</span><span class="p">)</span><span class="o">.</span><span class="n">prefetch</span><span class="p">(</span><span class="n">threads</span><span class="p">)</span>
+  <span class="k">if</span> <span class="n">shuffle</span><span class="p">:</span>
+    <span class="n">dataset</span> <span class="o">=</span> <span class="n">dataset</span><span class="o">.</span><span class="n">shuffle</span><span class="p">(</span><span class="n">num_x</span><span class="p">)</span>
+  <span class="c1"># It&#39;s necessary to repeat our data for all epochs </span>
+  <span class="n">dataset</span> <span class="o">=</span> <span class="n">dataset</span><span class="o">.</span><span class="n">repeat</span><span class="p">()</span><span class="o">.</span><span class="n">batch</span><span class="p">(</span><span class="n">batch_size</span><span class="p">)</span>
+  <span class="nb">print</span><span class="p">(</span><span class="n">dataset</span><span class="p">)</span>
+  <span class="k">return</span> <span class="n">dataset</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># dataset configuration for training</span>
+<span class="n">train_ds</span> <span class="o">=</span> <span class="n">get_baseline_dataset</span><span class="p">(</span><span class="n">x_train_filenames</span><span class="p">,</span>
+                                <span class="n">y_train_filenames</span><span class="p">,</span>
+                                <span class="n">batch_size</span><span class="o">=</span><span class="n">batch_size</span><span class="p">)</span>
+<span class="n">val_ds</span> <span class="o">=</span> <span class="n">get_baseline_dataset</span><span class="p">(</span><span class="n">x_val_filenames</span><span class="p">,</span>
+                              <span class="n">y_val_filenames</span><span class="p">,</span> 
+                              <span class="n">batch_size</span><span class="o">=</span><span class="n">batch_size</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>Let’s view some of our augmentations</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">view_image</span><span class="p">(</span><span class="n">ds</span><span class="p">):</span>
+    <span class="n">image</span><span class="p">,</span> <span class="n">label</span> <span class="o">=</span> <span class="nb">next</span><span class="p">(</span><span class="nb">iter</span><span class="p">(</span><span class="n">ds</span><span class="p">))</span> <span class="c1"># extract 1 batch from the dataset</span>
+    <span class="n">image</span> <span class="o">=</span> <span class="n">image</span><span class="o">.</span><span class="n">numpy</span><span class="p">()</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">image</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
+    
+    <span class="n">fig</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">22</span><span class="p">,</span> <span class="mi">22</span><span class="p">))</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">8</span><span class="p">):</span>
+        <span class="n">ax</span> <span class="o">=</span> <span class="n">fig</span><span class="o">.</span><span class="n">add_subplot</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span> <span class="n">xticks</span><span class="o">=</span><span class="p">[],</span> <span class="n">yticks</span><span class="o">=</span><span class="p">[])</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">image</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>Boom, more training data! Channel Shuffle presents the most extreme augmentation to the human eye. Try to adjust the Blur augmentation to create a more aggressive blurring effect.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">view_image</span><span class="p">(</span><span class="n">train_ds</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>Now that we have a variety of augmentations that will be applied to each image in each batch, let’s train a model using our augmentations and pretraining.</p>
+</div>
+<div class="section" id="display-functions-for-monitoring-model-progress-and-visualizing-arrays">
+<h3>Display functions for monitoring model progress and visualizing arrays<a class="headerlink" href="#display-functions-for-monitoring-model-progress-and-visualizing-arrays" title="Permalink to this headline">¶</a></h3>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">create_mask</span><span class="p">(</span><span class="n">pred_mask</span><span class="p">):</span>
+  <span class="n">pred_mask</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">argmax</span><span class="p">(</span><span class="n">pred_mask</span><span class="p">,</span> <span class="n">axis</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span>
+  <span class="n">pred_mask</span> <span class="o">=</span> <span class="n">pred_mask</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="n">tf</span><span class="o">.</span><span class="n">newaxis</span><span class="p">]</span>
+  <span class="k">return</span> <span class="n">pred_mask</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+
+<span class="k">def</span> <span class="nf">display</span><span class="p">(</span><span class="n">display_list</span><span class="p">):</span>
+  <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">15</span><span class="p">,</span> <span class="mi">15</span><span class="p">))</span>
+
+  <span class="n">title</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;Input Image&#39;</span><span class="p">,</span> <span class="s1">&#39;True Mask&#39;</span><span class="p">,</span> <span class="s1">&#39;Predicted Mask&#39;</span><span class="p">]</span>
+
+  <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">display_list</span><span class="p">)):</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">subplot</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">display_list</span><span class="p">),</span> <span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="n">title</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">tf</span><span class="o">.</span><span class="n">keras</span><span class="o">.</span><span class="n">preprocessing</span><span class="o">.</span><span class="n">image</span><span class="o">.</span><span class="n">array_to_img</span><span class="p">(</span><span class="n">display_list</span><span class="p">[</span><span class="n">i</span><span class="p">]))</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">axis</span><span class="p">(</span><span class="s1">&#39;off&#39;</span><span class="p">)</span>
+  <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+
+<span class="k">def</span> <span class="nf">show_predictions</span><span class="p">(</span><span class="n">image</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">mask</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">dataset</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">num</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
+  <span class="k">if</span> <span class="n">image</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">dataset</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="c1"># this is just for showing keras callback output. in practice this should be broken out into a different function</span>
+    <span class="n">sample_image</span> <span class="o">=</span> <span class="n">skio</span><span class="o">.</span><span class="n">imread</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">img_dir</span><span class="si">}</span><span class="s1">/tile_terrabio_15684.png&#39;</span><span class="p">)</span>
+    <span class="n">sample_mask</span> <span class="o">=</span> <span class="n">skio</span><span class="o">.</span><span class="n">imread</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">label_dir</span><span class="si">}</span><span class="s1">/tile_terrabio_15684.png&#39;</span><span class="p">)</span>
+    <span class="n">mp</span> <span class="o">=</span> <span class="n">create_mask</span><span class="p">(</span><span class="n">model</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">sample_image</span><span class="p">[</span><span class="n">tf</span><span class="o">.</span><span class="n">newaxis</span><span class="p">,</span> <span class="o">...</span><span class="p">]))</span>
+    <span class="n">mpe</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">keras</span><span class="o">.</span><span class="n">backend</span><span class="o">.</span><span class="n">eval</span><span class="p">(</span><span class="n">mp</span><span class="p">)</span>
+    <span class="n">display</span><span class="p">([</span><span class="n">sample_image</span><span class="p">,</span> <span class="n">sample_mask</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="n">tf</span><span class="o">.</span><span class="n">newaxis</span><span class="p">],</span> <span class="n">mpe</span><span class="p">])</span>
+  <span class="k">elif</span> <span class="n">dataset</span><span class="p">:</span>
+    <span class="k">for</span> <span class="n">image</span><span class="p">,</span> <span class="n">mask</span> <span class="ow">in</span> <span class="n">dataset</span><span class="o">.</span><span class="n">take</span><span class="p">(</span><span class="n">num</span><span class="p">):</span>
+      <span class="n">pred_mask</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">image</span><span class="p">)</span>
+      <span class="n">display</span><span class="p">([</span><span class="n">image</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">mask</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">create_mask</span><span class="p">(</span><span class="n">pred_mask</span><span class="p">)])</span>
+  <span class="k">else</span><span class="p">:</span>
+    <span class="n">mp</span> <span class="o">=</span> <span class="n">create_mask</span><span class="p">(</span><span class="n">model</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">image</span><span class="p">[</span><span class="n">tf</span><span class="o">.</span><span class="n">newaxis</span><span class="p">,</span> <span class="o">...</span><span class="p">]))</span>
+    <span class="n">mpe</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">keras</span><span class="o">.</span><span class="n">backend</span><span class="o">.</span><span class="n">eval</span><span class="p">(</span><span class="n">mp</span><span class="p">)</span>
+    <span class="n">display</span><span class="p">([</span><span class="n">image</span><span class="p">,</span> <span class="n">mask</span><span class="p">,</span> <span class="n">mpe</span><span class="p">])</span>
+
+<span class="k">class</span> <span class="nc">DisplayCallback</span><span class="p">(</span><span class="n">tf</span><span class="o">.</span><span class="n">keras</span><span class="o">.</span><span class="n">callbacks</span><span class="o">.</span><span class="n">Callback</span><span class="p">):</span>
+  <span class="k">def</span> <span class="nf">on_epoch_end</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">epoch</span><span class="p">,</span> <span class="n">logs</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="n">clear_output</span><span class="p">(</span><span class="n">wait</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">show_predictions</span><span class="p">()</span>
+    <span class="nb">print</span> <span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">Sample Prediction after epoch </span><span class="si">{}</span><span class="se">\n</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">epoch</span><span class="o">+</span><span class="mi">1</span><span class="p">))</span>
+
+<span class="n">callbacks</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="n">DisplayCallback</span><span class="p">()</span>
+<span class="p">]</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>We’ll use the <code class="docutils literal notranslate"><span class="pre">segmentation_models</span></code> implementation of a U-net, since it handles downlaoding pretrained weights from a variety of sources. To set up the U-Net in a manner that is equivalent with the U-Net we made from scratch in episode 3, we need to specify the correct activation function for multi-category pixel segmentation,<code class="docutils literal notranslate"><span class="pre">softmax</span></code>, and the correct number of classes: 9.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># define model</span>
+
+<span class="n">sm</span><span class="o">.</span><span class="n">set_framework</span><span class="p">(</span><span class="s1">&#39;tf.keras&#39;</span><span class="p">)</span>
+
+<span class="n">sm</span><span class="o">.</span><span class="n">framework</span><span class="p">()</span>
+
+<span class="n">model</span> <span class="o">=</span> <span class="n">sm</span><span class="o">.</span><span class="n">Unet</span><span class="p">(</span><span class="s1">&#39;mobilenetv2&#39;</span><span class="p">,</span> <span class="n">activation</span><span class="o">=</span><span class="s1">&#39;softmax&#39;</span><span class="p">,</span> <span class="n">classes</span> <span class="o">=</span> <span class="mi">9</span><span class="p">,</span> <span class="n">encoder_weights</span><span class="o">=</span><span class="s2">&quot;imagenet&quot;</span><span class="p">,</span> <span class="n">input_shape</span><span class="o">=</span><span class="p">(</span><span class="mi">224</span><span class="p">,</span><span class="mi">224</span><span class="p">,</span><span class="mi">3</span><span class="p">))</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>We’ll compile our model with the same optimizer, loss function, and accuracy metrics from Lesson 3.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">model</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="n">optimizer</span><span class="o">=</span><span class="n">tf</span><span class="o">.</span><span class="n">keras</span><span class="o">.</span><span class="n">optimizers</span><span class="o">.</span><span class="n">Adam</span><span class="p">(</span><span class="n">learning_rate</span><span class="o">=</span><span class="mf">0.00001</span><span class="p">),</span>
+              <span class="n">loss</span><span class="o">=</span><span class="n">SparseCategoricalFocalLoss</span><span class="p">(</span><span class="n">gamma</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">from_logits</span><span class="o">=</span><span class="kc">True</span><span class="p">),</span> <span class="c1">#tf.keras.losses.SparseCategoricalCrossentropy(from_logits=True),</span>
+              <span class="n">metrics</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;accuracy&#39;</span><span class="p">,</span> <span class="n">sm</span><span class="o">.</span><span class="n">metrics</span><span class="o">.</span><span class="n">iou_score</span><span class="p">])</span>
+
+<span class="n">EPOCHS</span><span class="o">=</span><span class="mi">10</span>
+<span class="n">model_history</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span>
+   <span class="n">train_ds</span><span class="p">,</span>
+   <span class="n">epochs</span><span class="o">=</span><span class="n">EPOCHS</span><span class="p">,</span>
+   <span class="n">steps_per_epoch</span><span class="o">=</span><span class="nb">int</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">ceil</span><span class="p">(</span><span class="n">num_train_examples</span> <span class="o">/</span> <span class="nb">float</span><span class="p">(</span><span class="n">batch_size</span><span class="p">))),</span>
+   <span class="n">validation_data</span><span class="o">=</span><span class="n">val_ds</span><span class="p">,</span>
+   <span class="n">validation_steps</span><span class="o">=</span><span class="nb">int</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">ceil</span><span class="p">(</span><span class="n">num_val_examples</span> <span class="o">/</span> <span class="nb">float</span><span class="p">(</span><span class="n">batch_size</span><span class="p">))),</span>
+   <span class="n">callbacks</span><span class="o">=</span><span class="n">callbacks</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>And we can view the model’s loss plot and compare to Lesson 3. Was there an improvement?</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">loss</span> <span class="o">=</span> <span class="n">model_history</span><span class="o">.</span><span class="n">history</span><span class="p">[</span><span class="s1">&#39;loss&#39;</span><span class="p">]</span>
+<span class="n">val_loss</span> <span class="o">=</span> <span class="n">model_history</span><span class="o">.</span><span class="n">history</span><span class="p">[</span><span class="s1">&#39;val_loss&#39;</span><span class="p">]</span>
+
+<span class="n">epochs</span> <span class="o">=</span> <span class="nb">range</span><span class="p">(</span><span class="n">EPOCHS</span><span class="p">)</span>
+
+<span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">()</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">epochs</span><span class="p">,</span> <span class="n">loss</span><span class="p">,</span> <span class="s1">&#39;r&#39;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;Training loss&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">epochs</span><span class="p">,</span> <span class="n">val_loss</span><span class="p">,</span> <span class="s1">&#39;bo&#39;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;Validation loss&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s1">&#39;Training and Validation Loss&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s1">&#39;Epoch&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s1">&#39;Loss Value&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">ylim</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="p">])</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
 </pre></div>
 </div>
 </div>
