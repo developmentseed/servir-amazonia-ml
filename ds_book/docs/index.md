@@ -27,12 +27,18 @@ A major advantage of executable books is that the reader may enjoy running the s
 
 [https://developmentseed.github.io/servir-amazonia-ml/docs/index.html](https://developmentseed.github.io/servir-amazonia-ml/docs/index.html),
 
-in the left menu select any chapter below the Introduction, click the "rocket" icon at the top right of the screen, and choose “Colab". After some initialization time (for the first time it is rather long) the notebook can be run.
+and in the left menu select any topic, click the "rocket" icon at the top right of the screen, and choose “Colab." This will launch the page in a virtual runtime environment hosted by Google. From there, the code can be run using a free GPU.
 
-For local running, the codes for each chapter in the form of 
-[Jupyter](https://jupyter.org) notebooks can be downloaded by clicking the "arrow-down" icon at the top right of the screen. A complete set of files is also available from the links given above.
+For local running, the code for each topic in the form of 
+[Jupyter](https://jupyter.org) notebooks can be downloaded by clicking the "arrow-down" icon at the top right of the screen. 
 
-Appendix {ref}`app-run` explains step-by-step how to proceed with the local execution of the codes.
+```
+
+```{admonition} How to access the data
+:class: important
+
+Ideally, all data would be ingested from a storage bucket on Google Cloud Platform, however, input/output to Google Colab from cloud storage is prohibitively slow and fragile. For the purpose of this workshop, we have shared a Google Drive folder with participants. To use its contents during the workshop, please right click on the folder from Google Drive and select `Add shortcut to Drive` and select your `My Drive` folder as the destination. This will allow you to programmatically read the data via a path that mimics your personal drive rather than your shared drive. 
+
 ```
 
 ```{admonition} $~$
