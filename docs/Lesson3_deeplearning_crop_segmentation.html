@@ -1195,14 +1195,14 @@ The code below loads foreground examples randomly. We won’t run this since it 
 </div>
 </div>
 </div>
-<p>The decoder/upsampler is simply a series of upsample blocks implemented in TensorFlow examples. The arguments are (number of filters, kernel size). A kernel size of 3 is considered standard for current network implementations (<a class="reference external" href="https://arxiv.org/abs/1801.04381">Sandler et al., 2018</a>). You can increase or decrease the number of filters, however, more filters equates to more parameters and longer training time.</p>
+<p>The decoder/upsampler is simply a series of upsample blocks implemented in TensorFlow examples. The arguments are (number of filters, kernel size). A kernel size of 3 is considered standard for current network implementations (<a class="reference external" href="https://arxiv.org/abs/1801.04381">Sandler et al., 2018</a>). You can increase or decrease the number of filters, however, more filters equates to more parameters and longer training time. A range between 32 to 512, increasing 2x for each successive convolutional layer and decreasing for each successive deconvolutional/upsampling layer, is very common across different convolutional network architectures.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">up_stack</span> <span class="o">=</span> <span class="p">[</span>
-    <span class="n">pix2pix</span><span class="o">.</span><span class="n">upsample</span><span class="p">(</span><span class="mi">896</span><span class="p">,</span> <span class="mi">3</span><span class="p">),</span>
-    <span class="n">pix2pix</span><span class="o">.</span><span class="n">upsample</span><span class="p">(</span><span class="mi">448</span><span class="p">,</span> <span class="mi">3</span><span class="p">),</span>
-    <span class="n">pix2pix</span><span class="o">.</span><span class="n">upsample</span><span class="p">(</span><span class="mi">224</span><span class="p">,</span> <span class="mi">3</span><span class="p">),</span>
-    <span class="n">pix2pix</span><span class="o">.</span><span class="n">upsample</span><span class="p">(</span><span class="mi">112</span><span class="p">,</span> <span class="mi">3</span><span class="p">),</span>
+    <span class="n">pix2pix</span><span class="o">.</span><span class="n">upsample</span><span class="p">(</span><span class="mi">512</span><span class="p">,</span> <span class="mi">3</span><span class="p">),</span>
+    <span class="n">pix2pix</span><span class="o">.</span><span class="n">upsample</span><span class="p">(</span><span class="mi">256</span><span class="p">,</span> <span class="mi">3</span><span class="p">),</span>
+    <span class="n">pix2pix</span><span class="o">.</span><span class="n">upsample</span><span class="p">(</span><span class="mi">128</span><span class="p">,</span> <span class="mi">3</span><span class="p">),</span>
+    <span class="n">pix2pix</span><span class="o">.</span><span class="n">upsample</span><span class="p">(</span><span class="mi">64</span><span class="p">,</span> <span class="mi">3</span><span class="p">),</span>
 <span class="p">]</span>
 </pre></div>
 </div>
