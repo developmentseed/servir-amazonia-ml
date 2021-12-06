@@ -895,7 +895,7 @@ The code below loads foreground examples randomly. We won’t run this since it 
 <span class="k">def</span> <span class="nf">_augment</span><span class="p">(</span><span class="n">img</span><span class="p">,</span>
              <span class="n">label_img</span><span class="p">,</span>
              <span class="n">resize</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>  <span class="c1"># Resize the image to some size e.g. [256, 256]</span>
-             <span class="c1">#scale=1,  # Scale image e.g. 1 / 255.</span>
+             <span class="n">scale</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>  <span class="c1"># Scale image e.g. 1 / 255.</span>
              <span class="n">horizontal_flip</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
              <span class="n">vertical_flip</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span> 
   <span class="k">if</span> <span class="n">resize</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
@@ -905,7 +905,10 @@ The code below loads foreground examples randomly. We won’t run this since it 
   
   <span class="n">img</span><span class="p">,</span> <span class="n">label_img</span> <span class="o">=</span> <span class="n">flip_img_h</span><span class="p">(</span><span class="n">horizontal_flip</span><span class="p">,</span> <span class="n">img</span><span class="p">,</span> <span class="n">label_img</span><span class="p">)</span>
   <span class="n">img</span><span class="p">,</span> <span class="n">label_img</span> <span class="o">=</span> <span class="n">flip_img_v</span><span class="p">(</span><span class="n">vertical_flip</span><span class="p">,</span> <span class="n">img</span><span class="p">,</span> <span class="n">label_img</span><span class="p">)</span>
-  <span class="n">img</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">cast</span><span class="p">(</span><span class="n">img</span><span class="p">,</span> <span class="n">tf</span><span class="o">.</span><span class="n">float32</span><span class="p">)</span> <span class="c1"># * scale  #tf.to_float(img) * scale </span>
+  <span class="n">img</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">cast</span><span class="p">(</span><span class="n">img</span><span class="p">,</span> <span class="n">tf</span><span class="o">.</span><span class="n">float32</span><span class="p">)</span> 
+  <span class="k">if</span> <span class="n">scale</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="n">img</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">cast</span><span class="p">(</span><span class="n">img</span><span class="p">,</span> <span class="n">tf</span><span class="o">.</span><span class="n">float32</span><span class="p">)</span> <span class="o">*</span> <span class="n">scale</span>
+    <span class="c1">#img = tf.keras.layers.Rescaling(scale=scale, offset=-1)</span>
   <span class="c1">#label_img = tf.cast(label_img, tf.float32) * scale</span>
   <span class="c1">#print(&quot;tensor: &quot;, tf.unique(tf.keras.backend.print_tensor(label_img)))</span>
   <span class="k">return</span> <span class="n">img</span><span class="p">,</span> <span class="n">label_img</span>
@@ -949,7 +952,7 @@ The code below loads foreground examples randomly. We won’t run this since it 
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># dataset configuration for training</span>
 <span class="n">tr_cfg</span> <span class="o">=</span> <span class="p">{</span>
     <span class="s1">&#39;resize&#39;</span><span class="p">:</span> <span class="p">[</span><span class="n">img_shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">img_shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]],</span>
-    <span class="c1">#&#39;scale&#39;: 1 / 255.,</span>
+    <span class="s1">&#39;scale&#39;</span><span class="p">:</span> <span class="mi">1</span> <span class="o">/</span> <span class="mf">255.</span><span class="p">,</span>
     <span class="s1">&#39;horizontal_flip&#39;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
     <span class="s1">&#39;vertical_flip&#39;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
 <span class="p">}</span>
@@ -963,7 +966,7 @@ The code below loads foreground examples randomly. We won’t run this since it 
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># dataset configuration for validation</span>
 <span class="n">val_cfg</span> <span class="o">=</span> <span class="p">{</span>
     <span class="s1">&#39;resize&#39;</span><span class="p">:</span> <span class="p">[</span><span class="n">img_shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">img_shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]],</span>
-    <span class="c1">#&#39;scale&#39;: 1 / 255.,</span>
+    <span class="s1">&#39;scale&#39;</span><span class="p">:</span> <span class="mi">1</span> <span class="o">/</span> <span class="mf">255.</span><span class="p">,</span>
 <span class="p">}</span>
 <span class="n">val_preprocessing_fn</span> <span class="o">=</span> <span class="n">functools</span><span class="o">.</span><span class="n">partial</span><span class="p">(</span><span class="n">_augment</span><span class="p">,</span> <span class="o">**</span><span class="n">val_cfg</span><span class="p">)</span>
 </pre></div>
@@ -975,7 +978,7 @@ The code below loads foreground examples randomly. We won’t run this since it 
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># dataset configuration for testing</span>
 <span class="n">test_cfg</span> <span class="o">=</span> <span class="p">{</span>
     <span class="s1">&#39;resize&#39;</span><span class="p">:</span> <span class="p">[</span><span class="n">img_shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">img_shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]],</span>
-    <span class="c1">#&#39;scale&#39;: 1 / 255.,</span>
+    <span class="s1">&#39;scale&#39;</span><span class="p">:</span> <span class="mi">1</span> <span class="o">/</span> <span class="mf">255.</span><span class="p">,</span>
 <span class="p">}</span>
 <span class="n">test_preprocessing_fn</span> <span class="o">=</span> <span class="n">functools</span><span class="o">.</span><span class="n">partial</span><span class="p">(</span><span class="n">_augment</span><span class="p">,</span> <span class="o">**</span><span class="n">test_cfg</span><span class="p">)</span>
 </pre></div>
@@ -1178,8 +1181,8 @@ The code below loads foreground examples randomly. We won’t run this since it 
 <span class="n">layer_names</span> <span class="o">=</span> <span class="p">[</span>
     <span class="s1">&#39;block_1_expand_relu&#39;</span><span class="p">,</span>
     <span class="s1">&#39;block_3_expand_relu&#39;</span><span class="p">,</span>
-    <span class="s1">&#39;block_6_expand_relu&#39;</span><span class="p">,</span>
-    <span class="s1">&#39;block_13_expand_relu&#39;</span><span class="p">,</span> 
+    <span class="s1">&#39;block_6_expand_relu&#39;</span><span class="p">,</span> 
+    <span class="s1">&#39;block_13_expand_relu&#39;</span><span class="p">,</span>
     <span class="s1">&#39;block_16_project&#39;</span><span class="p">,</span> 
 <span class="p">]</span>
 <span class="n">layers</span> <span class="o">=</span> <span class="p">[</span><span class="n">base_model</span><span class="o">.</span><span class="n">get_layer</span><span class="p">(</span><span class="n">name</span><span class="p">)</span><span class="o">.</span><span class="n">output</span> <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">layer_names</span><span class="p">]</span>
@@ -1192,14 +1195,14 @@ The code below loads foreground examples randomly. We won’t run this since it 
 </div>
 </div>
 </div>
-<p>The decoder/upsampler is simply a series of upsample blocks implemented in TensorFlow examples.</p>
+<p>The decoder/upsampler is simply a series of upsample blocks implemented in TensorFlow examples. The arguments are (number of filters, kernel size). A kernel size of 3 is considered standard for current network implementations (<a class="reference external" href="https://arxiv.org/abs/1801.04381">Sandler et al., 2018</a>). You can increase or decrease the number of filters, however, more filters equates to more parameters and longer training time.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">up_stack</span> <span class="o">=</span> <span class="p">[</span>
-    <span class="n">pix2pix</span><span class="o">.</span><span class="n">upsample</span><span class="p">(</span><span class="mi">512</span><span class="p">,</span> <span class="mi">3</span><span class="p">),</span>
-    <span class="n">pix2pix</span><span class="o">.</span><span class="n">upsample</span><span class="p">(</span><span class="mi">256</span><span class="p">,</span> <span class="mi">3</span><span class="p">),</span>
-    <span class="n">pix2pix</span><span class="o">.</span><span class="n">upsample</span><span class="p">(</span><span class="mi">128</span><span class="p">,</span> <span class="mi">3</span><span class="p">),</span>
-    <span class="n">pix2pix</span><span class="o">.</span><span class="n">upsample</span><span class="p">(</span><span class="mi">64</span><span class="p">,</span> <span class="mi">3</span><span class="p">),</span>
+    <span class="n">pix2pix</span><span class="o">.</span><span class="n">upsample</span><span class="p">(</span><span class="mi">896</span><span class="p">,</span> <span class="mi">3</span><span class="p">),</span>
+    <span class="n">pix2pix</span><span class="o">.</span><span class="n">upsample</span><span class="p">(</span><span class="mi">448</span><span class="p">,</span> <span class="mi">3</span><span class="p">),</span>
+    <span class="n">pix2pix</span><span class="o">.</span><span class="n">upsample</span><span class="p">(</span><span class="mi">224</span><span class="p">,</span> <span class="mi">3</span><span class="p">),</span>
+    <span class="n">pix2pix</span><span class="o">.</span><span class="n">upsample</span><span class="p">(</span><span class="mi">112</span><span class="p">,</span> <span class="mi">3</span><span class="p">),</span>
 <span class="p">]</span>
 </pre></div>
 </div>
@@ -1278,7 +1281,7 @@ The code below loads foreground examples randomly. We won’t run this since it 
 </div>
 </div>
 </div>
-<p>In the SparseCategoricalFocalLoss function, gamma is the focusing parameter. Higher values of gamma make dominant, or “easy to classify”, examples contribute less to the loss relative to rare, or “difficult to classify”, examples. The value for gamma must be non-negative. You can experiment by adding the class weights as a paramter to SparseCategoricalFocalLoss, e.g. <code class="docutils literal notranslate"><span class="pre">SparseCategoricalFocalLoss(gamma=2,</span> <span class="pre">class_weight=scaled_class_weights_list,</span> <span class="pre">from_logits=True)</span></code>.</p>
+<p>In the SparseCategoricalFocalLoss function, gamma is the focusing parameter. Higher values of gamma make dominant, or “easy to classify”, examples contribute less to the loss relative to rare, or “difficult to classify”, examples. The value for gamma must be non-negative, and the authors of this loss function found that epirically a gamma value of 2 works best (<a class="reference external" href="https://arxiv.org/abs/1708.02002">Lin et al., 2017</a>). You can experiment by adding the class weights as a parameter to SparseCategoricalFocalLoss, e.g. <code class="docutils literal notranslate"><span class="pre">SparseCategoricalFocalLoss(gamma=2,</span> <span class="pre">class_weight=scaled_class_weights_list,</span> <span class="pre">from_logits=True)</span></code>.</p>
 <p>We will measure our model’s performance during training by per-pixel accuracy.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
@@ -1305,8 +1308,8 @@ The code below loads foreground examples randomly. We won’t run this since it 
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">show_predictions</span><span class="p">(</span><span class="n">image</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">mask</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">dataset</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">num</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
   <span class="k">if</span> <span class="n">image</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">dataset</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
     <span class="c1"># this is just for showing keras callback output. in practice this should be broken out into a different function</span>
-    <span class="n">sample_image</span> <span class="o">=</span> <span class="n">skio</span><span class="o">.</span><span class="n">imread</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">img_dir</span><span class="si">}</span><span class="s1">/tile_terrabio_17507.png&#39;</span><span class="p">)</span>
-    <span class="n">sample_mask</span> <span class="o">=</span> <span class="n">skio</span><span class="o">.</span><span class="n">imread</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">label_dir</span><span class="si">}</span><span class="s1">/tile_terrabio_17507.png&#39;</span><span class="p">)</span>
+    <span class="n">sample_image</span> <span class="o">=</span> <span class="n">skio</span><span class="o">.</span><span class="n">imread</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">img_dir</span><span class="si">}</span><span class="s1">/tile_terrabio_17507.png&#39;</span><span class="p">)</span> <span class="o">/</span> <span class="mf">255.</span>
+    <span class="n">sample_mask</span> <span class="o">=</span> <span class="n">skio</span><span class="o">.</span><span class="n">imread</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">label_dir</span><span class="si">}</span><span class="s1">/tile_terrabio_17507.png&#39;</span><span class="p">)</span> <span class="o">/</span> <span class="mf">255.</span>
     <span class="n">mp</span> <span class="o">=</span> <span class="n">create_mask</span><span class="p">(</span><span class="n">model</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">sample_image</span><span class="p">[</span><span class="n">tf</span><span class="o">.</span><span class="n">newaxis</span><span class="p">,</span> <span class="o">...</span><span class="p">]))</span>
     <span class="n">mpe</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">keras</span><span class="o">.</span><span class="n">backend</span><span class="o">.</span><span class="n">eval</span><span class="p">(</span><span class="n">mp</span><span class="p">)</span>
     <span class="n">display</span><span class="p">([</span><span class="n">sample_image</span><span class="p">,</span> <span class="n">sample_mask</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="n">tf</span><span class="o">.</span><span class="n">newaxis</span><span class="p">],</span> <span class="n">mpe</span><span class="p">])</span>
@@ -1403,7 +1406,10 @@ The code below loads foreground examples randomly. We won’t run this since it 
 </div>
 <div class="section" id="fit-and-view">
 <h4>Fit and View<a class="headerlink" href="#fit-and-view" title="Permalink to this headline">¶</a></h4>
-<p>Now we will actually train the model for 4 epochs (full cycles through the training dataset), visualizing predictions on a validation image after each epoch. In practice, you would want to train the model until validation loss starts to increase (a clear indication of overfitting).</p>
+<p>Now we will actually train the model for 4 epochs (full cycles through the training dataset), visualizing predictions on a validation image after each epoch. In practice, you would want to train the model until validation loss starts to increase (a clear indication of overfitting). Empirically with this dataset, convergence occurred around 50 epochs. We’ve reduced to 4 epochs purely for rapid demonstration purposes. As a preview, at 50 epochs you should observe a test prediction similar to:</p>
+<p><img alt="testimage" src="../_images/epoch50_testimage.png" />
+<img alt="testimage1" src="../_images/epoch50_testimage1.png" /></p>
+<p>Don’t be alarmed if you see blank predictions after only 4 epochs.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">EPOCHS</span> <span class="o">=</span> <span class="mi">4</span>
