@@ -243,10 +243,13 @@
 <p class="admonition-title">How to run the notebook code</p>
 <p>A major advantage of executable books is that the reader may enjoy running the source code, modifying them and playing around. No downloading, installation or configuration are required. Simply go to</p>
 <p><a class="reference external" href="https://developmentseed.github.io/servir-amazonia-ml/docs/index.html">https://developmentseed.github.io/servir-amazonia-ml/docs/index.html</a>,</p>
-<p>in the left menu select any chapter below the Introduction, click the “rocket” icon at the top right of the screen, and choose “Colab”. After some initialization time (for the first time it is rather long) the notebook can be run.</p>
-<p>For local running, the codes for each chapter in the form of
-<a class="reference external" href="https://jupyter.org">Jupyter</a> notebooks can be downloaded by clicking the “arrow-down” icon at the top right of the screen. A complete set of files is also available from the links given above.</p>
-<p>Appendix <a class="reference internal" href="appendix.html#app-run"><span class="std std-ref">How to run the book codes</span></a> explains step-by-step how to proceed with the local execution of the codes.</p>
+<p>and in the left menu select any topic, click the “rocket” icon at the top right of the screen, and choose “Colab.” This will launch the page in a virtual runtime environment hosted by Google. From there, the code can be run using a free GPU.</p>
+<p>For local running, the code for each topic in the form of
+<a class="reference external" href="https://jupyter.org">Jupyter</a> notebooks can be downloaded by clicking the “arrow-down” icon at the top right of the screen.</p>
+</div>
+<div class="important admonition">
+<p class="admonition-title">How to access the data</p>
+<p>Ideally, all data would be ingested from a storage bucket on Google Cloud Platform, however, input/output to Google Colab from cloud storage is prohibitively slow and fragile. For the purpose of this workshop, we have shared a Google Drive folder with participants. To use its contents during the workshop, please right click on the folder from Google Drive and select <code class="docutils literal notranslate"><span class="pre">Add</span> <span class="pre">shortcut</span> <span class="pre">to</span> <span class="pre">Drive</span></code> and select your <code class="docutils literal notranslate"><span class="pre">My</span> <span class="pre">Drive</span></code> folder as the destination. This will allow you to programmatically read the data via a path that mimics your personal drive rather than your shared drive.</p>
 </div>
 <div class="admonition- admonition">
 <p class="admonition-title"><span class="math notranslate nohighlight">\(~\)</span></p>
